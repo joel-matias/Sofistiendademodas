@@ -16,7 +16,7 @@
 <body class="min-h-screen  flex flex-col">
     @include('partials.navbar')
 
-    <main class="container-base py-6 sm:py-10">
+    <main class="">
         @yield('content')
     </main>
 
