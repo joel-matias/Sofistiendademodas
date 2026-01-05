@@ -1,31 +1,47 @@
 @props(['producto'])
 
-<article class="card overflow-hidden group">
-    <a href="{{ route('producto', $producto['slug']) }}" class="block aspect-[4/5] overflow-hidden">
-        <img
-            src="{{ $producto['imagen'] }}"
-            alt="{{ $producto['nombre'] }}"
-            class="w-full h-full object-cover transition duration-300 group-hover:scale-[1.03]"
-            loading="lazy"
-        />
-    </a>
+<article class="group">
+    <div class="relative overflow-hidden rounded-xl2 border border-borde bg-white">
 
-    <div class="p-4 grid gap-2">
-        <p class="text-xs uppercase tracking-widest text-gris">
+        {{-- Badge (ejemplo Oferta) --}}
+        @if(!empty($producto['oferta']))
+            <div class="absolute top-3 left-3 z-10">
+                <span class="bg-pink-600 text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-widest uppercase">
+                    Oferta
+                </span>
+            </div>
+        @endif
+
+        {{-- Wishlist placeholder --}}
+        <button class="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/90 hover:bg-white transition shadow"
+                aria-label="Agregar a favoritos">
+            ♡
+        </button>
+
+        {{-- Imagen --}}
+        <a href="{{ route('producto', $producto['slug']) }}" class="block aspect-[3/4] overflow-hidden bg-gray-100">
+            <img
+                src="{{ $producto['imagen'] }}"
+                alt="{{ $producto['nombre'] }}"
+                class="w-full h-full object-cover transition duration-500 group-hover:scale-[1.05]"
+                loading="lazy"
+            />
+        </a>
+    </div>
+
+    {{-- Info --}}
+    <div class="mt-3">
+        <p class="text-[11px] uppercase tracking-widest text-gris">
             {{ $producto['categoria'] }}
         </p>
 
-        <h3 class="font-display text-lg leading-tight">
+        <h3 class="mt-1 font-medium text-sm sm:text-base leading-tight">
             {{ $producto['nombre'] }}
         </h3>
 
-        <p class="text-base font-semibold tracking-wide">
+        <p class="mt-1 text-base font-semibold">
             ${{ number_format($producto['precio'], 0) }}
             <span class="text-sm text-gris font-normal">MXN</span>
         </p>
-
-        <a href="{{ route('producto', $producto['slug']) }}" class="btn-primary mt-2">
-            Ver detalle
-        </a>
     </div>
 </article>
