@@ -13,7 +13,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
+<body class="min-h-screen  flex flex-col">
     @include('partials.navbar')
 
     <main class="container-base py-6 sm:py-10">
