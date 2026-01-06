@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Producto;
 
 class CatalogoController extends Controller
 {
@@ -13,51 +13,37 @@ class CatalogoController extends Controller
 
     public function catalogo()
     {
-
-        $productos = [
-            [
-                'nombre' => 'Camisa Oversize',
-                'precio' => 499,
-                'slug' => 'camisa-oversize',
-                'imagen' => 'https://images.unsplash.com/photo-1520975958225-07d845a6a6b9?q=80&w=1200&auto=format&fit=crop',
-                'categoria' => 'Camisas',
-            ],
-            [
-                'nombre' => 'Sudadera Minimal',
-                'precio' => 699,
-                'slug' => 'sudadera-minimal',
-                'imagen' => 'https://images.unsplash.com/photo-1520975682031-a0e27ecf41f0?q=80&w=1200&auto=format&fit=crop',
-                'categoria' => 'Sudaderas',
-            ],
-            [
-                'nombre' => 'Pantalón Cargo',
-                'precio' => 799,
-                'slug' => 'pantalon-cargo',
-                'imagen' => 'https://images.unsplash.com/photo-1514997130083-3e48bd2b2b86?q=80&w=1200&auto=format&fit=crop',
-                'categoria' => 'Pantalones',
-            ],
-            [
-                'nombre' => 'Vestido Casual',
-                'precio' => 899,
-                'slug' => 'vestido-casual',
-                'imagen' => 'https://images.unsplash.com/photo-1520975958225-07d845a6a6b9?q=80&w=1200&auto=format&fit=crop',
-                'categoria' => 'Vestidos',
-            ],
-        ];
+        $productos = Producto::with('categoria')
+            ->where('activo', true)
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'nombre' => $p->nombre,
+                    'precio' => $p->precio,
+                    'slug' => $p->slug,
+                    'imagen' => $p->imagen,
+                    'categoria' => $p->categoria ? $p->categoria->nombre : '',
+                    'oferta' => (bool) $p->oferta,
+                    'precio_oferta' => $p->precio_oferta,
+                ];
+            });
 
         return view('catalogo.index', compact('productos'));
     }
 
     public function producto($slug)
     {
-        // dummy data
+        $p = Producto::with('categoria')->where('slug', $slug)->firstOrFail();
+
         $producto = [
-            'nombre' => 'Camisa Oversize',
-            'precio' => 499,
-            'slug' => $slug,
-            'descripcion' => 'Camisa oversize de algodón premium, cómoda y perfecta para looks casuales.',
-            'imagen' => 'https://images.unsplash.com/photo-1520975958225-07d845a6a6b9?q=80&w=1200&auto=format&fit=crop',
-            'categoria' => 'Camisas',
+            'nombre' => $p->nombre,
+            'precio' => $p->precio,
+            'slug' => $p->slug,
+            'descripcion' => $p->descripcion,
+            'imagen' => $p->imagen,
+            'categoria' => $p->categoria ? $p->categoria->nombre : '',
+            'oferta' => (bool) $p->oferta,
+            'precio_oferta' => $p->precio_oferta,
         ];
 
         return view('catalogo.show', compact('producto'));
