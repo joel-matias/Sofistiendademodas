@@ -4,28 +4,19 @@
     <div class="relative overflow-hidden rounded-xl2 border border-borde bg-white">
 
         {{-- Badge (ejemplo Oferta) --}}
-        @if(!empty($producto['oferta']))
+        @if (!empty($producto['oferta']))
             <div class="absolute top-3 left-3 z-10">
-                <span class="bg-pink-600 text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-widest uppercase">
+                <span
+                    class="bg-pink-600 text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-widest uppercase">
                     Oferta
                 </span>
             </div>
         @endif
 
-        {{-- Wishlist placeholder --}}
-        <button class="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/90 hover:bg-white transition shadow"
-                aria-label="Agregar a favoritos">
-            ♡
-        </button>
-
         {{-- Imagen --}}
         <a href="{{ route('producto', $producto['slug']) }}" class="block aspect-[3/4] overflow-hidden bg-gray-100">
-            <img
-                src="{{ $producto['imagen'] }}"
-                alt="{{ $producto['nombre'] }}"
-                class="w-full h-full object-cover transition duration-500 group-hover:scale-[1.05]"
-                loading="lazy"
-            />
+            <img src="{{ $producto['imagen'] }}" alt="{{ $producto['nombre'] }}"
+                class="w-full h-full object-cover transition duration-500 group-hover:scale-[1.05]" loading="lazy" />
         </a>
     </div>
 
