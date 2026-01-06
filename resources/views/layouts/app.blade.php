@@ -16,7 +16,7 @@
 <body class="min-h-screen  flex flex-col">
     @include('partials.navbar')
 
-    <main class="pl-10 pr-10">
+    <main class="pl-1 pr-1 sm:pl-10 sm:pr-10 sm:items-center">
         @yield('content')
     </main>
 
