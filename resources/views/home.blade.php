@@ -57,23 +57,24 @@
             @endphp
 
             @foreach($__categorias as $cat)
-                <a href="{{ route('catalogo') }}"
-                   class="relative overflow-hidden rounded-xl2 border border-borde bg-gray-100 group h-[340px] sm:h-[420px]">
-                    <img src="{{ $cat['img'] ?? ($cat['imagen'] ?? asset('assets/img/placeholder-category.jpg')) }}"
-                         alt="{{ $cat['titulo'] ?? $cat['nombre'] ?? 'Categoria' }}"
-                         class="w-full h-full object-cover transition duration-500 group-hover:scale-[1.05]"
-                         loading="lazy">
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition"></div>
+                <a href="{{ route('catalogo', ['categoria' => $cat['slug'] ?? \Illuminate\Support\Str::slug($cat['nombre'] ?? $cat['titulo'])]) }}"
+   class="relative overflow-hidden rounded-xl2 border border-borde bg-gray-100 group h-[340px] sm:h-[420px]">
+    <img src="{{ $cat['img'] ?? ($cat['imagen'] ?? asset('assets/img/placeholder-category.jpg')) }}"
+         alt="{{ $cat['titulo'] ?? $cat['nombre'] ?? 'Categoria' }}"
+         class="w-full h-full object-cover transition duration-500 group-hover:scale-[1.05]"
+         loading="lazy">
+    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition"></div>
 
-                    <div class="absolute bottom-6 left-6 right-6">
-                        <p class="text-white font-display text-3xl tracking-wide">
-                            {{ strtoupper($cat['titulo'] ?? $cat['nombre'] ?? '') }}
-                        </p>
-                        <p class="mt-1 text-white/90 text-sm">
-                            Explorar →
-                        </p>
-                    </div>
-                </a>
+    <div class="absolute bottom-6 left-6 right-6">
+        <p class="text-white font-display text-3xl tracking-wide">
+            {{ strtoupper($cat['titulo'] ?? $cat['nombre'] ?? '') }}
+        </p>
+        <p class="mt-1 text-white/90 text-sm">
+            Explorar →
+        </p>
+    </div>
+</a>
+
             @endforeach
 
         </div>

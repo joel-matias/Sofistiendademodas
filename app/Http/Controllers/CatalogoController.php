@@ -4,22 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Categoria;
 use App\Models\Producto;
+use Illuminate\Http\Request;
 
 class CatalogoController extends Controller
 {
     public function home()
     {
-        // Categorías (mapear a la estructura esperada por la vista)
         $categorias = Categoria::all()->map(function ($c) {
             return [
                 'titulo' => $c->nombre,
                 'img' => $c->imagen ?? asset('assets/img/placeholder-category.jpg'),
                 'nombre' => $c->nombre,
                 'imagen' => $c->imagen ?? asset('assets/img/placeholder-category.jpg'),
+                'slug' => $c->slug,
             ];
         })->toArray();
 
-        // Destacados: los 10 productos más recientes y activos
         $destacados = Producto::with('categoria')
             ->where('activo', true)
             ->orderByDesc('created_at')
@@ -41,24 +41,68 @@ class CatalogoController extends Controller
         return view('home', compact('categorias', 'destacados'));
     }
 
-    public function catalogo()
+    public function catalogo(Request $request)
     {
-        $productos = Producto::with('categoria')
-            ->where('activo', true)
-            ->get()
-            ->map(function ($p) {
-                return [
-                    'nombre' => $p->nombre,
-                    'precio' => $p->precio,
-                    'slug' => $p->slug,
-                    'imagen' => $p->imagen,
-                    'categoria' => $p->categoria ? $p->categoria->nombre : '',
-                    'oferta' => (bool) $p->oferta,
-                    'precio_oferta' => $p->precio_oferta,
-                ];
-            });
+        $categoriaSlug = $request->query('categoria');
 
-        return view('catalogo.index', compact('productos'));
+        $query = Producto::with('categoria')->where('activo', true);
+        $categoriaSeleccionada = null;
+
+        if ($categoriaSlug) {
+            // intentamos por slug primero
+            $categoria = Categoria::where('slug', $categoriaSlug)->first();
+
+            // si no hay slug, intentamos por nombre (para mayor tolerancia)
+            if (! $categoria) {
+                $nombre = str_replace('-', ' ', $categoriaSlug);
+                $categoria = Categoria::whereRaw('LOWER(nombre) = ?', [strtolower($nombre)])->first();
+            }
+
+            if ($categoria) {
+                $categoriaSeleccionada = [
+                    'nombre' => $categoria->nombre,
+                    'slug' => $categoria->slug,
+                ];
+                $query->where('categoria_id', $categoria->id);
+            }
+        }
+
+        // Filtro de búsqueda (opcional)
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%")
+                    ->orWhere('descripcion', 'like', "%{$search}%");
+            });
+        }
+
+        // Orden (ejemplo sencillo: precio_menor, precio_mayor, por defecto: nuevos)
+        $orden = $request->input('orden');
+        if ($orden === 'precio_menor') {
+            $query->orderBy('precio', 'asc');
+        } elseif ($orden === 'precio_mayor') {
+            $query->orderBy('precio', 'desc');
+        } else {
+            $query->orderByDesc('created_at');
+        }
+
+        // Paginar y mantener query string
+        $productos = $query->paginate(24)->withQueryString();
+
+        // Transformar los items a la estructura que tus vistas/ component esperan
+        $productos->getCollection()->transform(function ($p) {
+            return [
+                'nombre' => $p->nombre,
+                'precio' => $p->precio,
+                'slug' => $p->slug,
+                'imagen' => $p->imagen,
+                'categoria' => $p->categoria ? $p->categoria->nombre : '',
+                'oferta' => (bool) $p->oferta,
+                'precio_oferta' => $p->precio_oferta,
+            ];
+        });
+
+        return view('catalogo.index', compact('productos', 'categoriaSeleccionada'));
     }
 
     public function producto($slug)

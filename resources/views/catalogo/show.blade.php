@@ -15,7 +15,7 @@
 
 <section class="grid gap-8 lg:grid-cols-2 lg:items-start">
 
-    {{-- IMAGEN / GALERÍA --}}
+    {{-- COLUMNA IZQUIERDA: IMÁGENES --}}
     <div class="space-y-3">
         <div class="card overflow-hidden">
             <div class="aspect-[3/4] bg-gray-100 overflow-hidden">
@@ -38,8 +38,9 @@
         </div>
     </div>
 
-    {{-- INFO DEL PRODUCTO --}}
+    {{-- COLUMNA DERECHA: INFO + DETALLES ABAJO DE DESCRIPCIÓN (SOLO DESKTOP) --}}
     <div class="card p-6 sm:p-8">
+
         <div class="flex items-start justify-between gap-4">
             <div>
                 <p class="badge">{{ $producto['categoria'] }}</p>
@@ -82,9 +83,7 @@
             </a>
 
             {{-- WhatsApp (placeholder) --}}
-            <a
-                href="#"
-                class="btn-primary w-full text-center">
+            <a href="#" class="btn-primary w-full text-center">
                 Preguntar por WhatsApp
             </a>
         </div>
@@ -100,11 +99,43 @@
                 <p><span class="text-tinta font-semibold">Cambios</span><br>Fáciles y rápidos</p>
             </div>
         </div>
+
+        {{-- ✅ DETALLES + ENVÍOS ABAJO DE LA DESCRIPCIÓN (SOLO DESKTOP) --}}
+        <div class="hidden lg:block mt-10 border-t border-borde pt-8 space-y-6">
+
+            {{-- Detalles --}}
+            <div>
+                <h2 class="font-display text-2xl">Detalles</h2>
+                <ul class="mt-4 space-y-3 text-sm text-gris leading-relaxed">
+                    <li>• Materiales de buena calidad (editable).</li>
+                    <li>• Corte cómodo y moderno.</li>
+                    <li>• Recomendación: revisar guía de tallas.</li>
+                    <li>• Ideal para uso diario.</li>
+                </ul>
+            </div>
+
+            {{-- Envíos --}}
+            <div class="pt-6 border-t border-borde">
+                <h2 class="font-display text-2xl">Envíos & devoluciones</h2>
+                <p class="mt-4 text-sm text-gris leading-relaxed">
+                    Envíos a todo México (editable). Cambios disponibles dentro de un periodo determinado.
+                    Para dudas, contáctanos por WhatsApp.
+                </p>
+
+                <div class="mt-6">
+                    <a href="{{ route('contacto') }}" class="btn-ghost">
+                        Ver información de contacto
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 </section>
 
-{{-- DETALLES ADICIONALES --}}
-<section class="mt-10 grid gap-6 lg:grid-cols-2">
+{{-- ✅ DETALLES + ENVÍOS (SOLO MÓVIL/TABLET) --}}
+<section class="mt-10 grid gap-6 lg:hidden">
     <div class="card p-6 sm:p-8">
         <h2 class="font-display text-2xl">Detalles</h2>
         <ul class="mt-4 space-y-3 text-sm text-gris leading-relaxed">
@@ -113,6 +144,20 @@
             <li>• Recomendación: revisar guía de tallas.</li>
             <li>• Ideal para uso diario.</li>
         </ul>
+    </div>
+
+    <div class="card p-6 sm:p-8">
+        <h2 class="font-display text-2xl">Envíos & devoluciones</h2>
+        <p class="mt-4 text-sm text-gris leading-relaxed">
+            Envíos a todo México (editable). Cambios disponibles dentro de un periodo determinado.
+            Para dudas, contáctanos por WhatsApp.
+        </p>
+
+        <div class="mt-6">
+            <a href="{{ route('contacto') }}" class="btn-ghost">
+                Ver información de contacto
+            </a>
+        </div>
     </div>
 </section>
 
