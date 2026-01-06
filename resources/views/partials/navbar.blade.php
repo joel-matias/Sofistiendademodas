@@ -6,7 +6,8 @@
         <div class="flex items-center gap-2 sm:hidden">
             <button class="p-2.5 rounded-lg border border-borde hover:bg-white transition text-lg" aria-label="Abrir menú"
                 onclick="toggleMenu()">
-                ☰
+                <img src="{{ asset('assets/svg/burger-menu.svg') }}" alt="icono del menu desplegable"
+                    class="w-6 h-6 sm:w-7 sm:h-7 object-contain">
             </button>
         </div>
 
@@ -39,7 +40,6 @@
                 class="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center
               rounded-lg hover:bg-white transition"
                 aria-label="Buscar">
-
                 <img src="{{ asset('assets/svg/searching.svg') }}" alt="botón de búsqueda"
                     class="w-6 h-6 sm:w-7 sm:h-7 object-contain">
             </a>
