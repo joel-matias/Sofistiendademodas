@@ -31,35 +31,33 @@ class Producto extends Model
         'activo' => 'boolean',
     ];
 
-    /**
-     * ✅ Un producto puede tener varias categorías (many-to-many).
-     */
     public function categorias(): BelongsToMany
     {
-        return $this->belongsToMany(
-            Categoria::class,
-            'categoria_producto',     // ✅ tu pivote real
-            'producto_id',
-            'categoria_id'
-        )
+        return $this->belongsToMany(Categoria::class, 'categoria_producto', 'producto_id', 'categoria_id')
             ->withTimestamps();
     }
 
-    /**
-     * Imágenes del producto.
-     */
+    public function tallas(): BelongsToMany
+    {
+        return $this->belongsToMany(Talla::class, 'producto_talla', 'producto_id', 'talla_id')
+            ->withTimestamps();
+    }
+
+    public function colores(): BelongsToMany
+    {
+        return $this->belongsToMany(Color::class, 'color_producto', 'producto_id', 'color_id')
+            ->withTimestamps();
+    }
+
+    public function detalles(): HasMany
+    {
+        return $this->hasMany(DetalleProducto::class, 'producto_id')
+            ->orderBy('orden');
+    }
+
     public function imagenes(): HasMany
     {
         return $this->hasMany(ImagenProducto::class, 'producto_id')
             ->orderBy('orden');
-    }
-
-    /**
-     * Usuarios que marcaron este producto como favorito.
-     */
-    public function favoritosUsuarios(): BelongsToMany
-    {
-        return $this->belongsToMany(\App\Models\User::class, 'favoritos', 'producto_id', 'user_id')
-            ->withTimestamps();
     }
 }
