@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Categoria extends Model
 {
@@ -13,10 +13,20 @@ class Categoria extends Model
         'nombre',
         'slug',
         'descripcion',
+        'imagen',
     ];
 
-    public function productos(): HasMany
+    /**
+     * ✅ Una categoría puede tener muchos productos (many-to-many).
+     */
+    public function productos(): BelongsToMany
     {
-        return $this->hasMany(Producto::class, 'categoria_id');
+        return $this->belongsToMany(
+            Producto::class,
+            'categoria_producto',   // ✅ tu pivote real
+            'categoria_id',
+            'producto_id'
+        )
+            ->withTimestamps();
     }
 }

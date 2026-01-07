@@ -20,19 +20,28 @@ class CatalogoController extends Controller
             ];
         })->toArray();
 
-        $destacados = Producto::with('categoria')
+        $destacados = Producto::with('categorias')
             ->where('activo', true)
             ->orderByDesc('created_at')
             ->limit(10)
             ->get()
             ->map(function ($p) {
+
+                $categoriaPrincipal = $p->categorias->first();
+
                 return [
                     'nombre' => $p->nombre,
                     'precio' => $p->precio,
                     'slug' => $p->slug,
                     'descripcion' => $p->descripcion,
                     'imagen' => $p->imagen,
-                    'categoria' => $p->categoria ? $p->categoria->nombre : '',
+
+                    // ✅ compatibilidad con tus vistas actuales
+                    'categoria' => $categoriaPrincipal ? $categoriaPrincipal->nombre : '',
+
+                    // ✅ extra por si quieres mostrar todas
+                    'categorias' => $p->categorias->pluck('nombre')->implode(', '),
+
                     'oferta' => (bool) $p->oferta,
                     'precio_oferta' => $p->precio_oferta,
                 ];
@@ -45,14 +54,13 @@ class CatalogoController extends Controller
     {
         $categoriaSlug = $request->query('categoria');
 
-        $query = Producto::with('categoria')->where('activo', true);
+        $query = Producto::with('categorias')->where('activo', true);
         $categoriaSeleccionada = null;
 
         if ($categoriaSlug) {
-            // intentamos por slug primero
+
             $categoria = Categoria::where('slug', $categoriaSlug)->first();
 
-            // si no hay slug, intentamos por nombre (para mayor tolerancia)
             if (! $categoria) {
                 $nombre = str_replace('-', ' ', $categoriaSlug);
                 $categoria = Categoria::whereRaw('LOWER(nombre) = ?', [strtolower($nombre)])->first();
@@ -63,11 +71,14 @@ class CatalogoController extends Controller
                     'nombre' => $categoria->nombre,
                     'slug' => $categoria->slug,
                 ];
-                $query->where('categoria_id', $categoria->id);
+
+                // ✅ filtro many-to-many
+                $query->whereHas('categorias', function ($q) use ($categoria) {
+                    $q->where('categorias.id', $categoria->id);
+                });
             }
         }
 
-        // Filtro de búsqueda (opcional)
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
@@ -76,8 +87,8 @@ class CatalogoController extends Controller
             });
         }
 
-        // Orden (ejemplo sencillo: precio_menor, precio_mayor, por defecto: nuevos)
         $orden = $request->input('orden');
+
         if ($orden === 'precio_menor') {
             $query->orderBy('precio', 'asc');
         } elseif ($orden === 'precio_mayor') {
@@ -86,17 +97,24 @@ class CatalogoController extends Controller
             $query->orderByDesc('created_at');
         }
 
-        // Paginar y mantener query string
         $productos = $query->paginate(24)->withQueryString();
 
-        // Transformar los items a la estructura que tus vistas/ component esperan
         $productos->getCollection()->transform(function ($p) {
+
+            $categoriaPrincipal = $p->categorias->first();
+
             return [
                 'nombre' => $p->nombre,
                 'precio' => $p->precio,
                 'slug' => $p->slug,
                 'imagen' => $p->imagen,
-                'categoria' => $p->categoria ? $p->categoria->nombre : '',
+
+                // ✅ compatibilidad (una sola)
+                'categoria' => $categoriaPrincipal ? $categoriaPrincipal->nombre : '',
+
+                // ✅ todas
+                'categorias' => $p->categorias->pluck('nombre')->implode(', '),
+
                 'oferta' => (bool) $p->oferta,
                 'precio_oferta' => $p->precio_oferta,
             ];
@@ -107,7 +125,9 @@ class CatalogoController extends Controller
 
     public function producto($slug)
     {
-        $p = Producto::with('categoria')->where('slug', $slug)->firstOrFail();
+        $p = Producto::with('categorias')->where('slug', $slug)->firstOrFail();
+
+        $categoriaPrincipal = $p->categorias->first();
 
         $producto = [
             'nombre' => $p->nombre,
@@ -115,7 +135,10 @@ class CatalogoController extends Controller
             'slug' => $p->slug,
             'descripcion' => $p->descripcion,
             'imagen' => $p->imagen,
-            'categoria' => $p->categoria ? $p->categoria->nombre : '',
+
+            'categoria' => $categoriaPrincipal ? $categoriaPrincipal->nombre : '',
+            'categorias' => $p->categorias->pluck('nombre')->implode(', '),
+
             'oferta' => (bool) $p->oferta,
             'precio_oferta' => $p->precio_oferta,
         ];
