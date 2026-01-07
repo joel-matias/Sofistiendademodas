@@ -37,59 +37,157 @@
         </div>
     </section>
 
-    {{-- CATEGORÍAS CON IMAGEN (consumidas desde BD) --}}
+    {{-- ✅ CATEGORÍAS CON IMAGEN (mejorado con JS) --}}
     <section class="mt-10 w-full p-100">
-        <div class="container-full">
-            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <section class="mt-10 w-full">
+            <div class="container-full">
+
+                {{-- ✅ Título del apartado --}}
+                <div class="flex items-end justify-between gap-6 flex-wrap">
+                    <div>
+                        <h2 class="font-display text-2xl sm:text-3xl">Explora por categorías</h2>
+                        <p class="mt-2 text-gris">Encuentra lo que buscas más rápido.</p>
+                    </div>
+                </div>
 
                 @php
-                    // Fallback por si no se pasaron categorías desde el controlador
+                    // ✅ Fallback por si no se pasaron categorías desde el controlador
                     $__categorias = $categorias ?? [
                         [
                             'titulo' => 'BLUSAS',
                             'img' =>
                                 'https://images.unsplash.com/photo-1520975958225-07d845a6a6b9?q=80&w=1200&auto=format&fit=crop',
+                            'slug' => 'blusas',
                         ],
                         [
                             'titulo' => 'JEANS',
                             'img' =>
                                 'https://images.unsplash.com/photo-1520975682071-ae22e7d0f4aa?q=80&w=1200&auto=format&fit=crop',
+                            'slug' => 'jeans',
                         ],
                         [
                             'titulo' => 'VESTIDOS',
                             'img' =>
                                 'https://images.unsplash.com/photo-1520975957475-5ceea250c40d?q=80&w=1200&auto=format&fit=crop',
+                            'slug' => 'vestidos',
                         ],
                         [
                             'titulo' => 'ZAPATOS',
                             'img' =>
                                 'https://images.unsplash.com/photo-1528701800489-20be3c2a3ba7?q=80&w=1200&auto=format&fit=crop',
+                            'slug' => 'zapatos',
                         ],
                     ];
+
+                    $__categoriasConImagen = collect($__categorias)
+                        ->filter(fn($cat) => !empty($cat['img'] ?? ($cat['imagen'] ?? null)))
+                        ->values();
+
+                    $limite = 4;
+                    $categoriasIniciales = $__categoriasConImagen->take($limite);
+                    $categoriasRestantes = $__categoriasConImagen->slice($limite);
                 @endphp
 
-                @foreach ($__categorias as $cat)
-                    <a href="{{ route('catalogo', ['categoria' => $cat['slug'] ?? \Illuminate\Support\Str::slug($cat['nombre'] ?? $cat['titulo'])]) }}"
-                        class="relative overflow-hidden rounded-xl2 border border-borde bg-gray-100 group h-[340px] sm:h-[420px]">
-                        <img src="{{ $cat['img'] ?? ($cat['imagen'] ?? asset('assets/img/placeholder-category.jpg')) }}"
-                            alt="{{ $cat['titulo'] ?? ($cat['nombre'] ?? 'Categoria') }}"
-                            class="w-full h-full object-cover transition duration-500 group-hover:scale-[1.05]"
-                            loading="lazy">
-                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition"></div>
+                {{-- ✅ GRID INICIAL (solo 4) --}}
+                <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    @foreach ($categoriasIniciales as $cat)
+                        <a href="{{ route('catalogo', ['categoria' => $cat['slug'] ?? \Illuminate\Support\Str::slug($cat['nombre'] ?? $cat['titulo'])]) }}"
+                            class="relative overflow-hidden rounded-xl2 border border-borde bg-gray-100 group h-[340px] sm:h-[420px]">
 
-                        <div class="absolute bottom-6 left-6 right-6">
-                            <p class="text-white font-display text-3xl tracking-wide">
-                                {{ strtoupper($cat['titulo'] ?? ($cat['nombre'] ?? '')) }}
-                            </p>
-                            <p class="mt-1 text-white/90 text-sm">
-                                Explorar →
-                            </p>
+                            <img src="{{ $cat['img'] ?? ($cat['imagen'] ?? asset('assets/img/placeholder-category.jpg')) }}"
+                                alt="{{ $cat['titulo'] ?? ($cat['nombre'] ?? 'Categoria') }}"
+                                class="w-full h-full object-cover transition duration-500 group-hover:scale-[1.05]"
+                                loading="lazy">
+
+                            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition"></div>
+
+                            <div class="absolute bottom-6 left-6 right-6">
+                                <p class="text-white font-display text-3xl tracking-wide">
+                                    {{ strtoupper($cat['titulo'] ?? ($cat['nombre'] ?? '')) }}
+                                </p>
+                                <p class="mt-1 text-white/90 text-sm">
+                                    Explorar →
+                                </p>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+
+                {{-- ✅ GRID RESTANTE (oculto inicialmente) --}}
+                @if ($categoriasRestantes->count() > 0)
+                    <div id="categoriasExtra"
+                        class="hidden opacity-0 translate-y-3 transition-all duration-300 ease-out mt-6">
+
+                        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                            @foreach ($categoriasRestantes as $cat)
+                                <a href="{{ route('catalogo', ['categoria' => $cat['slug'] ?? \Illuminate\Support\Str::slug($cat['nombre'] ?? $cat['titulo'])]) }}"
+                                    class="relative overflow-hidden rounded-xl2 border border-borde bg-gray-100 group h-[340px] sm:h-[420px]">
+
+                                    <img src="{{ $cat['img'] ?? ($cat['imagen'] ?? asset('assets/img/placeholder-category.jpg')) }}"
+                                        alt="{{ $cat['titulo'] ?? ($cat['nombre'] ?? 'Categoria') }}"
+                                        class="w-full h-full object-cover transition duration-500 group-hover:scale-[1.05]"
+                                        loading="lazy">
+
+                                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition"></div>
+
+                                    <div class="absolute bottom-6 left-6 right-6">
+                                        <p class="text-white font-display text-3xl tracking-wide">
+                                            {{ strtoupper($cat['titulo'] ?? ($cat['nombre'] ?? '')) }}
+                                        </p>
+                                        <p class="mt-1 text-white/90 text-sm">
+                                            Explorar →
+                                        </p>
+                                    </div>
+                                </a>
+                            @endforeach
                         </div>
-                    </a>
-                @endforeach
+                    </div>
 
+                    {{-- ✅ BOTÓN (siempre abajo de todas las categorías) --}}
+                    <div class="mt-8 flex justify-center">
+                        <button type="button" id="btnToggleCategorias" onclick="toggleCategorias()"
+                            class="btn-primary text-center">
+                            Mostrar todas las categorías
+                        </button>
+                    </div>
+
+                    <script>
+                        function toggleCategorias() {
+                            const extra = document.getElementById('categoriasExtra');
+                            const btn = document.getElementById('btnToggleCategorias');
+
+                            const isClosed = extra.classList.contains('hidden');
+
+                            if (isClosed) {
+                                // abrir
+                                extra.classList.remove('hidden');
+                                requestAnimationFrame(() => {
+                                    extra.classList.remove('opacity-0', 'translate-y-3');
+                                });
+
+                                btn.textContent = 'Ocultar categorías';
+
+                                setTimeout(() => {
+                                    btn.scrollIntoView({
+                                        behavior: 'smooth',
+                                        block: 'center'
+                                    });
+                                }, 250);
+                            } else {
+                                // cerrar
+                                extra.classList.add('opacity-0', 'translate-y-3');
+
+                                setTimeout(() => {
+                                    extra.classList.add('hidden');
+                                }, 250);
+
+                                btn.textContent = 'Mostrar todas las categorías';
+                            }
+                        }
+                    </script>
+                @endif
             </div>
-        </div>
+        </section>
     </section>
 
     {{-- SECCIÓN DESTACADOS FULL WIDTH (productos desde BD) --}}
