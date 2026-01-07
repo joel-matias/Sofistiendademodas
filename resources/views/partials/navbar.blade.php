@@ -123,7 +123,15 @@
         <form id="formSearch" action="{{ route('catalogo') }}" method="GET" class="mt-4 relative">
             <input id="searchInput" name="search" type="text" value="{{ request()->get('search') }}"
                 placeholder="Buscar productos..." autocomplete="off"
-                class="w-full h-12 rounded-xl border border-borde px-4 bg-white focus:outline-none focus:ring-2 focus:ring-tinta/20">
+                class="w-full h-12 rounded-xl border border-borde px-4 pr-14 bg-white focus:outline-none focus:ring-2 focus:ring-tinta/20">
+
+            {{-- ✅ BOTÓN ICONO (igual al del navbar) --}}
+            <button type="submit"
+                class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-50 transition"
+                aria-label="Buscar">
+                <img src="{{ asset('assets/svg/searching.svg') }}" alt="botón de búsqueda"
+                    class="w-5 h-5 object-contain">
+            </button>
 
             {{-- ✅ Sugerencias --}}
             <div id="searchSuggestions"
