@@ -45,7 +45,7 @@
                 {{-- ✅ Título del apartado --}}
                 <div class="flex items-end justify-between gap-6 flex-wrap">
                     <div>
-                        <h2 class="font-display text-2xl sm:text-3xl">Explora por categorías</h2>
+                        <h2 class="font-display text-2xl sm:text-3xl">Explora nuestras categorías</h2>
                         <p class="mt-2 text-gris">Encuentra lo que buscas más rápido.</p>
                     </div>
                 </div>

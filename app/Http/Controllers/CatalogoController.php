@@ -143,6 +143,39 @@ class CatalogoController extends Controller
         return view('catalogo.index', compact('productos', 'categoriaSeleccionada'));
     }
 
+    public function sugerenciasBusqueda(Request $request)
+    {
+        $q = trim((string) $request->query('q', ''));
+
+        if (mb_strlen($q) < 2) {
+            return response()->json([]);
+        }
+
+        $productos = Producto::query()
+            ->where('activo', true)
+            ->where(function ($query) use ($q) {
+                $query->where('nombre', 'like', "%{$q}%")
+                    ->orWhere('descripcion', 'like', "%{$q}%");
+            })
+            ->orderBy('nombre')
+            ->limit(8)
+            ->get(['id', 'nombre', 'slug', 'imagen', 'precio', 'oferta', 'precio_oferta']);
+
+        return response()->json(
+            $productos->map(function ($p) {
+                return [
+                    'nombre' => $p->nombre,
+                    'slug' => $p->slug,
+                    'imagen' => $p->imagen,
+                    'precio' => $p->precio,
+                    'oferta' => (bool) $p->oferta,
+                    'precio_oferta' => $p->precio_oferta,
+                    'url' => route('producto', $p->slug),
+                ];
+            })
+        );
+    }
+
     public function producto($slug)
     {
         $p = Producto::with(['categorias', 'imagenes', 'tallas', 'colores', 'detalles'])
