@@ -16,14 +16,11 @@ class Categoria extends Model
         'imagen',
     ];
 
-    /**
-     * ✅ Una categoría puede tener muchos productos (many-to-many).
-     */
     public function productos(): BelongsToMany
     {
         return $this->belongsToMany(
             Producto::class,
-            'categoria_producto',   // ✅ tu pivote real
+            'categoria_producto',
             'categoria_id',
             'producto_id'
         )

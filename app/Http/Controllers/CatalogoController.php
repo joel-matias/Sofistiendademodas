@@ -184,13 +184,12 @@ class CatalogoController extends Controller
 
         $productos = $query->paginate(24);
 
-        // ✅ traer tallas para selects
         $tallas = Talla::orderBy('nombre')->get();
 
         return view('catalogo.index', [
             'productos' => $productos,
             'tallas' => $tallas,
-            'categoriaSeleccionada' => null, // si la usas, llénala aquí
+            'categoriaSeleccionada' => null,
         ]);
     }
 
@@ -247,20 +246,16 @@ class CatalogoController extends Controller
             $imagenes[] = $this->urlImagen($img->url);
         }
 
-        // ✅ Categorías
         $categorias = $p->categorias->map(fn ($c) => [
             'id' => $c->id,
             'nombre' => $c->nombre,
             'slug' => $c->slug,
         ])->values()->toArray();
 
-        // ✅ Detalles
         $detalles = $p->detalles->sortBy('orden')->pluck('texto')->values()->toArray();
 
-        // ✅ Tallas
         $tallas = $p->tallas->pluck('nombre')->values()->toArray();
 
-        // ✅ Colores (con hex)
         $colores = $p->colores->map(fn ($c) => [
             'nombre' => $c->nombre,
             'hex' => $c->hex,
