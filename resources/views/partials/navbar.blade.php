@@ -1,4 +1,5 @@
-<header class="sticky top-0 z-50 bg-crema/95 backdrop-blur border-b border-borde">
+<header
+    class="sticky top-0 z-50 bg-crema/95 backdrop-blur border-b border-borde transition-transform duration-300 ease-in-out">
     {{-- FILA 1 --}}
     <div class="w-full px-4 sm:px-6 lg:px-10 h-25 flex items-center justify-between gap-3">
 
@@ -390,4 +391,79 @@
             hideSuggestions();
         }
     });
+    (function() {
+        const header = document.getElementById('siteHeader') || document.querySelector('header');
+        if (!header) return;
+
+        // Aseguramos que el header tenga la clase de transición
+        header.classList.add('transition-transform', 'duration-300', 'ease-in-out');
+
+        // Elementos que indican drawer/overlay abierto
+        const menuOverlay = document.getElementById('menuOverlay');
+        const searchOverlay = document.getElementById('searchOverlay');
+        const drawerMenu = document.getElementById('drawerMenu');
+        const drawerSearch = document.getElementById('drawerSearch');
+
+        // Umbral para ignorar micro-scrolls (px)
+        const THRESHOLD = 10;
+        // Mínima distancia desde el top para comenzar a ocultar (evita ocultar al inicio)
+        const MIN_SCROLL_TO_HIDE = 100;
+
+        let lastScroll = window.pageYOffset || document.documentElement.scrollTop;
+        let ticking = false;
+
+        function isAnyDrawerOpen() {
+            // Si overlays están visibles (no tienen la clase 'hidden'), o body tiene overflow-hidden
+            const overlayOpen = (menuOverlay && !menuOverlay.classList.contains('hidden')) ||
+                (searchOverlay && !searchOverlay.classList.contains('hidden'));
+            return overlayOpen || document.body.classList.contains('overflow-hidden') ||
+                (drawerMenu && !drawerMenu.classList.contains('-translate-x-full')) ||
+                (drawerSearch && !drawerSearch.classList.contains('-translate-y-full'));
+        }
+
+        function onScroll() {
+            const current = window.pageYOffset || document.documentElement.scrollTop;
+            const delta = current - lastScroll;
+
+            // Si drawer abierto, siempre mostrar header (no ocultar)
+            if (isAnyDrawerOpen()) {
+                header.classList.remove('-translate-y-full');
+                lastScroll = current <= 0 ? 0 : current;
+                return;
+            }
+
+            // Ignorar pequeños movimientos
+            if (Math.abs(delta) < THRESHOLD) {
+                // no actualizar lastScroll para permitir acumular movimientos mayores
+                return;
+            }
+
+            if (delta > 0 && current > MIN_SCROLL_TO_HIDE) {
+                // Scrolling down -> ocultar
+                header.classList.add('-translate-y-full');
+            } else if (delta < 0) {
+                // Scrolling up -> mostrar
+                header.classList.remove('-translate-y-full');
+            }
+
+            // Evitar valores negativos
+            lastScroll = current <= 0 ? 0 : current;
+        }
+
+        window.addEventListener('scroll', function() {
+            if (!ticking) {
+                window.requestAnimationFrame(function() {
+                    onScroll();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, {
+            passive: true
+        });
+
+        // Asegura que al redimensionar o cargar la página muestre header (evita quedarlo oculto si venimos de ancla)
+        window.addEventListener('resize', () => header.classList.remove('-translate-y-full'));
+        window.addEventListener('load', () => header.classList.remove('-translate-y-full'));
+    })();
 </script>

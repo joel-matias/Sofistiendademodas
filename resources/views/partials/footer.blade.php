@@ -9,7 +9,7 @@
                     <li><a href="{{ route('nosotros') }}" class="hover:text-tinta transition">Nuestra historia</a></li>
                     <li><a href="#" class="hover:text-tinta transition">Nuestras tiendas</a></li>
                     <li><a href="#" class="hover:text-tinta transition">Bolsa de trabajo</a></li>
-                    <li><a href="{{ route('contacto') }}" class="hover:text-tinta transition">Contacto</a></li>
+                    {{-- <li><a href="{{ route('contacto') }}" class="hover:text-tinta transition">Contacto</a></li> --}}
                 </ul>
             </div>
 
@@ -72,7 +72,8 @@
         </div>
 
         {{-- Línea separadora --}}
-        <div class="mt-10 border-t border-borde pt-6 text-xs text-gris flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div
+            class="mt-10 border-t border-borde pt-6 text-xs text-gris flex flex-col sm:flex-row items-center justify-between gap-3">
             <p>© {{ date('Y') }} Sofis Tienda de Modas. Todos los derechos reservados.</p>
 
             <div class="flex flex-wrap gap-4">

@@ -190,11 +190,11 @@
                 Para dudas, contáctanos por WhatsApp.
             </p>
 
-            <div class="mt-6">
+            {{-- <div class="mt-6">
                 <a href="{{ route('contacto') }}" class="btn-ghost">
                     Ver información de contacto
                 </a>
-            </div>
+            </div> --}}
         </div>
     </section>
 

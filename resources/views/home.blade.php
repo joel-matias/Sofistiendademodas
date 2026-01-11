@@ -24,7 +24,7 @@
 
                     <div class="mt-6 flex flex-wrap gap-3">
                         <a href="{{ route('catalogo') }}" class="btn-primary">Ver catálogo</a>
-                        <a href="{{ route('contacto') }}" class="btn-ghost">Contacto</a>
+                        {{-- <a href="{{ route('contacto') }}" class="btn-ghost">Contacto</a> --}}
                     </div>
                 </div>
 
