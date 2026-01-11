@@ -143,6 +143,57 @@ class CatalogoController extends Controller
         return view('catalogo.index', compact('productos', 'categoriaSeleccionada'));
     }
 
+    public function index(Request $request)
+    {
+        $query = Producto::query();
+
+        // ✅ Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%")
+                    ->orWhere('descripcion', 'like', "%{$search}%");
+            });
+        }
+
+        // ✅ Talla (por slug)
+        if ($request->filled('talla')) {
+            $tallaSlug = $request->talla;
+
+            $query->whereHas('tallas', function ($q) use ($tallaSlug) {
+                $q->where('slug', $tallaSlug);
+            });
+        }
+
+        // ✅ Orden
+        if ($request->filled('orden')) {
+            if ($request->orden === 'nuevos') {
+                $query->orderBy('created_at', 'desc');
+            }
+
+            if ($request->orden === 'precio_asc') {
+                $query->orderByRaw('COALESCE(precio_oferta, precio) asc');
+            }
+
+            if ($request->orden === 'precio_desc') {
+                $query->orderByRaw('COALESCE(precio_oferta, precio) desc');
+            }
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $productos = $query->paginate(24);
+
+        // ✅ traer tallas para selects
+        $tallas = Talla::orderBy('nombre')->get();
+
+        return view('catalogo.index', [
+            'productos' => $productos,
+            'tallas' => $tallas,
+            'categoriaSeleccionada' => null, // si la usas, llénala aquí
+        ]);
+    }
+
     public function sugerenciasBusqueda(Request $request)
     {
         $q = trim((string) $request->query('q', ''));

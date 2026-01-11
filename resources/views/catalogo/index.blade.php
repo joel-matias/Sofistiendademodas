@@ -17,6 +17,7 @@
                     Explora ropa, calzado y accesorios. Optimizado para móvil.
                 </p>
             </div>
+
             @if (!empty($categoriaSeleccionada))
                 <div class="text-center mt-2">
                     <p class="text-gris">Mostrando categoría: <span
@@ -24,37 +25,50 @@
                 </div>
             @endif
 
-
             {{-- FILTROS --}}
             <div class="mt-8 card p-4 sm:p-5">
-                <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 items-center">
+                <form id="filtersForm" method="GET" action="{{ route('catalogo') }}">
+                    {{-- preservamos la categoria --}}
+                    <input type="hidden" name="categoria" value="{{ request('categoria') }}">
 
-                    {{-- Buscador (opcional) --}}
-                    <input type="text" class="input" placeholder="Buscar producto...">
+                    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 items-center">
 
-                    {{-- Ordenar --}}
-                    <select class="input">
-                        <option>Ordenar por</option>
-                        <option>Más nuevos</option>
-                        <option>Precio: menor a mayor</option>
-                        <option>Precio: mayor a menor</option>
-                    </select>
+                        {{-- Ordenar --}}
+                        <select name="orden" class="input" onchange="document.getElementById('filtersForm').submit()">
+                            <option value="">Ordenar por</option>
+                            <option value="nuevos" {{ request('orden') === 'nuevos' ? 'selected' : '' }}>Más nuevos</option>
+                            <option value="precio_menor" {{ request('orden') === 'precio_menor' ? 'selected' : '' }}>Precio:
+                                menor a mayor</option>
+                            <option value="precio_mayor" {{ request('orden') === 'precio_mayor' ? 'selected' : '' }}>Precio:
+                                mayor a menor</option>
+                        </select>
 
-                    {{-- Talla / filtro ejemplo --}}
-                    <select class="input">
-                        <option>Talla</option>
-                        <option>CH</option>
-                        <option>M</option>
-                        <option>G</option>
-                        <option>EG</option>
-                        <option>2XL</option>
-                    </select>
+                        {{-- Talla --}}
+                        <select name="talla" class="input" onchange="document.getElementById('filtersForm').submit()">
+                            <option value="">{{ __('Talla') }}</option>
 
-                    {{-- Botón limpiar (placeholder) --}}
-                    <button class="btn-ghost w-full">
-                        Limpiar filtros
-                    </button>
-                </div>
+                            @if (!empty($availableTallas) && count($availableTallas))
+                                @foreach ($availableTallas as $t)
+                                    <option value="{{ $t }}" {{ request('talla') === $t ? 'selected' : '' }}>
+                                        {{ strtoupper($t) }}
+                                    </option>
+                                @endforeach
+                            @else
+                                {{-- fallback estático --}}
+                                <option value="CH" {{ request('talla') === 'CH' ? 'selected' : '' }}>CH</option>
+                                <option value="M" {{ request('talla') === 'M' ? 'selected' : '' }}>M</option>
+                                <option value="G" {{ request('talla') === 'G' ? 'selected' : '' }}>G</option>
+                                <option value="EG" {{ request('talla') === 'EG' ? 'selected' : '' }}>EG</option>
+                                <option value="2XL"{{ request('talla') === '2XL' ? 'selected' : '' }}>2XL</option>
+                            @endif
+                        </select>
+
+                        {{-- Botón limpiar --}}
+                        <a href="{{ route('catalogo', ['categoria' => request('categoria')]) }}" class="btn-ghost w-full">
+                            Limpiar filtros
+                        </a>
+                    </div>
+                </form>
             </div>
 
             {{-- GRID DE PRODUCTOS FULL WIDTH --}}
@@ -67,7 +81,6 @@
             <div class="mt-12 flex justify-center">
                 {{ $productos->links() }}
             </div>
-
 
         </div>
     </section>
