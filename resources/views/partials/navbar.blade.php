@@ -2,7 +2,7 @@
     {{-- FILA 1 --}}
     <div class="w-full px-4 sm:px-6 lg:px-10 h-25 flex items-center justify-between gap-3">
 
-        {{-- ✅ IZQUIERDA --}}
+        {{-- IZQUIERDA --}}
         <div class="flex items-center gap-2">
             <button type="button" class="p-2.5 rounded-lg border border-borde hover:bg-white transition text-lg"
                 aria-label="Abrir menú" onclick="toggleMenu()">
@@ -51,7 +51,7 @@
 
         {{-- ICONOS --}}
         <div class="flex items-center gap-1.5 sm:gap-2">
-            {{-- ✅ BUSCAR (toggle real) --}}
+            {{-- BUSCAR (toggle real) --}}
             <button type="button"
                 class="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-lg hover:bg-white transition"
                 aria-label="Buscar" onclick="toggleSearch()">
@@ -62,13 +62,13 @@
     </div>
 </header>
 
-{{-- ✅ OVERLAY MENÚ --}}
+{{-- OVERLAY MENÚ --}}
 <div id="menuOverlay" class="fixed inset-0 bg-black/40 z-40 hidden" onclick="closeMenu()"></div>
 
-{{-- ✅ OVERLAY SEARCH --}}
+{{-- OVERLAY SEARCH --}}
 <div id="searchOverlay" class="fixed inset-0 bg-black/40 z-40 hidden" onclick="closeSearch()"></div>
 
-{{-- ✅ DRAWER MENÚ LATERAL --}}
+{{-- DRAWER MENÚ LATERAL --}}
 <aside id="drawerMenu"
     class="fixed top-0 left-0 h-full w-[320px] sm:w-[360px] bg-crema z-50 border-r border-borde shadow-xl
            -translate-x-full transition-transform duration-300 ease-in-out">
@@ -91,7 +91,7 @@
             <a href="{{ route('contacto') }}" class="link-nav" onclick="closeMenu()">Contacto</a>
         </div>
 
-        {{-- ✅ Categorías SOLO EN MÓVIL --}}
+        {{-- Categorías SOLO EN MÓVIL --}}
         <div class="pt-4 border-t border-borde sm:hidden">
             <p class="text-xs tracking-widest uppercase text-gris mb-3">Categorías</p>
 
@@ -111,12 +111,12 @@
     </div>
 </aside>
 
-{{-- ✅ DRAWER SEARCH SUPERIOR (FULL WIDTH REAL) --}}
+{{-- DRAWER SEARCH SUPERIOR (FULL WIDTH REAL) --}}
 <div id="drawerSearch"
     class="fixed top-0 left-0 right-0 z-50 bg-crema border-b border-borde shadow-xl hidden
            -translate-y-full transition-transform duration-300 ease-in-out">
 
-    {{-- ✅ Ocupa todo el ancho, no solo un cuadrito --}}
+    {{-- Ocupa todo el ancho, no solo un cuadrito --}}
     <div class="w-full px-4 sm:px-6 lg:px-10 py-5">
         <p class="font-semibold tracking-widest uppercase text-sm text-tinta">Buscar</p>
 
@@ -125,7 +125,7 @@
                 placeholder="Buscar productos..." autocomplete="off"
                 class="w-full h-12 rounded-xl border border-borde px-4 pr-14 bg-white focus:outline-none focus:ring-2 focus:ring-tinta/20">
 
-            {{-- ✅ BOTÓN ICONO (igual al del navbar) --}}
+            {{-- BOTÓN ICONO (igual al del navbar) --}}
             <button type="submit"
                 class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-50 transition"
                 aria-label="Buscar">
@@ -133,7 +133,7 @@
                     class="w-5 h-5 object-contain">
             </button>
 
-            {{-- ✅ Sugerencias --}}
+            {{-- Sugerencias --}}
             <div id="searchSuggestions"
                 class="absolute left-0 right-0 mt-2 bg-white border border-borde rounded-xl2 shadow-lg overflow-hidden hidden z-50">
                 <div id="suggestionsList" class="divide-y divide-borde"></div>
@@ -144,7 +144,7 @@
 
 <script>
     // =============================
-    // ✅ MENÚ LATERAL
+    // MENÚ LATERAL
     // =============================
     function toggleMenu() {
         closeSearch();
@@ -169,7 +169,7 @@
     }
 
     // =============================
-    // ✅ SEARCH TOGGLE (FIJO)
+    //  SEARCH TOGGLE (FIJO)
     // =============================
     function toggleSearch() {
         closeMenu();
@@ -213,18 +213,61 @@
     }
 
     // =============================
-    // ✅ AUTOCOMPLETE
+    // AUTOCOMPLETE
     // =============================
     const input = document.getElementById('searchInput');
     const box = document.getElementById('searchSuggestions');
     const list = document.getElementById('suggestionsList');
 
     let debounceTimer = null;
+    let activeIndex = -1;
+
+    function safeImageUrl(url) {
+        if (!url) return null;
+        try {
+            if (url.startsWith('/')) return url;
+            const parsed = new URL(url, window.location.origin);
+            if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+                return parsed.href;
+            }
+        } catch (e) {
+            /* invalid URL */
+        }
+        return null;
+    }
 
     function hideSuggestions() {
         if (!box || !list) return;
-        box.classList.add('hidden');
         list.innerHTML = '';
+        box.classList.add('hidden');
+        box.setAttribute('aria-hidden', 'true');
+        input.removeAttribute('aria-activedescendant');
+        input.setAttribute('aria-expanded', 'false');
+        activeIndex = -1;
+    }
+
+    function openSuggestions() {
+        if (!box) return;
+        box.classList.remove('hidden');
+        box.setAttribute('aria-hidden', 'false');
+        input.setAttribute('aria-expanded', 'true');
+    }
+
+    function focusOption(index) {
+        const options = list.querySelectorAll('[role="option"]');
+        if (!options || options.length === 0) return;
+        if (index < 0) index = 0;
+        if (index >= options.length) index = options.length - 1;
+        options.forEach(opt => opt.classList.remove('bg-gray-100', 'ring-2', 'ring-tinta/20'));
+        const option = options[index];
+        if (option) {
+            option.classList.add('bg-gray-100', 'ring-2', 'ring-tinta/20');
+            option.scrollIntoView({
+                block: 'nearest'
+            });
+            input.setAttribute('aria-activedescendant', option.id);
+            activeIndex = index;
+        }
     }
 
     function renderSuggestions(items) {
@@ -233,26 +276,54 @@
             return;
         }
 
-        list.innerHTML = items.map(item => {
+        list.innerHTML = '';
+        activeIndex = -1;
+        box.setAttribute('role', 'listbox');
+        box.setAttribute('aria-hidden', 'false');
+
+        items.forEach((item, i) => {
+            const a = document.createElement('a');
+            a.href = item.url || '#';
+            a.className = 'flex items-center gap-3 p-3 hover:bg-gray-50 transition';
+            a.setAttribute('role', 'option');
+            a.id = `search-suggestion-${i}`;
+            a.tabIndex = -1;
+
+            const img = document.createElement('img');
+            const sUrl = safeImageUrl(item.imagen);
+            img.src = sUrl ?? '{{ asset('assets/img/placeholder-category.jpg') }}';
+            img.alt = (typeof item.nombre === 'string' ? item.nombre : 'Imagen');
+            img.className = 'w-12 h-12 object-cover rounded-lg border border-borde bg-gray-100';
+            img.loading = 'lazy';
+
+            const div = document.createElement('div');
+            div.className = 'flex-1';
+
+            const pName = document.createElement('p');
+            pName.className = 'text-sm font-semibold text-tinta';
+            pName.textContent = (typeof item.nombre === 'string' ? item.nombre : 'Producto');
+
+            const pPrice = document.createElement('p');
+            pPrice.className = 'text-xs text-gris';
             const precioFinal = item.oferta && item.precio_oferta ? item.precio_oferta : item.precio;
+            pPrice.textContent = `$${(Number(precioFinal) || 0).toLocaleString()} MXN`;
 
-            return `
-                <a href="${item.url}" class="flex items-center gap-3 p-3 hover:bg-gray-50 transition">
-                    <img src="${item.imagen ?? ''}" alt="${item.nombre}" class="w-12 h-12 object-cover rounded-lg border border-borde bg-gray-100">
-                    <div class="flex-1">
-                        <p class="text-sm font-semibold text-tinta">${item.nombre}</p>
-                        <p class="text-xs text-gris">$${Number(precioFinal).toLocaleString()} MXN</p>
-                    </div>
-                </a>
-            `;
-        }).join('');
+            div.appendChild(pName);
+            div.appendChild(pPrice);
+            a.appendChild(img);
+            a.appendChild(div);
 
-        box.classList.remove('hidden');
+            a.addEventListener('click', () => hideSuggestions());
+
+            list.appendChild(a);
+        });
+
+        openSuggestions();
     }
 
     async function fetchSuggestions(query) {
+        if (!query || query.length < 2) return [];
         const url = `{{ route('buscar.sugerencias') }}?q=${encodeURIComponent(query)}`;
-
         try {
             const res = await fetch(url, {
                 headers: {
@@ -260,7 +331,8 @@
                 }
             });
             if (!res.ok) return [];
-            return await res.json();
+            const data = await res.json();
+            return Array.isArray(data) ? data : [];
         } catch (e) {
             return [];
         }
@@ -268,27 +340,54 @@
 
     input?.addEventListener('input', function() {
         const q = this.value.trim();
-
         if (q.length < 2) {
             hideSuggestions();
             return;
         }
-
         clearTimeout(debounceTimer);
-
         debounceTimer = setTimeout(async () => {
             const items = await fetchSuggestions(q);
             renderSuggestions(items);
         }, 220);
     });
 
-    // =============================
-    // ✅ ESC CIERRA TODO
-    // =============================
+    input?.addEventListener('keydown', function(e) {
+        const options = list.querySelectorAll('[role="option"]');
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (options.length === 0) return;
+            const next = (activeIndex + 1) || 0;
+            focusOption(Math.min(next, options.length - 1));
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (options.length === 0) return;
+            focusOption(Math.max(activeIndex - 1, 0));
+        } else if (e.key === 'Enter') {
+            if (activeIndex >= 0) {
+                const opt = options[activeIndex];
+                if (opt && opt.href) {
+                    window.location.href = opt.href;
+                    hideSuggestions();
+                    e.preventDefault();
+                }
+            }
+        } else if (e.key === 'Escape') {
+            hideSuggestions();
+            this.blur();
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!box || !input) return;
+        if (!box.contains(e.target) && e.target !== input) {
+            hideSuggestions();
+        }
+    });
+
+    // Esc global
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
-            closeMenu();
-            closeSearch();
+            hideSuggestions();
         }
     });
 </script>
