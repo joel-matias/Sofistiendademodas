@@ -88,7 +88,7 @@
             <a href="{{ route('home') }}" class="link-nav" onclick="closeMenu()">Inicio</a>
             <a href="{{ route('catalogo') }}" class="link-nav" onclick="closeMenu()">Catálogo</a>
             <a href="{{ route('nosotros') }}" class="link-nav" onclick="closeMenu()">Nosotros</a>
-            <a href="{{ route('contacto') }}" class="link-nav" onclick="closeMenu()">Contacto</a>
+            {{-- <a href="{{ route('contacto') }}" class="link-nav" onclick="closeMenu()">Contacto</a> --}}
         </div>
 
         {{-- Categorías SOLO EN MÓVIL --}}

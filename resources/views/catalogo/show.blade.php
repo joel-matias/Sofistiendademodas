@@ -4,7 +4,6 @@
 
 @section('content')
 
-    {{-- BREADCRUMBS --}}
     <div class="text-sm text-gris mb-4">
         <a href="{{ route('home') }}" class="hover:text-tinta transition">Inicio</a>
         <span class="mx-2">/</span>
@@ -24,7 +23,6 @@
                 </div>
             </div>
 
-            {{-- ✅ Miniaturas reales (hasta 4) --}}
             @if (!empty($producto['imagenes']) && count($producto['imagenes']) > 1)
                 <div class="grid grid-cols-4 gap-3">
                     @foreach ($producto['imagenes'] as $index => $img)
@@ -56,7 +54,6 @@
                 </div>
             </div>
 
-            {{-- ✅ Precios con oferta --}}
             <div class="mt-4 flex items-end gap-3 flex-wrap">
                 @if (!empty($producto['oferta']) && !empty($producto['precio_oferta']))
                     <p class="text-lg text-gris line-through">
@@ -79,7 +76,6 @@
                 {{ $producto['descripcion'] }}
             </p>
 
-            {{-- ✅ Tallas disponibles --}}
             @if (!empty($producto['tallas']))
                 <div class="mt-6">
                     <p class="text-xs tracking-widest uppercase text-gris">Tallas disponibles</p>
@@ -93,7 +89,6 @@
                 </div>
             @endif
 
-            {{-- ✅ Colores disponibles --}}
             @if (!empty($producto['colores']))
                 <div class="mt-6">
                     <p class="text-xs tracking-widest uppercase text-gris">Colores disponibles</p>
@@ -154,7 +149,7 @@
                 </div>
 
                 {{-- Envíos --}}
-                <div class="pt-6 border-t border-borde">
+                {{-- <div class="pt-6 border-t border-borde">
                     <h2 class="font-display text-2xl">Envíos & devoluciones</h2>
                     <p class="mt-4 text-sm text-gris leading-relaxed">
                         Envíos a todo México (editable). Cambios disponibles dentro de un periodo determinado.
@@ -166,7 +161,7 @@
                             Ver información de contacto
                         </a>
                     </div>
-                </div>
+                </div> --}}
 
             </div>
 
