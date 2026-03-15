@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Categoria;
 use App\Models\Producto;
+use App\Models\Talla;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -47,18 +48,14 @@ class CatalogoController extends Controller
                 $categoriaPrincipal = $p->categorias->first();
 
                 return [
+                    'id' => $p->id,
                     'nombre' => $p->nombre,
                     'precio' => $p->precio,
                     'slug' => $p->slug,
                     'descripcion' => $p->descripcion,
                     'imagen' => $this->urlImagen($p->imagen),
-
-                    // ✅ compatibilidad con tus vistas actuales
                     'categoria' => $categoriaPrincipal ? $categoriaPrincipal->nombre : '',
-
-                    // ✅ extra por si quieres mostrar todas
                     'categorias' => $p->categorias->pluck('nombre')->implode(', '),
-
                     'oferta' => (bool) $p->oferta,
                     'precio_oferta' => $p->precio_oferta,
                 ];
@@ -124,17 +121,13 @@ class CatalogoController extends Controller
             $categoriaPrincipal = $p->categorias->first();
 
             return [
+                'id' => $p->id,
                 'nombre' => $p->nombre,
                 'precio' => $p->precio,
                 'slug' => $p->slug,
                 'imagen' => $this->urlImagen($p->imagen),
-
-                // ✅ compatibilidad (una sola)
                 'categoria' => $categoriaPrincipal ? $categoriaPrincipal->nombre : '',
-
-                // ✅ todas
                 'categorias' => $p->categorias->pluck('nombre')->implode(', '),
-
                 'oferta' => (bool) $p->oferta,
                 'precio_oferta' => $p->precio_oferta,
             ];
