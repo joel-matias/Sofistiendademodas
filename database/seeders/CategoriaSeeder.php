@@ -8,71 +8,35 @@ use Illuminate\Support\Str;
 
 class CategoriaSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $categorias = [
-            [
-                'nombre' => 'Blusas',
-                'imagen' => 'https://images.unsplash.com/photo-1520975958225-07d845a6a6b9?q=80&w=1200&auto=format&fit=crop',
-                'descripcion' => null,
-            ],
-            [
-                'nombre' => 'Jeans',
-                'imagen' => 'https://images.unsplash.com/photo-1520975682071-ae22e7d0f4aa?q=80&w=1200&auto=format&fit=crop',
-                'descripcion' => null,
-            ],
-            [
-                'nombre' => 'Vestidos',
-                'imagen' => 'https://images.unsplash.com/photo-1520975957475-5ceea250c40d?q=80&w=1200&auto=format&fit=crop',
-                'descripcion' => null,
-            ],
-            [
-                'nombre' => 'Zapatos',
-                'imagen' => 'https://images.unsplash.com/photo-1528701800489-20be3c2a3ba7?q=80&w=1200&auto=format&fit=crop',
-                'descripcion' => null,
-            ],
-            [
-                'nombre' => 'Ropa',
-                'imagen' => 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?q=80&w=1200&auto=format&fit=crop',
-                'descripcion' => null,
-            ],
-            [
-                'nombre' => 'Calzado',
-                'imagen' => 'https://images.unsplash.com/photo-1542293787938-c9e299b8802b?q=80&w=1200&auto=format&fit=crop',
-                'descripcion' => null,
-            ],
-            [
-                'nombre' => 'Accesorios',
-                'imagen' => 'https://images.unsplash.com/photo-1520975976508-1b2f4c1d8f39?q=80&w=1200&auto=format&fit=crop',
-                'descripcion' => null,
-            ],
-            [
-                'nombre' => 'Ofertas',
-                'imagen' => 'https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1200&auto=format&fit=crop',
-                'descripcion' => null,
-            ],
-            [
-                'nombre' => 'Lo nuevo',
-                'imagen' => 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1200&auto=format&fit=crop',
-                'descripcion' => null,
-            ],
+            ['nombre' => 'Lo nuevo',    'imagen' => 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1200&auto=format&fit=crop'],
+            ['nombre' => 'Blusas',      'imagen' => 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1200&auto=format&fit=crop'],
+            ['nombre' => 'Vestidos',    'imagen' => 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1200&auto=format&fit=crop'],
+            ['nombre' => 'Jeans',       'imagen' => 'https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=1200&auto=format&fit=crop'],
+            ['nombre' => 'Faldas',      'imagen' => 'https://images.unsplash.com/photo-1583496661160-fb5218cbc86f?q=80&w=1200&auto=format&fit=crop'],
+            ['nombre' => 'Tops',        'imagen' => 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1200&auto=format&fit=crop'],
+            ['nombre' => 'Abrigos',     'imagen' => 'https://images.unsplash.com/photo-1539533018257-c4d9f476cfe8?q=80&w=1200&auto=format&fit=crop'],
+            ['nombre' => 'Calzado',     'imagen' => 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1200&auto=format&fit=crop'],
+            ['nombre' => 'Accesorios',  'imagen' => 'https://images.unsplash.com/photo-1611085583191-a3b181a88401?q=80&w=1200&auto=format&fit=crop'],
+            ['nombre' => 'Ropa',        'imagen' => 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?q=80&w=1200&auto=format&fit=crop'],
         ];
 
         foreach ($categorias as $c) {
             DB::table('categorias')->updateOrInsert(
                 ['slug' => Str::slug($c['nombre'])],
                 [
-                    'nombre' => $c['nombre'],
-                    'descripcion' => $c['descripcion'],
-                    // Si la columna imagen existe, la guardamos; si no existe, DB ignorará la clave en updateOrInsert
-                    'imagen' => $c['imagen'] ?? null,
-                    'created_at' => now(),
-                    'updated_at' => now(),
+                    'nombre'      => $c['nombre'],
+                    'slug'        => Str::slug($c['nombre']),
+                    'descripcion' => null,
+                    'imagen'      => $c['imagen'],
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
                 ]
             );
         }
+
+        $this->command->info('✓ Categorías creadas');
     }
 }
