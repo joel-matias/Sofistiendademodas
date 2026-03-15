@@ -1,256 +1,221 @@
 @extends('layouts.app')
 
-@section('title', 'Inicio | Tienda')
+@section('title', 'Sofis Tienda de Modas · Ropa, Calzado y Accesorios')
 
 @section('content')
-    {{-- NOTA: quitamos el container-base aquí porque queremos full width --}}
 
-    {{-- HERO FULL WIDTH --}}
     <section class="w-full">
-        <div class="card overflow-hidden">
-            <div class="grid lg:grid-cols-2">
-                <div class="p-6 sm:p-10 flex flex-col justify-center">
-                    <p class="text-xs tracking-[0.25em] uppercase text-gris">Sofis Tienda de Modas</p>
+        <div class="relative overflow-hidden bg-tinta min-h-[80vh] sm:min-h-[85vh] flex items-end">
 
-                    <h1 class="mt-3 font-display text-4xl sm:text-5xl md:text-6xl leading-[1.05]">
-                        Moda y calzado<br class="hidden sm:block">
-                        para tu día a día
-                    </h1>
+            <img src="{{ asset('assets/img/hero.jpg') }}" alt="Sofis Tienda de Modas"
+                class="absolute inset-0 w-full h-full object-cover opacity-60" loading="eager">
 
-                    <p class="mt-4 text-gris max-w-xl text-base sm:text-lg leading-relaxed">
-                        Explora nuestro catálogo mixto con ropa, calzado y accesorios.
-                        Diseño premium, rápido y optimizado para móvil.
-                    </p>
+            <div class="absolute inset-0 bg-gradient-to-t from-tinta/80 via-tinta/20 to-transparent"></div>
 
-                    <div class="mt-6 flex flex-wrap gap-3">
-                        <a href="{{ route('catalogo') }}" class="btn-primary">Ver catálogo</a>
-                        {{-- <a href="{{ route('contacto') }}" class="btn-ghost">Contacto</a> --}}
-                    </div>
-                </div>
-
-                <div class="relative">
-                    <img src="{{ asset('assets/img/hero.jpg') }}" alt="Moda"
-                        class="w-full h-[320px] sm:h-[420px] lg:h-full object-cover" loading="lazy">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent"></div>
+            <div class="relative z-10 w-full px-6 sm:px-10 lg:px-16 pb-16 sm:pb-20">
+                <p class="text-[11px] tracking-[0.3em] uppercase text-white/60 mb-3">Sofis Tienda de Modas</p>
+                <h1 class="font-display text-4xl sm:text-5xl lg:text-7xl text-white leading-[1.05] max-w-3xl">
+                    Moda para<br>
+                    <em class="not-italic text-white/80">tu estilo</em>
+                </h1>
+                <p class="mt-4 text-white/70 max-w-md text-base sm:text-lg leading-relaxed">
+                    Ropa, calzado y accesorios con diseño y calidad accesible.
+                </p>
+                <div class="mt-8 flex flex-wrap gap-3">
+                    <a href="{{ route('catalogo') }}" class="btn-primary">
+                        Ver catálogo
+                    </a>
+                    <a href="{{ route('catalogo', ['ofertas' => 1]) }}" class="btn-outline-white">
+                        Ver ofertas
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
-    {{-- ✅ CATEGORÍAS CON IMAGEN (mejorado con JS) --}}
-    <section class="mt-10 w-full p-100">
-        <section class="mt-10 w-full">
-            <div class="container-full">
-
-                {{-- ✅ Título del apartado --}}
-                <div class="flex items-end justify-between gap-6 flex-wrap">
-                    <div>
-                        <h2 class="font-display text-2xl sm:text-3xl">Explora nuestras categorías</h2>
-                        <p class="mt-2 text-gris">Encuentra lo que buscas más rápido.</p>
-                    </div>
+    <section class="bg-white border-b border-borde">
+        <div class="container-full py-4 grid grid-cols-2 sm:grid-cols-4 divide-x divide-borde text-center">
+            @foreach ([['icon' => 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10', 'text' => 'Envíos rápidos'], ['icon' => 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15', 'text' => 'Cambios fáciles'], ['icon' => 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', 'text' => 'Calidad garantizada'], ['icon' => 'M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z', 'text' => 'Atención personalizada']] as $p)
+                <div class="px-3 py-3 flex flex-col items-center gap-1.5">
+                    <svg class="w-5 h-5 text-tinta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $p['icon'] }}" />
+                    </svg>
+                    <p class="text-[11px] sm:text-xs font-semibold tracking-wide text-tinta">{{ $p['text'] }}</p>
                 </div>
+            @endforeach
+        </div>
+    </section>
 
-                @php
-                    // ✅ Fallback por si no se pasaron categorías desde el controlador
-                    $__categorias = $categorias ?? [
-                        [
-                            'titulo' => 'BLUSAS',
-                            'img' =>
-                                'https://images.unsplash.com/photo-1520975958225-07d845a6a6b9?q=80&w=1200&auto=format&fit=crop',
-                            'slug' => 'blusas',
-                        ],
-                        [
-                            'titulo' => 'JEANS',
-                            'img' =>
-                                'https://images.unsplash.com/photo-1520975682071-ae22e7d0f4aa?q=80&w=1200&auto=format&fit=crop',
-                            'slug' => 'jeans',
-                        ],
-                        [
-                            'titulo' => 'VESTIDOS',
-                            'img' =>
-                                'https://images.unsplash.com/photo-1520975957475-5ceea250c40d?q=80&w=1200&auto=format&fit=crop',
-                            'slug' => 'vestidos',
-                        ],
-                        [
-                            'titulo' => 'ZAPATOS',
-                            'img' =>
-                                'https://images.unsplash.com/photo-1528701800489-20be3c2a3ba7?q=80&w=1200&auto=format&fit=crop',
-                            'slug' => 'zapatos',
-                        ],
-                    ];
+    <section class="mt-16 sm:mt-20 container-full">
+        <div class="flex items-end justify-between gap-4 mb-8">
+            <div>
+                <p class="text-[11px] tracking-[0.2em] uppercase text-gris mb-1">Explorar</p>
+                <h2 class="section-title">Nuestras categorías</h2>
+            </div>
+            <a href="{{ route('catalogo') }}"
+                class="hidden sm:inline-flex text-sm font-semibold text-gris hover:text-tinta transition underline underline-offset-4">
+                Ver todo
+            </a>
+        </div>
 
-                    $__categoriasConImagen = collect($__categorias)
-                        ->filter(fn($cat) => !empty($cat['img'] ?? ($cat['imagen'] ?? null)))
-                        ->values();
+        @php
+            $__categorias = $categorias ?? [
+                [
+                    'titulo' => 'BLUSAS',
+                    'img' =>
+                        'https://images.unsplash.com/photo-1520975958225-07d845a6a6b9?q=80&w=800&auto=format&fit=crop',
+                    'slug' => 'blusas',
+                ],
+                [
+                    'titulo' => 'JEANS',
+                    'img' =>
+                        'https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=800&auto=format&fit=crop',
+                    'slug' => 'jeans',
+                ],
+                [
+                    'titulo' => 'VESTIDOS',
+                    'img' =>
+                        'https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=800&auto=format&fit=crop',
+                    'slug' => 'vestidos',
+                ],
+                [
+                    'titulo' => 'ZAPATOS',
+                    'img' =>
+                        'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=800&auto=format&fit=crop',
+                    'slug' => 'zapatos',
+                ],
+            ];
+            $__categoriasConImg = collect($__categorias)
+                ->filter(fn($c) => !empty($c['img'] ?? ($c['imagen'] ?? null)))
+                ->values();
+            $iniciales = $__categoriasConImg->take(4);
+            $restantes = $__categoriasConImg->slice(4);
+        @endphp
 
-                    $limite = 4;
-                    $categoriasIniciales = $__categoriasConImagen->take($limite);
-                    $categoriasRestantes = $__categoriasConImagen->slice($limite);
-                @endphp
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            @foreach ($iniciales as $cat)
+                <a href="{{ route('catalogo', ['categoria' => $cat['slug'] ?? \Illuminate\Support\Str::slug($cat['nombre'] ?? $cat['titulo'])]) }}"
+                    class="group relative overflow-hidden rounded-2xl bg-gray-100 block h-[380px] sm:h-[460px]">
 
-                {{-- ✅ GRID INICIAL (solo 4) --}}
-                <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                    @foreach ($categoriasIniciales as $cat)
+                    <img src="{{ $cat['img'] ?? ($cat['imagen'] ?? '') }}"
+                        alt="{{ $cat['titulo'] ?? ($cat['nombre'] ?? '') }}"
+                        class="w-full h-full object-cover transition duration-700 ease-out group-hover:scale-[1.05]"
+                        loading="lazy">
+
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-tinta/70 via-tinta/10 to-transparent group-hover:from-tinta/80 transition duration-300">
+                    </div>
+
+                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <p class="text-white font-display text-2xl sm:text-3xl tracking-wide">
+                            {{ $cat['titulo'] ?? ($cat['nombre'] ?? '') }}
+                        </p>
+                        <p class="mt-1 text-white/70 text-sm flex items-center gap-1.5 group-hover:text-white transition">
+                            Explorar
+                            <svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </p>
+                    </div>
+                </a>
+            @endforeach
+        </div>
+
+        @if ($restantes->count() > 0)
+            <div id="categoriasExtra" class="hidden mt-3">
+                <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    @foreach ($restantes as $cat)
                         <a href="{{ route('catalogo', ['categoria' => $cat['slug'] ?? \Illuminate\Support\Str::slug($cat['nombre'] ?? $cat['titulo'])]) }}"
-                            class="relative overflow-hidden rounded-xl2 border border-borde bg-gray-100 group h-[340px] sm:h-[420px]">
-
-                            <img src="{{ $cat['img'] ?? ($cat['imagen'] ?? asset('assets/img/placeholder-category.jpg')) }}"
-                                alt="{{ $cat['titulo'] ?? ($cat['nombre'] ?? 'Categoria') }}"
-                                class="w-full h-full object-cover transition duration-500 group-hover:scale-[1.05]"
+                            class="group relative overflow-hidden rounded-2xl bg-gray-100 block h-[380px] sm:h-[460px]">
+                            <img src="{{ $cat['img'] ?? ($cat['imagen'] ?? '') }}" alt="{{ $cat['titulo'] ?? '' }}"
+                                class="w-full h-full object-cover transition duration-700 group-hover:scale-[1.05]"
                                 loading="lazy">
-
-                            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition"></div>
-
-                            <div class="absolute bottom-6 left-6 right-6">
-                                <p class="text-white font-display text-3xl tracking-wide">
-                                    {{ strtoupper($cat['titulo'] ?? ($cat['nombre'] ?? '')) }}
-                                </p>
-                                <p class="mt-1 text-white/90 text-sm">
-                                    Explorar →
-                                </p>
+                            <div class="absolute inset-0 bg-gradient-to-t from-tinta/70 via-tinta/10 to-transparent"></div>
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <p class="text-white font-display text-2xl sm:text-3xl tracking-wide">
+                                    {{ $cat['titulo'] ?? ($cat['nombre'] ?? '') }}</p>
+                                <p class="mt-1 text-white/70 text-sm">Explorar →</p>
                             </div>
                         </a>
                     @endforeach
                 </div>
-
-                {{-- ✅ GRID RESTANTE (oculto inicialmente) --}}
-                @if ($categoriasRestantes->count() > 0)
-                    <div id="categoriasExtra"
-                        class="hidden opacity-0 translate-y-3 transition-all duration-300 ease-out mt-6">
-
-                        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                            @foreach ($categoriasRestantes as $cat)
-                                <a href="{{ route('catalogo', ['categoria' => $cat['slug'] ?? \Illuminate\Support\Str::slug($cat['nombre'] ?? $cat['titulo'])]) }}"
-                                    class="relative overflow-hidden rounded-xl2 border border-borde bg-gray-100 group h-[340px] sm:h-[420px]">
-
-                                    <img src="{{ $cat['img'] ?? ($cat['imagen'] ?? asset('assets/img/placeholder-category.jpg')) }}"
-                                        alt="{{ $cat['titulo'] ?? ($cat['nombre'] ?? 'Categoria') }}"
-                                        class="w-full h-full object-cover transition duration-500 group-hover:scale-[1.05]"
-                                        loading="lazy">
-
-                                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition"></div>
-
-                                    <div class="absolute bottom-6 left-6 right-6">
-                                        <p class="text-white font-display text-3xl tracking-wide">
-                                            {{ strtoupper($cat['titulo'] ?? ($cat['nombre'] ?? '')) }}
-                                        </p>
-                                        <p class="mt-1 text-white/90 text-sm">
-                                            Explorar →
-                                        </p>
-                                    </div>
-                                </a>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    {{-- ✅ BOTÓN (siempre abajo de todas las categorías) --}}
-                    <div class="mt-8 flex justify-center">
-                        <button type="button" id="btnToggleCategorias" onclick="toggleCategorias()"
-                            class="btn-primary text-center">
-                            Mostrar todas las categorías
-                        </button>
-                    </div>
-
-                    <script>
-                        function toggleCategorias() {
-                            const extra = document.getElementById('categoriasExtra');
-                            const btn = document.getElementById('btnToggleCategorias');
-
-                            const isClosed = extra.classList.contains('hidden');
-
-                            if (isClosed) {
-                                // abrir
-                                extra.classList.remove('hidden');
-                                requestAnimationFrame(() => {
-                                    extra.classList.remove('opacity-0', 'translate-y-3');
-                                });
-
-                                btn.textContent = 'Ocultar categorías';
-
-                                setTimeout(() => {
-                                    btn.scrollIntoView({
-                                        behavior: 'smooth',
-                                        block: 'center'
-                                    });
-                                }, 250);
-                            } else {
-                                // cerrar
-                                extra.classList.add('opacity-0', 'translate-y-3');
-
-                                setTimeout(() => {
-                                    extra.classList.add('hidden');
-                                }, 250);
-
-                                btn.textContent = 'Mostrar todas las categorías';
-                            }
-                        }
-                    </script>
-                @endif
             </div>
-        </section>
+            <div class="mt-6 text-center">
+                <button id="btnToggleCats" onclick="toggleCats()" class="btn-ghost text-sm">
+                    Mostrar todas las categorías
+                </button>
+            </div>
+            <script>
+                function toggleCats() {
+                    const el = document.getElementById('categoriasExtra');
+                    const btn = document.getElementById('btnToggleCats');
+                    const hidden = el.classList.contains('hidden');
+                    el.classList.toggle('hidden', !hidden);
+                    btn.textContent = hidden ? 'Ocultar categorías' : 'Mostrar todas las categorías';
+                }
+            </script>
+        @endif
     </section>
 
-    {{-- SECCIÓN DESTACADOS FULL WIDTH (productos desde BD) --}}
-    <section class="mt-14 w-full">
-        <div class="container-full">
-            <div class="text-center">
-                <h2 class="font-display text-3xl sm:text-4xl">Destacados</h2>
-                <p class="mt-2 text-gris">Lo más populares de esta semana</p>
+    <section class="mt-20 sm:mt-24 container-full">
+        <div class="relative overflow-hidden rounded-2xl bg-tinta min-h-[240px] sm:min-h-[300px] flex items-center">
+            <div class="relative z-10 px-8 sm:px-14 py-12">
+                <p class="text-[11px] tracking-[0.2em] uppercase text-white/50 mb-3">Colección actual</p>
+                <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl text-white leading-tight max-w-xl">
+                    Estilo que habla<br>por ti
+                </h2>
+                <a href="{{ route('catalogo', ['ofertas' => 1]) }}" class="btn-outline-white mt-6 inline-flex">
+                    Ver ofertas especiales
+                </a>
             </div>
-
-            <div class="mt-8 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
-                @php
-                    // Fallback: si no vienen destacados, intentamos usar $productos o un array vacío
-                    $__destacados = $destacados ?? ($productos ?? []);
-                @endphp
-
-                @forelse($__destacados as $producto)
-                    {{-- Si el componente espera array, aseguramos que sea array --}}
-                    @if (is_object($producto))
-                        @php
-                            $producto = [
-                                'nombre' => $producto->nombre ?? '',
-                                'precio' => $producto->precio ?? 0,
-                                'slug' => $producto->slug ?? '',
-                                'imagen' => $producto->imagen ?? '',
-                                'categoria' => $producto->categoria->nombre ?? ($producto->categoria ?? ''),
-                                'oferta' => $producto->oferta ?? false,
-                                'precio_oferta' => $producto->precio_oferta ?? null,
-                            ];
-                        @endphp
-                    @endif
-
-                    <x-product-card :producto="$producto" />
-                @empty
-                    {{-- Si no hay productos, mostramos placeholders similares al diseño original --}}
-                    @foreach (range(1, 10) as $i)
-                        <article class="group">
-                            <div class="overflow-hidden rounded-xl2 bg-gray-100 border border-borde">
-                                <div class="aspect-[3/4] overflow-hidden">
-                                    <img src="https://images.unsplash.com/photo-1520975958225-07d845a6a6b9?q=80&w=1200&auto=format&fit=crop"
-                                        alt="Producto {{ $i }}"
-                                        class="w-full h-full object-cover transition duration-500 group-hover:scale-[1.05]"
-                                        loading="lazy">
-                                </div>
-                            </div>
-
-                            <div class="mt-3">
-                                <p class="text-xs uppercase tracking-widest text-gris">Moda</p>
-                                <h3 class="mt-1 font-medium text-sm sm:text-base leading-tight">
-                                    Producto {{ $i }}
-                                </h3>
-                                <p class="mt-1 text-base font-semibold">
-                                    $499 <span class="text-sm text-gris font-normal">MXN</span>
-                                </p>
-                            </div>
-                        </article>
-                    @endforeach
-                @endforelse
-            </div>
-
-            <div class="mt-10 flex justify-center">
-                <a href="{{ route('catalogo') }}" class="btn-primary">Ver todo el catálogo</a>
+            <div class="absolute right-0 top-0 h-full w-1/2 hidden sm:block">
+                <div class="h-full bg-gradient-to-l from-transparent via-transparent to-tinta absolute inset-0 z-10"></div>
             </div>
         </div>
     </section>
+
+    <section class="mt-20 sm:mt-24 container-full">
+        <div class="flex items-end justify-between gap-4 mb-8">
+            <div>
+                <p class="text-[11px] tracking-[0.2em] uppercase text-gris mb-1">Selección</p>
+                <h2 class="section-title">Destacados</h2>
+            </div>
+            <a href="{{ route('catalogo') }}"
+                class="hidden sm:inline-flex text-sm font-semibold text-gris hover:text-tinta transition underline underline-offset-4">
+                Ver todo
+            </a>
+        </div>
+
+        @php
+            $__destacados = $destacados ?? ($productos ?? []);
+        @endphp
+
+        <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+            @forelse($__destacados as $producto)
+                @if (is_object($producto))
+                    @php $producto = ['nombre' => $producto->nombre, 'precio' => $producto->precio, 'slug' => $producto->slug, 'imagen' => $producto->imagen ?? '', 'categoria' => $producto->categorias->first()->nombre ?? '', 'oferta' => (bool)$producto->oferta, 'precio_oferta' => $producto->precio_oferta]; @endphp
+                @endif
+                <x-product-card :producto="$producto" />
+            @empty
+                @for ($i = 1; $i <= 10; $i++)
+                    <article class="group">
+                        <div class="overflow-hidden rounded-2xl bg-gray-100 border border-borde aspect-[3/4]"></div>
+                        <div class="mt-3">
+                            <div class="h-2.5 bg-gray-100 rounded w-2/3 mb-2"></div>
+                            <div class="h-3 bg-gray-200 rounded w-full mb-1.5"></div>
+                            <div class="h-2.5 bg-gray-100 rounded w-1/3"></div>
+                        </div>
+                    </article>
+                @endfor
+            @endforelse
+        </div>
+
+        <div class="mt-10 text-center">
+            <a href="{{ route('catalogo') }}" class="btn-primary">Ver todo el catálogo</a>
+        </div>
+    </section>
+
+    <div class="pb-6"></div>
+
 @endsection

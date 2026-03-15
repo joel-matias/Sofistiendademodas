@@ -1,131 +1,71 @@
 @extends('layouts.app')
 
-@section('title', 'Nosotros | Tienda')
+@section('title', 'Nosotros | Sofis Tienda de Modas')
 
 @section('content')
 
-    {{-- HERO / INTRO --}}
-    <section class="card overflow-hidden">
-        <div class="p-6 sm:p-10">
-            <p class="text-xs tracking-[0.25em] uppercase text-gris">Sofis Tienda de Modas</p>
-
-            <h1 class="mt-3 font-display text-3xl sm:text-4xl md:text-5xl leading-[1.05]">
-                Moda, calzado y estilo<br class="hidden sm:block"> para cada día.
-            </h1>
-
-            <p class="mt-4 text-gris max-w-2xl text-base sm:text-lg leading-relaxed">
-                Somos una tienda enfocada en ofrecer piezas con diseño, comodidad y excelente relación calidad/precio.
-                Nuestra misión es que encuentres moda para tu estilo, sin complicarte.
-            </p>
-
-            <div class="mt-6 flex flex-wrap gap-2">
-                <span class="badge">Ropa</span>
-                <span class="badge">Calzado</span>
-                <span class="badge">Accesorios</span>
-                <span class="badge">Mixto</span>
-            </div>
-        </div>
-
-        <div class="h-1 w-full bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600"></div>
-    </section>
-
-    {{-- SECCIÓN: MISIÓN / VISIÓN / VALORES --}}
-    <section class="mt-10">
-        <div class="flex items-end justify-between gap-6 flex-wrap">
+    <section class="w-full bg-tinta text-crema">
+        <div class="container-full pt-16 sm:pt-24 pb-16 sm:pb-20 grid lg:grid-cols-2 gap-10 items-center">
             <div>
-                <h2 class="font-display text-2xl sm:text-3xl">Lo que nos mueve</h2>
-                <p class="mt-2 text-gris max-w-xl">
-                    Nuestro enfoque está en una experiencia simple, una selección cuidada y atención cercana.
+                <p class="text-[11px] tracking-[0.2em] uppercase text-white/50 mb-4">Sobre nosotros</p>
+                <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl leading-tight">
+                    Somos Sofis<br>
+                    <em class="not-italic text-white/70">Tienda de Modas</em>
+                </h1>
+                <p class="mt-6 text-white/70 text-base sm:text-lg leading-relaxed max-w-lg">
+                    Desde nuestra apertura, hemos sido el destino favorito para quienes buscan moda accesible, calidad y
+                    estilo en un solo lugar.
                 </p>
+                <div class="mt-8 flex flex-wrap gap-3">
+                    <span class="badge border-white/20 text-white/70">Ropa</span>
+                    <span class="badge border-white/20 text-white/70">Calzado</span>
+                    <span class="badge border-white/20 text-white/70">Accesorios</span>
+                    <span class="badge border-white/20 text-white/70">Mixto</span>
+                </div>
             </div>
-
-            {{-- <a href="{{ route('contacto') }}" class="btn-primary">
-            Contáctanos
-        </a> --}}
-        </div>
-
-        <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {{-- Misión --}}
-            <article class="card p-6">
-                <div class="flex items-center gap-3">
-                    <span class="badge">Misión</span>
-                </div>
-
-                <h3 class="mt-4 font-display text-xl">
-                    Calidad y estilo accesible
-                </h3>
-
-                <p class="mt-3 text-sm text-gris leading-relaxed">
-                    Ofrecer productos con excelente relación calidad/precio, cuidando el diseño y la comodidad en cada
-                    pieza.
-                </p>
-            </article>
-
-            {{-- Visión --}}
-            <article class="card p-6">
-                <div class="flex items-center gap-3">
-                    <span class="badge">Visión</span>
-                </div>
-
-                <h3 class="mt-4 font-display text-xl">
-                    Ser una marca reconocida
-                </h3>
-
-                <p class="mt-3 text-sm text-gris leading-relaxed">
-                    Convertirnos en una tienda de referencia en moda y calzado, con una experiencia digital moderna y
-                    cercana.
-                </p>
-            </article>
-
-            {{-- Valores --}}
-            <article class="card p-6">
-                <div class="flex items-center gap-3">
-                    <span class="badge">Valores</span>
-                </div>
-
-                <h3 class="mt-4 font-display text-xl">
-                    Confianza y atención al cliente
-                </h3>
-
-                <p class="mt-3 text-sm text-gris leading-relaxed">
-                    Calidad, honestidad, servicio y compromiso. Queremos que comprar aquí sea sencillo y agradable.
-                </p>
-            </article>
+            <div class="hidden lg:block h-[320px] rounded-2xl overflow-hidden border border-white/10">
+                <img src="{{ asset('assets/img/hero.jpg') }}" alt="Sofis Tienda de Modas"
+                    class="w-full h-full object-cover opacity-80">
+            </div>
         </div>
     </section>
 
-    {{-- SECCIÓN: DIFERENCIA / PROMESA --}}
-    <section class="mt-10 card p-6 sm:p-10">
-        <div class="grid gap-8 lg:grid-cols-2 lg:items-center">
-            <div>
-                <h2 class="font-display text-2xl sm:text-3xl">
-                    Nuestra promesa
-                </h2>
-
-                <p class="mt-3 text-gris leading-relaxed">
-                    Seleccionamos prendas y calzado pensando en durabilidad, comodidad y estilo.
-                    Estamos enfocados en que encuentres lo que necesitas con rapidez, desde tu móvil.
-                </p>
-                <li class="flex gap-3">
-                    <span class="text-pink-500 font-bold">✓</span>
-                    Moda mixta, calzado y accesorios.
-                </li>
-                <li class="flex gap-3">
-                    <span class="text-pink-500 font-bold">✓</span>
-                    Atención directa por WhatsApp.
-                </li>
-                </ul>
-
-                <div class="mt-6 flex flex-wrap gap-3">
-                    <a href="{{ route('catalogo') }}" class="btn-primary">Ver catálogo</a>
-                    {{-- <a href="{{ route('contacto') }}" class="btn-ghost">Hablar con nosotros</a> --}}
+    <section class="container-full mt-16 sm:mt-20">
+        <div class="text-center mb-10">
+            <p class="text-[11px] tracking-[0.2em] uppercase text-gris mb-2">Nuestra esencia</p>
+            <h2 class="section-title">Lo que nos mueve</h2>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-5">
+            @foreach ([['title' => 'Misión', 'icon' => 'M13 10V3L4 14h7v7l9-11h-7z', 'body' => 'Ofrecer ropa, calzado y accesorios de calidad a precios accesibles para que cada persona exprese su estilo sin límites.'], ['title' => 'Visión', 'icon' => 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z', 'body' => 'Ser la marca de moda de referencia en nuestra región, reconocida por su calidad, atención y compromiso con nuestros clientes.'], ['title' => 'Valores', 'icon' => 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z', 'body' => 'Confianza, honestidad y atención personalizada. Cada cliente es único y merece una experiencia de compra excepcional.']] as $item)
+                <div class="card p-7">
+                    <div class="w-10 h-10 rounded-xl bg-tinta flex items-center justify-center mb-5">
+                        <svg class="w-5 h-5 text-crema" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="{{ $item['icon'] }}" />
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl mb-3">{{ $item['title'] }}</h3>
+                    <p class="text-gris text-sm leading-relaxed">{{ $item['body'] }}</p>
                 </div>
-            </div>
+            @endforeach
+        </div>
+    </section>
 
-            {{-- Imagen placeholder (puedes cambiarla) --}}
-            <div class="card overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1520975958225-07d845a6a6b9?q=80&w=1200&auto=format&fit=crop"
-                    alt="Moda Sofis Tienda" class="w-full h-[260px] sm:h-[320px] lg:h-[360px] object-cover" loading="lazy">
+    <section class="container-full mt-16 sm:mt-20 mb-6">
+        <div class="card overflow-hidden">
+            <div class="grid lg:grid-cols-2">
+                <div class="p-8 sm:p-12 flex flex-col justify-center">
+                    <p class="text-[11px] tracking-[0.2em] uppercase text-gris mb-3">Nuestra promesa</p>
+                    <h2 class="font-display text-3xl sm:text-4xl leading-tight">Calidad que puedes sentir</h2>
+                    <p class="mt-4 text-gris leading-relaxed">
+                        Cada pieza en nuestro catálogo pasa por una selección cuidadosa para asegurarte el mejor diseño y
+                        durabilidad. Tu satisfacción es nuestra mayor recompensa.
+                    </p>
+                    <a href="{{ route('catalogo') }}" class="btn-primary mt-8 self-start">Explorar catálogo</a>
+                </div>
+                <div class="h-64 lg:h-auto bg-gray-100">
+                    <img src="{{ asset('assets/img/hero.jpg') }}" alt="Calidad" class="w-full h-full object-cover">
+                </div>
             </div>
         </div>
     </section>

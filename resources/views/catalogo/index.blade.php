@@ -1,88 +1,89 @@
 @extends('layouts.app')
 
-@section('title', 'Catálogo | Tienda')
-@section('main_class', 'w-full')
+@section('title', isset($categoriaSeleccionada) ? $categoriaSeleccionada['nombre'] . ' · Catálogo | Sofis' : 'Catálogo |
+    Sofis')
 
 @section('content')
 
-    <section class="w-full">
-        <div class="container-full">
+    <div class="container-full pt-8 sm:pt-12 pb-10">
 
-            {{-- ENCABEZADO --}}
-            <div class="text-center pt-6 sm:pt-10">
-                <h1 class="font-display text-3xl sm:text-4xl md:text-5xl">
-                    Catálogo
-                </h1>
-                <p class="mt-2 text-gris max-w-2xl mx-auto">
-                    Explora ropa, calzado y accesorios. Optimizado para móvil.
-                </p>
-            </div>
-
+        {{-- Header --}}
+        <div class="mb-8">
             @if (!empty($categoriaSeleccionada))
-                <div class="text-center mt-2">
-                    <p class="text-gris">Mostrando categoría: <span
-                            class="font-medium">{{ $categoriaSeleccionada['nombre'] }}</span></p>
-                </div>
+                <p class="text-[11px] tracking-[0.2em] uppercase text-gris mb-1">Categoría</p>
+                <h1 class="section-title">{{ $categoriaSeleccionada['nombre'] }}</h1>
+            @else
+                <p class="text-[11px] tracking-[0.2em] uppercase text-gris mb-1">Tienda</p>
+                <h1 class="section-title">Catálogo</h1>
+            @endif
+        </div>
+
+        {{-- Filters --}}
+        <form id="filtersForm" method="GET" action="{{ route('catalogo') }}" class="mb-8 flex flex-wrap items-center gap-2.5">
+            <input type="hidden" name="categoria" value="{{ request('categoria') }}">
+
+            <select name="orden" onchange="document.getElementById('filtersForm').submit()"
+                class="input text-sm w-auto min-w-[160px]">
+                <option value="">Ordenar</option>
+                <option value="nuevos" {{ request('orden') === 'nuevos' ? 'selected' : '' }}>Más nuevos</option>
+                <option value="precio_menor" {{ request('orden') === 'precio_menor' ? 'selected' : '' }}>Precio: menor →
+                    mayor</option>
+                <option value="precio_mayor" {{ request('orden') === 'precio_mayor' ? 'selected' : '' }}>Precio: mayor →
+                    menor</option>
+            </select>
+
+            <select name="talla" onchange="document.getElementById('filtersForm').submit()" class="input text-sm w-auto">
+                <option value="">Talla</option>
+                @if (!empty($availableTallas))
+                    @foreach ($availableTallas as $t)
+                        <option value="{{ $t }}" {{ request('talla') === $t ? 'selected' : '' }}>
+                            {{ strtoupper($t) }}</option>
+                    @endforeach
+                @else
+                    @foreach (['CH', 'S', 'M', 'G', 'XL', '2XL'] as $t)
+                        <option value="{{ $t }}" {{ request('talla') === $t ? 'selected' : '' }}>
+                            {{ $t }}</option>
+                    @endforeach
+                @endif
+            </select>
+
+            @if (request()->hasAny(['orden', 'talla', 'search']))
+                <a href="{{ route('catalogo', array_filter(['categoria' => request('categoria')])) }}"
+                    class="btn-ghost text-sm py-2.5">
+                    Limpiar filtros
+                </a>
             @endif
 
-            {{-- FILTROS --}}
-            <div class="mt-8 card p-4 sm:p-5">
-                <form id="filtersForm" method="GET" action="{{ route('catalogo') }}">
-                    {{-- preservamos la categoria --}}
-                    <input type="hidden" name="categoria" value="{{ request('categoria') }}">
+            {{-- Product count --}}
+            <p class="ml-auto text-sm text-gris hidden sm:block">
+                {{ $productos->total() }} {{ $productos->total() === 1 ? 'producto' : 'productos' }}
+            </p>
+        </form>
 
-                    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 items-center">
+        {{-- Grid --}}
+        <div class="grid gap-x-4 gap-y-8 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            @forelse($productos as $producto)
+                <x-product-card :producto="$producto" />
+            @empty
+                <div class="col-span-full py-20 text-center">
+                    <svg class="w-12 h-12 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    <p class="text-gris">No se encontraron productos con esos filtros.</p>
+                    <a href="{{ route('catalogo') }}" class="btn-ghost text-sm mt-4 inline-flex">Ver todo el catálogo</a>
+                </div>
+            @endforelse
+        </div>
 
-                        {{-- Ordenar --}}
-                        <select name="orden" class="input" onchange="document.getElementById('filtersForm').submit()">
-                            <option value="">Ordenar por</option>
-                            <option value="nuevos" {{ request('orden') === 'nuevos' ? 'selected' : '' }}>Más nuevos</option>
-                            <option value="precio_menor" {{ request('orden') === 'precio_menor' ? 'selected' : '' }}>Precio:
-                                menor a mayor</option>
-                            <option value="precio_mayor" {{ request('orden') === 'precio_mayor' ? 'selected' : '' }}>Precio:
-                                mayor a menor</option>
-                        </select>
-
-                        {{-- Talla --}}
-                        <select name="talla" class="input" onchange="document.getElementById('filtersForm').submit()">
-                            <option value="">{{ __('Talla') }}</option>
-
-                            @if (!empty($availableTallas) && count($availableTallas))
-                                @foreach ($availableTallas as $t)
-                                    <option value="{{ $t }}" {{ request('talla') === $t ? 'selected' : '' }}>
-                                        {{ strtoupper($t) }}
-                                    </option>
-                                @endforeach
-                            @else
-                                {{-- fallback estático --}}
-                                <option value="CH" {{ request('talla') === 'CH' ? 'selected' : '' }}>CH</option>
-                                <option value="M" {{ request('talla') === 'M' ? 'selected' : '' }}>M</option>
-                                <option value="G" {{ request('talla') === 'G' ? 'selected' : '' }}>G</option>
-                                <option value="EG" {{ request('talla') === 'EG' ? 'selected' : '' }}>EG</option>
-                                <option value="2XL"{{ request('talla') === '2XL' ? 'selected' : '' }}>2XL</option>
-                            @endif
-                        </select>
-
-                        {{-- Botón limpiar --}}
-                        <a href="{{ route('catalogo', ['categoria' => request('categoria')]) }}" class="btn-ghost w-full">
-                            Limpiar filtros
-                        </a>
-                    </div>
-                </form>
-            </div>
-
-            {{-- GRID DE PRODUCTOS FULL WIDTH --}}
-            <div class="mt-10 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-                @foreach ($productos as $producto)
-                    <x-product-card :producto="$producto" />
-                @endforeach
-            </div>
-
+        {{-- Paginación --}}
+        @if ($productos->hasPages())
             <div class="mt-12 flex justify-center">
                 {{ $productos->links() }}
             </div>
+        @endif
 
-        </div>
-    </section>
+    </div>
 
 @endsection
