@@ -1,86 +1,115 @@
-<footer class="mt-16 border-t border-borde bg-white">
-    <div class="container-base py-12">
-        <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+<footer class="mt-20 bg-tinta text-crema">
 
-            {{-- Columna 1 --}}
-            <div>
-                <h3 class="font-display text-lg tracking-wide">Conoce Sofis</h3>
-                <ul class="mt-4 space-y-2 text-sm text-gris">
-                    <li><a href="{{ route('nosotros') }}" class="hover:text-tinta transition">Nuestra historia</a></li>
-                    <li><a href="#" class="hover:text-tinta transition">Nuestras tiendas</a></li>
-                    <li><a href="#" class="hover:text-tinta transition">Bolsa de trabajo</a></li>
-                    {{-- <li><a href="{{ route('contacto') }}" class="hover:text-tinta transition">Contacto</a></li> --}}
-                </ul>
-            </div>
 
-            {{-- Columna 2 --}}
-            <div>
-                <h3 class="font-display text-lg tracking-wide">Guía de compra</h3>
-                <ul class="mt-4 space-y-2 text-sm text-gris">
-                    <li><a href="#" class="hover:text-tinta transition">Preguntas frecuentes</a></li>
-                    <li><a href="#" class="hover:text-tinta transition">Cambios y devoluciones</a></li>
-                    <li><a href="#" class="hover:text-tinta transition">Métodos de pago</a></li>
-                    <li><a href="#" class="hover:text-tinta transition">Política de privacidad</a></li>
-                </ul>
-            </div>
+    <div class="w-full px-4 sm:px-6 lg:px-10 xl:px-16 pt-14 pb-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
 
-            {{-- Columna 3 --}}
-            <div>
-                <h3 class="font-display text-lg tracking-wide">Atención al cliente</h3>
-                <div class="mt-4 space-y-2 text-sm text-gris">
-                    <p><span class="text-tinta font-medium">Tel:</span> 55 0000 0000</p>
-                    <p><span class="text-tinta font-medium">Correo:</span> contacto@sofistienda.com</p>
-                    <p>
-                        <a href="#" class="text-tinta underline underline-offset-4 hover:opacity-80 transition">
-                            Comunícate vía WhatsApp
-                        </a>
-                    </p>
 
-                    <div class="pt-3">
-                        <p class="text-xs uppercase tracking-widest text-gris">Horarios</p>
-                        <p class="mt-2">Lun - Sáb: 9:00 a 20:00</p>
-                        <p>Dom: 10:00 a 18:00</p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Columna 4: Newsletter + redes --}}
-            <div>
-                <h3 class="font-display text-lg tracking-wide">Suscríbete</h3>
-                <p class="mt-4 text-sm text-gris">
-                    Entérate primero de lanzamientos, rebajas y novedades.
-                </p>
-
-                <form class="mt-4 flex gap-2">
-                    <input type="email" class="input" placeholder="Tu correo">
-                    <button type="submit" class="btn-primary whitespace-nowrap">
-                        Suscribirme
-                    </button>
-                </form>
-
-                <div class="mt-6">
-                    <p class="text-xs uppercase tracking-widest text-gris">Síguenos</p>
-                    <div class="mt-3 flex items-center gap-3 text-xl">
-                        {{-- Reemplaza con íconos reales --}}
-                        <a href="#" class="hover:opacity-70 transition" aria-label="Facebook">📘</a>
-                        <a href="#" class="hover:opacity-70 transition" aria-label="Instagram">📸</a>
-                        <a href="#" class="hover:opacity-70 transition" aria-label="TikTok">🎵</a>
-                        <a href="#" class="hover:opacity-70 transition" aria-label="YouTube">▶️</a>
-                    </div>
-                </div>
+        <div class="lg:col-span-1">
+            <a href="{{ route('home') }}">
+                <img src="{{ asset('assets/svg/logo-sofistiendademodas.svg') }}" alt="Sofis"
+                    class="h-10 object-contain brightness-0 invert mb-4">
+            </a>
+            <p class="text-sm text-white/60 leading-relaxed max-w-xs">
+                Moda y estilo para tu día a día. Ropa, calzado y accesorios con diseño y calidad accesible.
+            </p>
+            <div class="flex gap-3 mt-5">
+                <a href="#"
+                    class="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition"
+                    aria-label="Instagram">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                    </svg>
+                </a>
+                <a href="#"
+                    class="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition"
+                    aria-label="Facebook">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg>
+                </a>
+                <a href="https://wa.me/521234567890"
+                    class="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition"
+                    aria-label="WhatsApp">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                    </svg>
+                </a>
             </div>
         </div>
 
-        {{-- Línea separadora --}}
-        <div
-            class="mt-10 border-t border-borde pt-6 text-xs text-gris flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p>© {{ date('Y') }} Sofis Tienda de Modas. Todos los derechos reservados.</p>
 
-            <div class="flex flex-wrap gap-4">
-                <a href="#" class="hover:text-tinta transition">Términos de uso</a>
-                <a href="#" class="hover:text-tinta transition">Aviso de privacidad</a>
-                <a href="#" class="hover:text-tinta transition">Políticas</a>
-            </div>
+        <div>
+            <p class="text-[10px] tracking-[0.2em] uppercase text-white/40 mb-4">Catálogo</p>
+            <ul class="space-y-2.5">
+                <li><a href="{{ route('catalogo', ['categoria' => 'lo-nuevo']) }}"
+                        class="text-sm text-white/70 hover:text-white transition">Lo nuevo</a></li>
+                <li><a href="{{ route('catalogo', ['categoria' => 'ropa']) }}"
+                        class="text-sm text-white/70 hover:text-white transition">Ropa</a></li>
+                <li><a href="{{ route('catalogo', ['categoria' => 'calzado']) }}"
+                        class="text-sm text-white/70 hover:text-white transition">Calzado</a></li>
+                <li><a href="{{ route('catalogo', ['categoria' => 'accesorios']) }}"
+                        class="text-sm text-white/70 hover:text-white transition">Accesorios</a></li>
+                <li><a href="{{ route('catalogo', ['ofertas' => 1]) }}"
+                        class="text-sm text-white/70 hover:text-white transition">Ofertas</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <p class="text-[10px] tracking-[0.2em] uppercase text-white/40 mb-4">Información</p>
+            <ul class="space-y-2.5">
+                <li><a href="{{ route('nosotros') }}"
+                        class="text-sm text-white/70 hover:text-white transition">Nosotros</a></li>
+                <li><a href="{{ route('contacto') }}"
+                        class="text-sm text-white/70 hover:text-white transition">Contacto</a></li>
+                <li><a href="#" class="text-sm text-white/70 hover:text-white transition">Guía de tallas</a></li>
+                <li><a href="#" class="text-sm text-white/70 hover:text-white transition">Envíos y
+                        devoluciones</a></li>
+            </ul>
+        </div>
+
+
+        <div>
+            <p class="text-[10px] tracking-[0.2em] uppercase text-white/40 mb-4">Contacto</p>
+            <ul class="space-y-3">
+                <li class="flex items-start gap-2.5">
+                    <svg class="w-4 h-4 mt-0.5 text-white/40 flex-shrink-0" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    <span class="text-sm text-white/70">+52 (123) 456-7890</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <svg class="w-4 h-4 mt-0.5 text-white/40 flex-shrink-0" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span class="text-sm text-white/70">hola@sofistienda.com</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <svg class="w-4 h-4 mt-0.5 text-white/40 flex-shrink-0" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-sm text-white/70">Lun – Sáb: 10:00 – 20:00</span>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div
+        class="border-t border-white/10 px-4 sm:px-6 lg:px-10 xl:px-16 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p class="text-xs text-white/40">© {{ date('Y') }} Sofis Tienda de Modas. Todos los derechos reservados.</p>
+        <div class="flex gap-4">
+            <a href="#" class="text-xs text-white/40 hover:text-white/70 transition">Privacidad</a>
+            <a href="#" class="text-xs text-white/40 hover:text-white/70 transition">Términos</a>
         </div>
     </div>
+
 </footer>

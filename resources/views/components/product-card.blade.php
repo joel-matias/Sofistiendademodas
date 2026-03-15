@@ -1,38 +1,122 @@
 @props(['producto'])
 
-<article class="group">
-    <div class="relative overflow-hidden rounded-xl2 border border-borde bg-white">
+@php
+    $esFavorito =
+        auth()->check() && !auth()->user()->isAdmin() && in_array($producto['id'] ?? null, $favoritoIds ?? []);
+@endphp
 
-        {{-- Badge (ejemplo Oferta) --}}
-        @if (!empty($producto['oferta']))
-            <div class="absolute top-3 left-3 z-10">
-                <span
-                    class="bg-pink-600 text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-widest uppercase">
-                    Oferta
-                </span>
+<article class="group relative">
+    <a href="{{ route('producto', $producto['slug']) }}" class="block">
+        <div class="overflow-hidden rounded-2xl bg-gray-100 border border-borde relative">
+            <div class="aspect-[3/4] overflow-hidden">
+                @if (!empty($producto['imagen']))
+                    <img src="{{ $producto['imagen'] }}" alt="{{ $producto['nombre'] }}"
+                        class="w-full h-full object-cover transition duration-700 ease-out group-hover:scale-[1.06]"
+                        loading="lazy">
+                @else
+                    <div class="w-full h-full bg-gray-100 flex items-center justify-center">
+                        <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                @endif
             </div>
-        @endif
 
-        {{-- Imagen --}}
-        <a href="{{ route('producto', $producto['slug']) }}" class="block aspect-[3/4] overflow-hidden bg-gray-100">
-            <img src="{{ $producto['imagen'] }}" alt="{{ $producto['nombre'] }}"
-                class="w-full h-full object-cover transition duration-500 group-hover:scale-[1.05]" loading="lazy" />
-        </a>
-    </div>
+            {{-- Badge oferta --}}
+            @if (!empty($producto['oferta']))
+                <div class="absolute top-3 left-3">
+                    <span
+                        class="inline-flex items-center bg-tinta text-crema text-[10px] font-semibold tracking-wider uppercase px-2 py-1 rounded-lg">
+                        Oferta
+                    </span>
+                </div>
+            @endif
+        </div>
+    </a>
+
+    {{-- Heart button --}}
+    @auth
+        @if (!auth()->user()->isAdmin() && !empty($producto['id']))
+            <button type="button" onclick="toggleFavorito(this, {{ $producto['id'] }})"
+                data-favorito="{{ $esFavorito ? 'true' : 'false' }}"
+                class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm shadow-sm border border-borde/50 flex items-center justify-center transition hover:scale-110 active:scale-95"
+                aria-label="{{ $esFavorito ? 'Quitar de favoritos' : 'Guardar en favoritos' }}">
+                <svg class="w-4 h-4 transition-all" fill="{{ $esFavorito ? 'currentColor' : 'none' }}" stroke="currentColor"
+                    viewBox="0 0 24 24" style="color: {{ $esFavorito ? '#ef4444' : '#6B7280' }}">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+            </button>
+        @endif
+    @endauth
 
     {{-- Info --}}
-    <div class="mt-3">
-        <p class="text-[11px] uppercase tracking-widest text-gris">
-            {{ $producto['categoria'] }}
-        </p>
+    <div class="mt-3 px-0.5">
+        @if (!empty($producto['categoria']))
+            <p class="text-[10px] uppercase tracking-[0.15em] text-gris font-medium">{{ $producto['categoria'] }}</p>
+        @endif
 
-        <h3 class="mt-1 font-medium text-sm sm:text-base leading-tight">
-            {{ $producto['nombre'] }}
+        <h3 class="mt-1 font-medium text-sm sm:text-[15px] leading-snug line-clamp-2 text-tinta">
+            <a href="{{ route('producto', $producto['slug']) }}" class="hover:text-gris transition">
+                {{ $producto['nombre'] }}
+            </a>
         </h3>
 
-        <p class="mt-1 text-base font-semibold">
-            ${{ number_format($producto['precio'], 0) }}
-            <span class="text-sm text-gris font-normal">MXN</span>
-        </p>
+        <div class="mt-1.5 flex items-baseline gap-2">
+            @if (!empty($producto['oferta']) && !empty($producto['precio_oferta']))
+                <span class="text-xs text-gris line-through">${{ number_format($producto['precio'], 0) }}</span>
+                <span class="text-sm font-semibold text-tinta">${{ number_format($producto['precio_oferta'], 0) }}
+                    <span class="text-xs font-normal text-gris">MXN</span></span>
+            @else
+                <span class="text-sm font-semibold text-tinta">${{ number_format($producto['precio'] ?? 0, 0) }}
+                    <span class="text-xs font-normal text-gris">MXN</span></span>
+            @endif
+        </div>
     </div>
 </article>
+
+@once
+    @push('scripts')
+        <script>
+            async function toggleFavorito(btn, productoId) {
+                const svg = btn.querySelector('svg');
+                const esFav = btn.dataset.favorito === 'true';
+
+                // Optimistic UI
+                btn.dataset.favorito = esFav ? 'false' : 'true';
+                svg.setAttribute('fill', esFav ? 'none' : 'currentColor');
+                svg.style.color = esFav ? '#6B7280' : '#ef4444';
+                btn.setAttribute('aria-label', esFav ? 'Guardar en favoritos' : 'Quitar de favoritos');
+
+                try {
+                    const res = await fetch(`/favoritos/${productoId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ||
+                                '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    });
+
+                    if (!res.ok) throw new Error('Error');
+
+                    const data = await res.json();
+
+                    // Actualizar contador en navbar si existe
+                    const counter = document.getElementById('favoritosCount');
+                    if (counter) {
+                        counter.textContent = data.count;
+                        counter.classList.toggle('hidden', data.count === 0);
+                    }
+                } catch {
+                    // Revert on error
+                    btn.dataset.favorito = esFav ? 'true' : 'false';
+                    svg.setAttribute('fill', esFav ? 'currentColor' : 'none');
+                    svg.style.color = esFav ? '#ef4444' : '#6B7280';
+                }
+            }
+        </script>
+    @endpush
+@endonce
