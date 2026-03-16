@@ -5,7 +5,7 @@
         auth()->check() && !auth()->user()->isAdmin() && in_array($producto['id'] ?? null, $favoritoIds ?? []);
 @endphp
 
-<article class="group relative">
+<article class="group relative" data-product-card data-producto-id="{{ $producto['id'] ?? '' }}">
     <a href="{{ route('producto', $producto['slug']) }}" class="block">
         <div class="overflow-hidden rounded-2xl bg-gray-100 border border-borde relative">
             <div class="aspect-[3/4] overflow-hidden">
@@ -104,11 +104,36 @@
 
                     const data = await res.json();
 
+                    // Sync UI with the backend response in case the local state was stale.
+                    btn.dataset.favorito = data.favorito ? 'true' : 'false';
+                    svg.setAttribute('fill', data.favorito ? 'currentColor' : 'none');
+                    svg.style.color = data.favorito ? '#ef4444' : '#6B7280';
+                    btn.setAttribute('aria-label', data.favorito ? 'Quitar de favoritos' : 'Guardar en favoritos');
+
                     // Actualizar contador en navbar si existe
                     const counter = document.getElementById('favoritosCount');
                     if (counter) {
                         counter.textContent = data.count;
                         counter.classList.toggle('hidden', data.count === 0);
+                    }
+
+                    const favoritosCountLabel = document.getElementById('favoritosPageCount');
+                    if (favoritosCountLabel) {
+                        favoritosCountLabel.textContent = `(${data.count})`;
+                    }
+
+                    // En la vista de favoritos, quitar la card al remover el producto.
+                    if (!data.favorito) {
+                        const favoritosGrid = btn.closest('[data-favoritos-grid]');
+                        const card = btn.closest('[data-product-card]');
+
+                        if (favoritosGrid && card) {
+                            card.remove();
+
+                            if (!favoritosGrid.querySelector('[data-product-card]')) {
+                                window.location.reload();
+                            }
+                        }
                     }
                 } catch {
                     // Revert on error

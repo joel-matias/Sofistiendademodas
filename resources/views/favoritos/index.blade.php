@@ -11,7 +11,7 @@
             <h1 class="section-title flex items-center gap-3">
                 Mis favoritos
                 @if (count($productos) > 0)
-                    <span class="text-base font-normal text-gris">({{ count($productos) }})</span>
+                    <span id="favoritosPageCount" class="text-base font-normal text-gris">({{ count($productos) }})</span>
                 @endif
             </h1>
         </div>
@@ -23,7 +23,7 @@
         @endif
 
         @if (count($productos) > 0)
-            <div class="grid gap-x-4 gap-y-8 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            <div class="grid gap-x-4 gap-y-8 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" data-favoritos-grid>
                 @foreach ($productos as $producto)
                     <x-product-card :producto="$producto" />
                 @endforeach

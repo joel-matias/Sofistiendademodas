@@ -44,10 +44,9 @@ class WishlistController extends Controller
         $user = Auth::user();
 
         $existing = Favorito::where('user_id', $user->id)
-            ->where('producto_id', $producto->id)
-            ->first();
+            ->where('producto_id', $producto->id);
 
-        if ($existing) {
+        if ($existing->exists()) {
             $existing->delete();
             $esFavorito = false;
         } else {
