@@ -4,33 +4,119 @@
 
 @section('content')
 
-    <section class="w-full">
-        <div class="relative overflow-hidden bg-tinta min-h-[80vh] sm:min-h-[85vh] flex items-end">
+    @php
+        $__covers = $covers ?? [];
+        if (empty($__covers)) {
+            $__covers = [[
+                'titulo'      => 'Moda para tu estilo',
+                'subtitulo'   => 'Ropa, calzado y accesorios con diseño y calidad accesible.',
+                'texto_boton' => 'Ver catálogo',
+                'url_boton'   => route('catalogo'),
+                'imagen'      => null,
+            ]];
+        }
+    @endphp
 
-            <img src="{{ asset('assets/img/hero.jpg') }}" alt="Sofis Tienda de Modas"
-                class="absolute inset-0 w-full h-full object-cover opacity-60" loading="eager">
+    <section class="w-full" aria-label="Carrusel de portada">
+        <div id="hero-carousel" class="relative overflow-hidden bg-tinta min-h-[80vh] sm:min-h-[85vh]">
 
-            <div class="absolute inset-0 bg-gradient-to-t from-tinta/80 via-tinta/20 to-transparent"></div>
+            {{-- Slides --}}
+            @foreach($__covers as $i => $cover)
+                <div class="hero-slide absolute inset-0 flex items-end transition-opacity duration-700 ease-in-out
+                            {{ $i === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0' }}"
+                    data-index="{{ $i }}">
 
-            <div class="relative z-10 w-full px-6 sm:px-10 lg:px-16 pb-16 sm:pb-20">
-                <p class="text-[11px] tracking-[0.3em] uppercase text-white/60 mb-3">Sofis Tienda de Modas</p>
-                <h1 class="font-display text-4xl sm:text-5xl lg:text-7xl text-white leading-[1.05] max-w-3xl">
-                    Moda para<br>
-                    <em class="not-italic text-white/80">tu estilo</em>
-                </h1>
-                <p class="mt-4 text-white/70 max-w-md text-base sm:text-lg leading-relaxed">
-                    Ropa, calzado y accesorios con diseño y calidad accesible.
-                </p>
-                <div class="mt-8 flex flex-wrap gap-3">
-                    <a href="{{ route('catalogo') }}" class="btn-primary">
-                        Ver catálogo
-                    </a>
-                    <a href="{{ route('catalogo', ['ofertas' => 1]) }}" class="btn-outline-white">
-                        Ver ofertas
-                    </a>
+                    @if(!empty($cover['imagen']))
+                        <img src="{{ $cover['imagen'] }}" alt="{{ $cover['titulo'] }}"
+                            class="absolute inset-0 w-full h-full object-cover opacity-60"
+                            loading="{{ $i === 0 ? 'eager' : 'lazy' }}">
+                    @else
+                        <img src="{{ asset('assets/img/hero.jpg') }}" alt="{{ $cover['titulo'] }}"
+                            class="absolute inset-0 w-full h-full object-cover opacity-60" loading="eager">
+                    @endif
+
+                    <div class="absolute inset-0 bg-gradient-to-t from-tinta/80 via-tinta/20 to-transparent"></div>
+
+                    <div class="relative z-10 w-full px-6 sm:px-10 lg:px-16 pb-16 sm:pb-20">
+                        <p class="text-[11px] tracking-[0.3em] uppercase text-white/60 mb-3">Sofis Tienda de Modas</p>
+                        <h1 class="font-display text-4xl sm:text-5xl lg:text-7xl text-white leading-[1.05] max-w-3xl">
+                            {!! nl2br(e($cover['titulo'])) !!}
+                        </h1>
+                        @if(!empty($cover['subtitulo']))
+                            <p class="mt-4 text-white/70 max-w-md text-base sm:text-lg leading-relaxed">
+                                {{ $cover['subtitulo'] }}
+                            </p>
+                        @endif
+                        @if(!empty($cover['texto_boton']) && !empty($cover['url_boton']))
+                            <div class="mt-8 flex flex-wrap gap-3">
+                                <a href="{{ $cover['url_boton'] }}" class="btn-primary">
+                                    {{ $cover['texto_boton'] }}
+                                </a>
+                            </div>
+                        @endif
+                    </div>
                 </div>
-            </div>
+            @endforeach
+
+            {{-- Navegación (solo si hay más de 1 slide) --}}
+            @if(count($__covers) > 1)
+                {{-- Flechas --}}
+                <button onclick="heroCarousel.prev()" aria-label="Anterior"
+                    class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/20 hover:bg-white/35 backdrop-blur-sm flex items-center justify-center transition">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <button onclick="heroCarousel.next()" aria-label="Siguiente"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/20 hover:bg-white/35 backdrop-blur-sm flex items-center justify-center transition">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+
+                {{-- Dots --}}
+                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                    @foreach($__covers as $i => $cover)
+                        <button onclick="heroCarousel.goTo({{ $i }})"
+                            class="hero-dot w-2 h-2 rounded-full transition-all duration-300 {{ $i === 0 ? 'bg-white w-5' : 'bg-white/40' }}"
+                            aria-label="Ir al slide {{ $i + 1 }}"></button>
+                    @endforeach
+                </div>
+            @endif
         </div>
+
+        @if(count($__covers) > 1)
+        <script>
+            const heroCarousel = (() => {
+                const slides = document.querySelectorAll('.hero-slide');
+                const dots   = document.querySelectorAll('.hero-dot');
+                let current  = 0;
+                let timer;
+
+                function show(index) {
+                    slides[current].classList.replace('opacity-100', 'opacity-0');
+                    slides[current].classList.replace('z-10', 'z-0');
+                    dots[current].classList.remove('bg-white', 'w-5');
+                    dots[current].classList.add('bg-white/40');
+
+                    current = (index + slides.length) % slides.length;
+
+                    slides[current].classList.replace('opacity-0', 'opacity-100');
+                    slides[current].classList.replace('z-0', 'z-10');
+                    dots[current].classList.remove('bg-white/40');
+                    dots[current].classList.add('bg-white', 'w-5');
+                }
+
+                function next()         { show(current + 1); resetTimer(); }
+                function prev()         { show(current - 1); resetTimer(); }
+                function goTo(i)        { show(i);           resetTimer(); }
+                function resetTimer()   { clearInterval(timer); timer = setInterval(next, 5000); }
+
+                resetTimer();
+                return { next, prev, goTo };
+            })();
+        </script>
+        @endif
     </section>
 
     <section class="bg-white border-b border-borde">

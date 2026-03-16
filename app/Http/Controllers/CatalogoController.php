@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
+use App\Models\Cover;
 use App\Models\Producto;
 use App\Models\Talla;
 use Illuminate\Http\Request;
@@ -61,7 +62,19 @@ class CatalogoController extends Controller
                 ];
             })->toArray();
 
-        return view('home', compact('categorias', 'destacados'));
+        $covers = Cover::activos()->get()->map(function ($c) {
+            return [
+                'titulo'      => $c->titulo,
+                'subtitulo'   => $c->subtitulo,
+                'texto_boton' => $c->texto_boton,
+                'url_boton'   => $c->url_boton,
+                'imagen'      => $c->imagen
+                    ? (str_starts_with($c->imagen, 'http') ? $c->imagen : Storage::url($c->imagen))
+                    : null,
+            ];
+        })->toArray();
+
+        return view('home', compact('categorias', 'destacados', 'covers'));
     }
 
     public function catalogo(Request $request)
