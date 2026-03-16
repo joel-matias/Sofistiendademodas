@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\ProductoController as AdminProductoController;
 use App\Http\Controllers\Admin\CategoriaController as AdminCategoriaController;
 use App\Http\Controllers\Admin\TallaController;
 use App\Http\Controllers\Admin\ColorController;
+use App\Http\Controllers\Admin\CoverController;
+use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
@@ -68,4 +70,14 @@ Route::prefix('admin')
         Route::get('colores/{color}/editar', [ColorController::class, 'edit'])->name('colores.edit');
         Route::put('colores/{color}', [ColorController::class, 'update'])->name('colores.update');
         Route::delete('colores/{color}', [ColorController::class, 'destroy'])->name('colores.destroy');
+
+        Route::get('covers', [CoverController::class, 'index'])->name('covers.index');
+        Route::get('covers/crear', [CoverController::class, 'create'])->name('covers.create');
+        Route::post('covers', [CoverController::class, 'store'])->name('covers.store');
+        Route::get('covers/{cover}/editar', [CoverController::class, 'edit'])->name('covers.edit');
+        Route::put('covers/{cover}', [CoverController::class, 'update'])->name('covers.update');
+        Route::delete('covers/{cover}', [CoverController::class, 'destroy'])->name('covers.destroy');
+
+        Route::get('usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
+        Route::patch('usuarios/{usuario}/role', [UsuarioController::class, 'updateRole'])->name('usuarios.role');
     });
