@@ -209,7 +209,7 @@ class CatalogoController extends Controller
                 return [
                     'nombre' => $p->nombre,
                     'slug' => $p->slug,
-                    'imagen' => $p->imagen,
+                    'imagen' => $this->urlImagen($p->imagen),
                     'precio' => $p->precio,
                     'oferta' => (bool) $p->oferta,
                     'precio_oferta' => $p->precio_oferta,
