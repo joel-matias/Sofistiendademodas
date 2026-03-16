@@ -403,7 +403,7 @@
     async function fetchSuggestions(q) {
         if (!q || q.length < 2) return [];
         try {
-            const r = await fetch(`{{ route('buscar.sugerencias') }}?q=${encodeURIComponent(q)}`, {
+            const r = await fetch(`/buscar/sugerencias?q=${encodeURIComponent(q)}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 }
