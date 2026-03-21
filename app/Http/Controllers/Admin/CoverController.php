@@ -74,6 +74,21 @@ class CoverController extends Controller
         return redirect()->route('admin.covers.index')->with('success', 'Cover actualizado.');
     }
 
+    public function reorder(Request $request)
+    {
+        $request->validate([
+            'orden'         => 'required|array',
+            'orden.*.id'    => 'required|integer|exists:covers,id',
+            'orden.*.orden' => 'required|integer|min:0',
+        ]);
+
+        foreach ($request->input('orden') as $item) {
+            Cover::where('id', $item['id'])->update(['orden' => $item['orden']]);
+        }
+
+        return response()->json(['ok' => true]);
+    }
+
     public function destroy(Cover $cover)
     {
         if ($cover->imagen && !str_starts_with($cover->imagen, 'http')) {

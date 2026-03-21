@@ -88,7 +88,7 @@
 
     {{-- Últimos productos --}}
     <div class="card overflow-hidden">
-        <div class="px-5 py-4 border-b border-borde flex items-center justify-between">
+        <div class="px-4 sm:px-5 py-4 border-b border-borde flex items-center justify-between">
             <h2 class="font-display text-lg">Últimos productos</h2>
             <a href="{{ route('admin.productos.index') }}"
                 class="text-xs text-gris hover:text-tinta transition underline underline-offset-2">
@@ -96,7 +96,45 @@
             </a>
         </div>
 
-        <div class="overflow-x-auto">
+        {{-- Mobile cards --}}
+        <div class="divide-y divide-borde sm:hidden">
+            @forelse($stats['ultimosProductos'] as $producto)
+                <div class="px-4 py-3 flex items-center gap-3">
+                    @if ($producto->imagen)
+                        <img src="{{ str_starts_with($producto->imagen, 'http') ? $producto->imagen : Storage::url($producto->imagen) }}"
+                             class="w-10 h-12 object-cover rounded-lg border border-borde flex-shrink-0">
+                    @else
+                        <div class="w-10 h-12 bg-gray-100 rounded-lg border border-borde flex items-center justify-center text-gray-300 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                    @endif
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate">{{ $producto->nombre }}</p>
+                        <p class="text-xs text-gris">
+                            @if ($producto->oferta && $producto->precio_oferta)
+                                <span class="line-through mr-1">${{ number_format($producto->precio, 0) }}</span>
+                                <span class="font-semibold text-tinta">${{ number_format($producto->precio_oferta, 0) }}</span>
+                            @else
+                                ${{ number_format($producto->precio, 0) }}
+                            @endif
+                        </p>
+                    </div>
+                    <a href="{{ route('admin.productos.edit', $producto) }}"
+                       class="text-xs text-gris hover:text-tinta transition font-medium px-2.5 py-1.5 rounded-lg hover:bg-gray-100 flex-shrink-0">
+                        Editar
+                    </a>
+                </div>
+            @empty
+                <div class="px-5 py-8 text-center text-gris text-sm">
+                    No hay productos aún.
+                </div>
+            @endforelse
+        </div>
+
+        <div class="overflow-x-auto hidden sm:block">
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-b border-borde bg-gray-50">
