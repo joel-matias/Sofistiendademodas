@@ -16,7 +16,8 @@ export default {
       crema: "#FAFAF7",
       gris: "#6B7280",
       borde: "#E5E7EB",
-      acento: "#111827"
+      acento: "#111827",
+      moda:  "#B5896B",
     },
     boxShadow: {
       suave: "0 10px 30px rgba(0,0,0,.07)",

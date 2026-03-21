@@ -74,6 +74,7 @@ Route::prefix('admin')
         Route::get('covers', [CoverController::class, 'index'])->name('covers.index');
         Route::get('covers/crear', [CoverController::class, 'create'])->name('covers.create');
         Route::post('covers', [CoverController::class, 'store'])->name('covers.store');
+        Route::post('covers/reorder', [CoverController::class, 'reorder'])->name('covers.reorder');
         Route::get('covers/{cover}/editar', [CoverController::class, 'edit'])->name('covers.edit');
         Route::put('covers/{cover}', [CoverController::class, 'update'])->name('covers.update');
         Route::delete('covers/{cover}', [CoverController::class, 'destroy'])->name('covers.destroy');

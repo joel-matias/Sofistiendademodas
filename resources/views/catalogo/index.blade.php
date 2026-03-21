@@ -19,45 +19,43 @@
         </div>
 
         {{-- Filters --}}
-        <form id="filtersForm" method="GET" action="{{ route('catalogo') }}" class="mb-8 flex flex-wrap items-center gap-2.5">
+        <form id="filtersForm" method="GET" action="{{ route('catalogo') }}" class="mb-8">
             <input type="hidden" name="categoria" value="{{ request('categoria') }}">
 
-            <select name="orden" onchange="document.getElementById('filtersForm').submit()"
-                class="input text-sm w-auto min-w-[160px]">
-                <option value="">Ordenar</option>
-                <option value="nuevos" {{ request('orden') === 'nuevos' ? 'selected' : '' }}>Más nuevos</option>
-                <option value="precio_menor" {{ request('orden') === 'precio_menor' ? 'selected' : '' }}>Precio: menor →
-                    mayor</option>
-                <option value="precio_mayor" {{ request('orden') === 'precio_mayor' ? 'selected' : '' }}>Precio: mayor →
-                    menor</option>
-            </select>
+            <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2.5">
+                <select name="orden" onchange="document.getElementById('filtersForm').submit()"
+                    class="input text-sm w-full sm:w-auto sm:min-w-[160px]">
+                    <option value="">Ordenar</option>
+                    <option value="nuevos" {{ request('orden') === 'nuevos' ? 'selected' : '' }}>Más nuevos</option>
+                    <option value="precio_menor" {{ request('orden') === 'precio_menor' ? 'selected' : '' }}>Precio: menor → mayor</option>
+                    <option value="precio_mayor" {{ request('orden') === 'precio_mayor' ? 'selected' : '' }}>Precio: mayor → menor</option>
+                </select>
 
-            <select name="talla" onchange="document.getElementById('filtersForm').submit()" class="input text-sm w-auto">
-                <option value="">Talla</option>
-                @if (!empty($availableTallas))
-                    @foreach ($availableTallas as $t)
-                        <option value="{{ $t }}" {{ request('talla') === $t ? 'selected' : '' }}>
-                            {{ strtoupper($t) }}</option>
-                    @endforeach
-                @else
-                    @foreach (['CH', 'S', 'M', 'G', 'XL', '2XL'] as $t)
-                        <option value="{{ $t }}" {{ request('talla') === $t ? 'selected' : '' }}>
-                            {{ $t }}</option>
-                    @endforeach
+                <select name="talla" onchange="document.getElementById('filtersForm').submit()" class="input text-sm w-full sm:w-auto">
+                    <option value="">Talla</option>
+                    @if (!empty($availableTallas))
+                        @foreach ($availableTallas as $t)
+                            <option value="{{ $t }}" {{ request('talla') === $t ? 'selected' : '' }}>{{ strtoupper($t) }}</option>
+                        @endforeach
+                    @else
+                        @foreach (['CH', 'S', 'M', 'G', 'XL', '2XL'] as $t)
+                            <option value="{{ $t }}" {{ request('talla') === $t ? 'selected' : '' }}>{{ $t }}</option>
+                        @endforeach
+                    @endif
+                </select>
+
+                @if (request()->hasAny(['orden', 'talla', 'search']))
+                    <a href="{{ route('catalogo', array_filter(['categoria' => request('categoria')])) }}"
+                        class="btn-ghost text-sm py-2.5 w-full sm:w-auto text-center">
+                        Limpiar filtros
+                    </a>
                 @endif
-            </select>
 
-            @if (request()->hasAny(['orden', 'talla', 'search']))
-                <a href="{{ route('catalogo', array_filter(['categoria' => request('categoria')])) }}"
-                    class="btn-ghost text-sm py-2.5">
-                    Limpiar filtros
-                </a>
-            @endif
-
-            {{-- Product count --}}
-            <p class="ml-auto text-sm text-gris hidden sm:block">
-                {{ $productos->total() }} {{ $productos->total() === 1 ? 'producto' : 'productos' }}
-            </p>
+                {{-- Product count --}}
+                <p class="text-sm text-gris sm:ml-auto">
+                    {{ $productos->total() }} {{ $productos->total() === 1 ? 'producto' : 'productos' }}
+                </p>
+            </div>
         </form>
 
         {{-- Grid --}}

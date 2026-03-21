@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Panel Admin') · Sofis</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -204,12 +205,19 @@
             document.getElementById('sidebar').classList.add('-translate-x-full');
             document.getElementById('sidebarOverlay').classList.add('hidden');
         }
+        // Close sidebar on navigation (mobile UX)
+        document.querySelectorAll('#sidebar a').forEach(a => {
+            a.addEventListener('click', () => {
+                if (window.innerWidth < 1024) closeSidebar();
+            });
+        });
         // Auto-dismiss flash messages
         setTimeout(() => {
             const flash = document.getElementById('flash-success');
             if (flash) flash.remove();
         }, 4000);
     </script>
+    @stack('scripts')
 </body>
 
 </html>
