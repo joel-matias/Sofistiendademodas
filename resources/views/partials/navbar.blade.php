@@ -25,16 +25,15 @@
             {{-- nav para escritorio --}}
             <nav class="hidden lg:flex items-center gap-5 mr-4 text-[12px] font-semibold tracking-[0.12em] uppercase">
                 <a href="{{ route('catalogo', ['categoria' => 'lo-nuevo']) }}"
-                    class="{{ request()->get('categoria') === 'lo-nuevo' ? 'text-tinta' : 'text-gris' }} hover:text-tinta transition">Lo
-                    nuevo</a>
+                    class="{{ request()->get('categoria') === 'lo-nuevo' ? 'text-tinta border-b border-tinta pb-0.5' : 'text-gris' }} hover:text-tinta transition">Lo nuevo</a>
                 <a href="{{ route('catalogo', ['categoria' => 'ropa']) }}"
-                    class="{{ request()->get('categoria') === 'ropa' ? 'text-tinta' : 'text-gris' }} hover:text-tinta transition">Ropa</a>
+                    class="{{ request()->get('categoria') === 'ropa' ? 'text-tinta border-b border-tinta pb-0.5' : 'text-gris' }} hover:text-tinta transition">Ropa</a>
                 <a href="{{ route('catalogo', ['categoria' => 'calzado']) }}"
-                    class="{{ request()->get('categoria') === 'calzado' ? 'text-tinta' : 'text-gris' }} hover:text-tinta transition">Calzado</a>
+                    class="{{ request()->get('categoria') === 'calzado' ? 'text-tinta border-b border-tinta pb-0.5' : 'text-gris' }} hover:text-tinta transition">Calzado</a>
                 <a href="{{ route('catalogo', ['categoria' => 'accesorios']) }}"
-                    class="{{ request()->get('categoria') === 'accesorios' ? 'text-tinta' : 'text-gris' }} hover:text-tinta transition">Accesorios</a>
+                    class="{{ request()->get('categoria') === 'accesorios' ? 'text-tinta border-b border-tinta pb-0.5' : 'text-gris' }} hover:text-tinta transition">Accesorios</a>
                 <a href="{{ route('catalogo', ['ofertas' => 1]) }}"
-                    class="{{ request()->boolean('ofertas') ? 'text-tinta' : 'text-gris' }} hover:text-tinta transition">Ofertas</a>
+                    class="{{ request()->boolean('ofertas') ? 'text-moda border-b border-moda pb-0.5' : 'text-moda/70' }} hover:text-moda transition">Ofertas</a>
             </nav>
 
             <button type="button" onclick="toggleSearch()"
@@ -201,7 +200,7 @@
                     </a>
                 @endforeach
                 <a href="{{ route('catalogo', ['ofertas' => 1]) }}" onclick="closeMenu()"
-                    class="col-span-2 text-center py-3 px-2 text-xs font-semibold tracking-wider uppercase rounded-xl border border-borde hover:border-tinta hover:bg-white transition">
+                    class="col-span-2 text-center py-3 px-2 text-xs font-semibold tracking-wider uppercase rounded-xl border border-moda/40 text-moda hover:border-moda hover:bg-moda/5 transition">
                     Ofertas
                 </a>
             </div>

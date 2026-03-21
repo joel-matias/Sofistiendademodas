@@ -7,7 +7,7 @@
     <section class="w-full bg-tinta text-crema">
         <div class="container-full pt-16 sm:pt-24 pb-16 sm:pb-20 grid lg:grid-cols-2 gap-10 items-center">
             <div>
-                <p class="text-[11px] tracking-[0.2em] uppercase text-white/50 mb-4">Sobre nosotros</p>
+                <p class="text-[11px] tracking-[0.3em] uppercase text-moda/80 mb-4 font-medium">Sobre nosotros</p>
                 <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl leading-tight">
                     Somos Sofis<br>
                     <em class="not-italic text-white/70">Tienda de Modas</em>
@@ -22,8 +22,11 @@
                     <span class="badge border-white/20 text-white/70">Accesorios</span>
                     <span class="badge border-white/20 text-white/70">Mixto</span>
                 </div>
+                <div class="mt-8">
+                    <a href="{{ route('catalogo') }}" class="btn-outline-white">Explorar catálogo</a>
+                </div>
             </div>
-            <div class="hidden lg:block h-[320px] rounded-2xl overflow-hidden border border-white/10">
+            <div class="h-[240px] sm:h-[320px] lg:h-[400px] rounded-2xl overflow-hidden border border-white/10">
                 <img src="{{ asset('assets/img/hero.jpg') }}" alt="Sofis Tienda de Modas"
                     class="w-full h-full object-cover opacity-80">
             </div>
@@ -37,9 +40,9 @@
         </div>
         <div class="grid sm:grid-cols-3 gap-5">
             @foreach ([['title' => 'Misión', 'icon' => 'M13 10V3L4 14h7v7l9-11h-7z', 'body' => 'Ofrecer ropa, calzado y accesorios de calidad a precios accesibles para que cada persona exprese su estilo sin límites.'], ['title' => 'Visión', 'icon' => 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z', 'body' => 'Ser la marca de moda de referencia en nuestra región, reconocida por su calidad, atención y compromiso con nuestros clientes.'], ['title' => 'Valores', 'icon' => 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z', 'body' => 'Confianza, honestidad y atención personalizada. Cada cliente es único y merece una experiencia de compra excepcional.']] as $item)
-                <div class="card p-7">
-                    <div class="w-10 h-10 rounded-xl bg-tinta flex items-center justify-center mb-5">
-                        <svg class="w-5 h-5 text-crema" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="card p-7 hover:shadow-md transition-shadow duration-300">
+                    <div class="w-10 h-10 rounded-xl bg-moda/10 border border-moda/20 flex items-center justify-center mb-5">
+                        <svg class="w-5 h-5 text-moda" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                 d="{{ $item['icon'] }}" />
                         </svg>

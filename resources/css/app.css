@@ -69,4 +69,17 @@
     .section-subtitle {
         @apply mt-2 text-gris text-base leading-relaxed;
     }
+
+    .badge-moda {
+        @apply inline-flex items-center rounded-full bg-moda text-white px-3 py-1 text-[11px] tracking-[0.12em] uppercase font-medium;
+    }
+
+    .btn-moda {
+        @apply btn bg-moda text-white hover:bg-moda/85 active:scale-[0.98];
+    }
+
+    /* Product card hover overlay */
+    .product-overlay {
+        @apply absolute inset-0 bg-tinta/0 group-hover:bg-tinta/10 transition-all duration-300 flex items-end justify-center pb-5 opacity-0 group-hover:opacity-100;
+    }
 }

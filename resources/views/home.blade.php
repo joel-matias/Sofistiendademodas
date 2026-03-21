@@ -38,7 +38,7 @@
                     <div class="absolute inset-0 bg-gradient-to-t from-tinta/80 via-tinta/20 to-transparent"></div>
 
                     <div class="relative z-10 w-full px-6 sm:px-10 lg:px-16 pb-16 sm:pb-20">
-                        <p class="text-[11px] tracking-[0.3em] uppercase text-white/60 mb-3">Sofis Tienda de Modas</p>
+                        <p class="text-[11px] tracking-[0.3em] uppercase text-moda/80 mb-3 font-medium">Sofis Tienda de Modas</p>
                         <h1 class="font-display text-4xl sm:text-5xl lg:text-7xl text-white leading-[1.05] max-w-3xl">
                             {!! nl2br(e($cover['titulo'])) !!}
                         </h1>
@@ -120,10 +120,17 @@
     </section>
 
     <section class="bg-white border-b border-borde">
-        <div class="container-full py-4 grid grid-cols-2 sm:grid-cols-4 divide-x divide-borde text-center">
-            @foreach ([['icon' => 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10', 'text' => 'Envíos rápidos'], ['icon' => 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15', 'text' => 'Cambios fáciles'], ['icon' => 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', 'text' => 'Calidad garantizada'], ['icon' => 'M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z', 'text' => 'Atención personalizada']] as $p)
-                <div class="px-3 py-3 flex flex-col items-center gap-1.5">
-                    <svg class="w-5 h-5 text-tinta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="container-full py-3 sm:py-0 grid grid-cols-2 sm:grid-cols-4 sm:divide-x divide-borde text-center">
+            @foreach ([
+                ['icon' => 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10', 'text' => 'Envíos rápidos'],
+                ['icon' => 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15', 'text' => 'Cambios fáciles'],
+                ['icon' => 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', 'text' => 'Calidad garantizada'],
+                ['icon' => 'M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z', 'text' => 'Atención personalizada']
+            ] as $idx => $p)
+                <div class="px-3 py-3 sm:py-4 flex flex-col items-center gap-1.5
+                    {{ $idx === 1 || $idx === 3 ? 'border-l border-borde sm:border-0' : '' }}
+                    {{ $idx >= 2 ? 'border-t border-borde sm:border-0' : '' }}">
+                    <svg class="w-4 h-4 text-moda" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $p['icon'] }}" />
                     </svg>
                     <p class="text-[11px] sm:text-xs font-semibold tracking-wide text-tinta">{{ $p['text'] }}</p>
@@ -245,18 +252,27 @@
     </section>
 
     <section class="mt-20 sm:mt-24 container-full">
-        <div class="relative overflow-hidden rounded-2xl bg-tinta min-h-[240px] sm:min-h-[300px] flex items-center">
-            <div class="relative z-10 px-8 sm:px-14 py-12">
-                <p class="text-[11px] tracking-[0.2em] uppercase text-white/50 mb-3">Colección actual</p>
+        <div class="relative overflow-hidden rounded-2xl bg-tinta min-h-[260px] sm:min-h-[320px] flex items-center">
+            {{-- Decorative pattern background --}}
+            <div class="absolute inset-0 opacity-[0.04]" style="background-image: repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%); background-size: 20px 20px;"></div>
+
+            {{-- Subtle accent line --}}
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-moda rounded-l-2xl"></div>
+
+            <div class="relative z-10 px-10 sm:px-16 py-14 w-full sm:w-auto">
+                <p class="text-[10px] tracking-[0.35em] uppercase text-moda/90 mb-3 font-medium">Colección actual</p>
                 <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl text-white leading-tight max-w-xl">
                     Estilo que habla<br>por ti
                 </h2>
-                <a href="{{ route('catalogo', ['ofertas' => 1]) }}" class="btn-outline-white mt-6 inline-flex">
-                    Ver ofertas especiales
-                </a>
-            </div>
-            <div class="absolute right-0 top-0 h-full w-1/2 hidden sm:block">
-                <div class="h-full bg-gradient-to-l from-transparent via-transparent to-tinta absolute inset-0 z-10"></div>
+                <p class="mt-3 text-white/50 text-sm max-w-xs hidden sm:block">Descubre las piezas que definen cada temporada.</p>
+                <div class="mt-7 flex flex-wrap gap-3">
+                    <a href="{{ route('catalogo', ['ofertas' => 1]) }}" class="btn-outline-white">
+                        Ver ofertas especiales
+                    </a>
+                    <a href="{{ route('catalogo') }}" class="btn text-white/60 hover:text-white transition text-sm px-4 py-3">
+                        Todo el catálogo →
+                    </a>
+                </div>
             </div>
         </div>
     </section>

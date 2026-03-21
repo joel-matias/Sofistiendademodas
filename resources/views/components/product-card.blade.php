@@ -27,11 +27,18 @@
             @if (!empty($producto['oferta']))
                 <div class="absolute top-3 left-3">
                     <span
-                        class="inline-flex items-center bg-tinta text-crema text-[10px] font-semibold tracking-wider uppercase px-2 py-1 rounded-lg">
+                        class="inline-flex items-center bg-moda text-white text-[10px] font-semibold tracking-wider uppercase px-2.5 py-1 rounded-lg">
                         Oferta
                     </span>
                 </div>
             @endif
+
+            {{-- Hover overlay CTA --}}
+            <div class="absolute inset-0 bg-tinta/0 group-hover:bg-tinta/10 transition-all duration-300 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 pointer-events-none">
+                <span class="text-[10px] tracking-[0.2em] uppercase font-semibold text-white bg-tinta/80 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                    Ver detalle
+                </span>
+            </div>
         </div>
     </a>
 

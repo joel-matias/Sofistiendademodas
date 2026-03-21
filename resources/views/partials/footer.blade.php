@@ -53,7 +53,7 @@
                 <li><a href="{{ route('catalogo', ['categoria' => 'accesorios']) }}"
                         class="text-sm text-white/70 hover:text-white transition">Accesorios</a></li>
                 <li><a href="{{ route('catalogo', ['ofertas' => 1]) }}"
-                        class="text-sm text-white/70 hover:text-white transition">Ofertas</a></li>
+                        class="text-sm text-moda/80 hover:text-moda transition">Ofertas</a></li>
             </ul>
         </div>
 
