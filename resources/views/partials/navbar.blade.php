@@ -271,8 +271,9 @@
     class="fixed top-0 left-0 right-0 z-50 bg-crema border-b border-borde shadow-xl hidden
            -translate-y-full transition-transform duration-300 ease-in-out">
     <div class="w-full px-4 sm:px-6 lg:px-10 py-4 sm:py-5">
+
         <div class="flex items-center justify-between mb-4">
-            <p class="text-xs tracking-[0.2em] uppercase text-gris font-semibold">Buscar</p>
+            <p class="text-[10px] tracking-[0.2em] uppercase text-gris font-semibold">Buscar</p>
             <button onclick="closeSearch()"
                 class="p-2 rounded-lg hover:bg-white transition border border-transparent hover:border-borde">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -280,9 +281,10 @@
                 </svg>
             </button>
         </div>
+
         <form id="formSearch" action="{{ route('catalogo') }}" method="GET" class="relative">
             <input id="searchInput" name="search" type="text" value="{{ request()->get('search') }}"
-                placeholder="Buscar productos..." autocomplete="off"
+                placeholder="Buscar productos, tallas, estilos..." autocomplete="off"
                 class="w-full h-12 rounded-xl border border-borde px-5 pr-14 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-tinta/20 transition">
             <button type="submit"
                 class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-50 transition">
@@ -291,11 +293,71 @@
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
             </button>
-            <div id="searchSuggestions"
-                class="absolute left-0 right-0 mt-2 bg-white border border-borde rounded-2xl shadow-suave overflow-hidden hidden z-50">
-                <div id="suggestionsList" class="divide-y divide-borde"></div>
+
+            {{-- Panel de sugerencias rico --}}
+            <div id="searchPanel"
+                class="absolute left-0 right-0 mt-2 bg-white border border-borde rounded-2xl shadow-xl overflow-hidden hidden z-50 max-h-[70vh] overflow-y-auto">
+
+                {{-- Loading --}}
+                <div id="spLoading" class="hidden flex items-center gap-3 px-5 py-5 text-gris text-sm">
+                    <svg class="w-4 h-4 animate-spin text-gris" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                    Buscando...
+                </div>
+
+                {{-- Sugerencias de texto --}}
+                <div id="spTerms" class="hidden">
+                    <p class="px-5 pt-4 pb-1.5 text-[10px] tracking-[0.2em] uppercase text-gris font-semibold">Sugerencias</p>
+                    <div id="spTermsList"></div>
+                </div>
+
+                <div id="spDivider" class="hidden mx-5 border-t border-borde/60 my-1"></div>
+
+                {{-- Productos --}}
+                <div id="spProducts" class="hidden">
+                    <p class="px-5 pt-3 pb-1.5 text-[10px] tracking-[0.2em] uppercase text-gris font-semibold">Productos</p>
+                    <div id="spProductsList" class="divide-y divide-borde/40"></div>
+                </div>
+
+                {{-- Ver todos --}}
+                <div id="spViewAll" class="hidden border-t border-borde">
+                    <a id="spViewAllLink" href="#"
+                        class="flex items-center justify-center gap-1.5 px-5 py-3.5 text-sm font-medium text-tinta hover:bg-gray-50 transition w-full">
+                    </a>
+                </div>
+
+                {{-- Sin resultados --}}
+                <div id="spEmpty" class="hidden px-5 py-10 text-center">
+                    <svg class="w-10 h-10 mx-auto text-gray-200 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <p class="text-sm text-gris">Sin resultados para "<span id="spEmptyQuery" class="text-tinta font-medium"></span>"</p>
+                    <a href="{{ route('catalogo') }}" class="text-xs text-gris hover:text-tinta underline underline-offset-2 mt-2 inline-block">Ver todo el catálogo</a>
+                </div>
+
             </div>
         </form>
+
+        {{-- Explorar (estado inicial, sin texto) --}}
+        <div id="searchQuickLinks" class="mt-5">
+            <p class="text-[10px] tracking-[0.2em] uppercase text-gris font-semibold mb-3">Explorar</p>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('catalogo', ['categoria' => 'lo-nuevo']) }}" onclick="closeSearch()"
+                    class="px-3.5 py-1.5 rounded-full text-xs font-medium border border-borde hover:border-tinta hover:bg-white transition text-tinta">Lo nuevo</a>
+                <a href="{{ route('catalogo', ['categoria' => 'ropa']) }}" onclick="closeSearch()"
+                    class="px-3.5 py-1.5 rounded-full text-xs font-medium border border-borde hover:border-tinta hover:bg-white transition text-tinta">Ropa</a>
+                <a href="{{ route('catalogo', ['categoria' => 'calzado']) }}" onclick="closeSearch()"
+                    class="px-3.5 py-1.5 rounded-full text-xs font-medium border border-borde hover:border-tinta hover:bg-white transition text-tinta">Calzado</a>
+                <a href="{{ route('catalogo', ['categoria' => 'accesorios']) }}" onclick="closeSearch()"
+                    class="px-3.5 py-1.5 rounded-full text-xs font-medium border border-borde hover:border-tinta hover:bg-white transition text-tinta">Accesorios</a>
+                <a href="{{ route('catalogo', ['ofertas' => 1]) }}" onclick="closeSearch()"
+                    class="px-3.5 py-1.5 rounded-full text-xs font-medium border border-borde border-amber-200 text-amber-600 hover:bg-amber-50 transition">Ofertas</a>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -328,7 +390,13 @@
             requestAnimationFrame(() => d.classList.remove('-translate-y-full'));
             o.classList.remove('hidden');
             document.body.classList.add('overflow-hidden');
-            setTimeout(() => document.getElementById('searchInput')?.focus(), 250);
+            // Ensure quick links visible & panel hidden on open
+            document.getElementById('searchPanel')?.classList.add('hidden');
+            document.getElementById('searchQuickLinks')?.classList.remove('hidden');
+            setTimeout(() => {
+                const si = document.getElementById('searchInput');
+                if (si) { si.focus(); if (!si.value.trim()) si.value = ''; }
+            }, 250);
         } else closeSearch();
     }
 
@@ -338,7 +406,7 @@
         d.classList.add('-translate-y-full');
         o.classList.add('hidden');
         document.body.classList.remove('overflow-hidden');
-        hideSuggestions();
+        document.getElementById('searchPanel')?.classList.add('hidden');
         setTimeout(() => d.classList.add('hidden'), 300);
     }
 
@@ -355,91 +423,200 @@
         if (wrapper && !wrapper.contains(e.target)) closeUserMenu();
     });
 
-    const input = document.getElementById('searchInput');
-    const box = document.getElementById('searchSuggestions');
-    const list = document.getElementById('suggestionsList');
-    let debounce = null,
-        activeIdx = -1;
+    // ── Search panel ────────────────────────────────────────────────────────
+    const searchInput = document.getElementById('searchInput');
+    const searchPanel = document.getElementById('searchPanel');
+    const searchQuickLinks = document.getElementById('searchQuickLinks');
+    let srDebounce = null, srActiveIdx = -1, srOptions = [];
 
-    function hideSuggestions() {
-        if (list) list.innerHTML = '';
-        box?.classList.add('hidden');
-        activeIdx = -1;
+    function srEscape(str) {
+        return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    function renderSuggestions(items) {
-        if (!items?.length) {
-            hideSuggestions();
+    function srHidePanel() {
+        searchPanel?.classList.add('hidden');
+        srActiveIdx = -1;
+        srOptions = [];
+    }
+
+    function srShowPanel() {
+        searchPanel?.classList.remove('hidden');
+        searchQuickLinks?.classList.add('hidden');
+    }
+
+    function srShowQuickLinks() {
+        searchQuickLinks?.classList.remove('hidden');
+        srHidePanel();
+    }
+
+    function srSetLoading(on) {
+        document.getElementById('spLoading')?.classList.toggle('hidden', !on);
+        if (on) {
+            ['spTerms','spDivider','spProducts','spViewAll','spEmpty'].forEach(id =>
+                document.getElementById(id)?.classList.add('hidden'));
+            srShowPanel();
+        }
+    }
+
+    function srUpdateActive() {
+        srOptions.forEach((el, i) => el.classList.toggle('bg-gray-50', i === srActiveIdx));
+    }
+
+    function srRender(data, query) {
+        const { terminos = [], produtos, productos = produtos ?? [], total = 0 } = data;
+        srSetLoading(false);
+        document.getElementById('spLoading')?.classList.add('hidden');
+
+        if (!terminos.length && !productos.length) {
+            const el = document.getElementById('spEmpty');
+            const q = document.getElementById('spEmptyQuery');
+            if (q) q.textContent = query;
+            el?.classList.remove('hidden');
+            ['spTerms','spDivider','spProducts','spViewAll'].forEach(id =>
+                document.getElementById(id)?.classList.add('hidden'));
+            srShowPanel();
+            srOptions = [];
             return;
         }
-        list.innerHTML = '';
-        activeIdx = -1;
-        items.forEach((item, i) => {
-            const a = document.createElement('a');
-            a.href = item.url || '#';
-            a.className = 'flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition';
-            a.setAttribute('role', 'option');
-            const img = document.createElement('img');
-            img.src = item.imagen ?? '{{ asset('assets/img/placeholder-category.jpg') }}';
-            img.className = 'w-11 h-14 object-cover rounded-lg border border-borde bg-gray-100 flex-shrink-0';
-            img.loading = 'lazy';
-            const div = document.createElement('div');
-            div.className = 'flex-1 min-w-0';
-            const pN = document.createElement('p');
-            pN.className = 'text-sm font-medium text-tinta truncate';
-            pN.textContent = item.nombre ?? '';
-            const pP = document.createElement('p');
-            pP.className = 'text-xs text-gris mt-0.5';
-            const price = item.oferta && item.precio_oferta ? item.precio_oferta : item.precio;
-            pP.textContent = `$${Number(price || 0).toLocaleString()} MXN`;
-            div.append(pN, pP);
-            a.append(img, div);
-            a.addEventListener('click', hideSuggestions);
-            list.appendChild(a);
-        });
-        box?.classList.remove('hidden');
-    }
-    async function fetchSuggestions(q) {
-        if (!q || q.length < 2) return [];
-        try {
-            const r = await fetch(`/buscar/sugerencias?q=${encodeURIComponent(q)}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
+
+        document.getElementById('spEmpty')?.classList.add('hidden');
+        srOptions = [];
+
+        // — Términos —
+        const termsList = document.getElementById('spTermsList');
+        const termsEl   = document.getElementById('spTerms');
+        if (terminos.length && termsList && termsEl) {
+            termsList.innerHTML = '';
+            terminos.forEach(term => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'w-full flex items-center gap-3 px-5 py-2.5 hover:bg-gray-50 transition text-left group';
+                btn.innerHTML =
+                    `<svg class="w-3.5 h-3.5 flex-shrink-0" style="color:#9CA3AF" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <span class="text-sm text-tinta flex-1 truncate">${srEscape(term)}</span>
+                    <svg class="w-3 h-3 flex-shrink-0 opacity-0 group-hover:opacity-40 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7v10"/>
+                    </svg>`;
+                btn.addEventListener('click', () => {
+                    searchInput.value = term;
+                    srHidePanel();
+                    document.getElementById('formSearch').submit();
+                });
+                termsList.appendChild(btn);
+                srOptions.push(btn);
             });
-            return await r.json();
-        } catch {
-            return [];
+            termsEl.classList.remove('hidden');
+        } else {
+            termsEl?.classList.add('hidden');
         }
+
+        // — Divider —
+        const divider = document.getElementById('spDivider');
+        divider?.classList.toggle('hidden', !(terminos.length && productos.length));
+
+        // — Productos —
+        const prodList = document.getElementById('spProductsList');
+        const prodEl   = document.getElementById('spProducts');
+        if (productos.length && prodList && prodEl) {
+            prodList.innerHTML = '';
+            productos.forEach(p => {
+                const a = document.createElement('a');
+                a.href = p.url || '#';
+                a.className = 'flex items-center gap-3.5 px-5 py-3 hover:bg-gray-50 transition';
+                const price = p.oferta && p.precio_oferta ? p.precio_oferta : p.precio;
+                const orig  = p.oferta && p.precio_oferta ? p.precio : null;
+                const imgHtml = p.imagen
+                    ? `<img src="${srEscape(p.imagen)}" alt="${srEscape(p.nombre)}" class="w-full h-full object-cover" loading="lazy">`
+                    : `<svg class="w-4 h-4" style="color:#D1D5DB" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>`;
+                const ofertaBadge = p.oferta
+                    ? `<span style="font-size:10px;background:#FEF3C7;color:#D97706;border:1px solid #FDE68A;padding:1px 6px;border-radius:999px;font-weight:500;flex-shrink:0">Oferta</span>` : '';
+                const origHtml = orig
+                    ? `<span style="font-size:11px;color:#9CA3AF;text-decoration:line-through">$${Number(orig).toLocaleString()}</span>` : '';
+                a.innerHTML =
+                    `<div class="w-10 h-12 rounded-lg overflow-hidden border border-borde bg-gray-100 flex-shrink-0 flex items-center justify-center">${imgHtml}</div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-tinta truncate">${srEscape(p.nombre)}</p>
+                        <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                            ${origHtml}
+                            <span class="text-sm font-semibold text-tinta">$${Number(price).toLocaleString()}</span>
+                            ${ofertaBadge}
+                        </div>
+                    </div>
+                    <svg class="w-4 h-4 flex-shrink-0" style="color:#D1D5DB" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+                    </svg>`;
+                a.addEventListener('click', srHidePanel);
+                prodList.appendChild(a);
+                srOptions.push(a);
+            });
+            prodEl.classList.remove('hidden');
+        } else {
+            prodEl?.classList.add('hidden');
+        }
+
+        // — Ver todos —
+        const viewAllEl   = document.getElementById('spViewAll');
+        const viewAllLink = document.getElementById('spViewAllLink');
+        if (total > 0 && viewAllEl && viewAllLink) {
+            const url = `{{ route('catalogo') }}?search=${encodeURIComponent(query)}`;
+            viewAllLink.href = url;
+            viewAllLink.innerHTML =
+                `Ver los <strong class="mx-1">${total}</strong> resultado${total === 1 ? '' : 's'} para "<em>${srEscape(query)}</em>"
+                <svg class="w-4 h-4 ml-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>`;
+            viewAllEl.classList.remove('hidden');
+            srOptions.push(viewAllLink);
+        } else {
+            viewAllEl?.classList.add('hidden');
+        }
+
+        srShowPanel();
     }
-    input?.addEventListener('input', function() {
-        clearTimeout(debounce);
-        if (this.value.trim().length < 2) {
-            hideSuggestions();
-            return;
-        }
-        debounce = setTimeout(async () => renderSuggestions(await fetchSuggestions(this.value.trim())), 220);
+
+    async function srFetch(q) {
+        try {
+            const r = await fetch(`{{ route('buscar.sugerencias') }}?q=${encodeURIComponent(q)}`,
+                { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            return await r.json();
+        } catch { return { terminos: [], productos: [], total: 0 }; }
+    }
+
+    searchInput?.addEventListener('input', function () {
+        clearTimeout(srDebounce);
+        const val = this.value.trim();
+        if (!val) { srShowQuickLinks(); return; }
+        if (val.length < 2) { srHidePanel(); return; }
+        srSetLoading(true);
+        srDebounce = setTimeout(async () => srRender(await srFetch(val), val), 220);
     });
-    input?.addEventListener('keydown', function(e) {
-        const opts = list?.querySelectorAll('[role=option]') ?? [];
+
+    searchInput?.addEventListener('keydown', function (e) {
+        if (searchPanel?.classList.contains('hidden')) return;
         if (e.key === 'ArrowDown') {
             e.preventDefault();
-            activeIdx = Math.min(activeIdx + 1, opts.length - 1);
-            opts.forEach((o, i) => o.classList.toggle('bg-gray-100', i === activeIdx));
+            srActiveIdx = Math.min(srActiveIdx + 1, srOptions.length - 1);
+            srUpdateActive();
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
-            activeIdx = Math.max(activeIdx - 1, 0);
-            opts.forEach((o, i) => o.classList.toggle('bg-gray-100', i === activeIdx));
-        } else if (e.key === 'Enter' && activeIdx >= 0) {
+            srActiveIdx = Math.max(srActiveIdx - 1, 0);
+            srUpdateActive();
+        } else if (e.key === 'Enter' && srActiveIdx >= 0) {
             e.preventDefault();
-            opts[activeIdx]?.click();
+            srOptions[srActiveIdx]?.click();
         } else if (e.key === 'Escape') {
-            hideSuggestions();
+            srHidePanel();
             this.blur();
         }
     });
+
     document.addEventListener('click', e => {
-        if (box && input && !box.contains(e.target) && e.target !== input) hideSuggestions();
+        if (searchPanel && searchInput &&
+            !searchPanel.contains(e.target) && e.target !== searchInput) {
+            srHidePanel();
+        }
     });
 
     (function() {
