@@ -204,32 +204,46 @@ class CatalogoController extends Controller
         $q = trim((string) $request->query('q', ''));
 
         if (mb_strlen($q) < 2) {
-            return response()->json([]);
+            return response()->json(['terminos' => [], 'productos' => [], 'total' => 0]);
         }
 
-        $productos = Producto::query()
-            ->where('activo', true)
-            ->where(function ($query) use ($q) {
-                $query->where('nombre', 'like', "%{$q}%")
-                    ->orWhere('descripcion', 'like', "%{$q}%");
-            })
-            ->orderBy('nombre')
-            ->limit(8)
-            ->get(['id', 'nombre', 'slug', 'imagen', 'precio', 'oferta', 'precio_oferta']);
+        $where = function ($query) use ($q) {
+            $query->where('nombre', 'like', "%{$q}%")
+                  ->orWhere('descripcion', 'like', "%{$q}%");
+        };
 
-        return response()->json(
-            $productos->map(function ($p) {
+        $total = Producto::where('activo', true)->where($where)->count();
+
+        $productos = Producto::where('activo', true)
+            ->where($where)
+            ->orderBy('nombre')
+            ->limit(4)
+            ->get(['id', 'nombre', 'slug', 'imagen', 'precio', 'oferta', 'precio_oferta'])
+            ->map(function ($p) {
                 return [
-                    'nombre' => $p->nombre,
-                    'slug' => $p->slug,
-                    'imagen' => $this->urlImagen($p->imagen),
-                    'precio' => $p->precio,
-                    'oferta' => (bool) $p->oferta,
+                    'nombre'        => $p->nombre,
+                    'slug'          => $p->slug,
+                    'imagen'        => $this->urlImagen($p->imagen),
+                    'precio'        => $p->precio,
+                    'oferta'        => (bool) $p->oferta,
                     'precio_oferta' => $p->precio_oferta,
-                    'url' => route('producto', $p->slug),
+                    'url'           => route('producto', $p->slug),
                 ];
-            })
-        );
+            });
+
+        $terminos = Producto::where('activo', true)
+            ->where('nombre', 'like', "%{$q}%")
+            ->orderBy('nombre')
+            ->limit(5)
+            ->pluck('nombre')
+            ->values()
+            ->toArray();
+
+        return response()->json([
+            'terminos' => $terminos,
+            'productos' => $productos,
+            'total'    => $total,
+        ]);
     }
 
     public function producto($slug)
