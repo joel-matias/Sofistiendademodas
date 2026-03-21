@@ -13,11 +13,11 @@ export default {
     },
     colors: {
       tinta:  "#1A1A18",
-      crema:  "#F7F5F2",
+      crema:  "#F6F4F1",
       gris:   "#716F6A",
       borde:  "#E2DED9",
       acento: "#1A1A18",
-      moda:   "#8C7355",
+      moda:   "#B8936A",
       oferta: "#9B1D3A",
     },
     boxShadow: {
