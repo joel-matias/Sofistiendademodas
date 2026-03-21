@@ -27,8 +27,8 @@
             @if (!empty($producto['oferta']))
                 <div class="absolute top-3 left-3">
                     <span
-                        class="inline-flex items-center bg-moda text-white text-[10px] font-semibold tracking-wider uppercase px-2.5 py-1 rounded-lg">
-                        Oferta
+                        class="inline-flex items-center bg-oferta text-white text-[10px] font-semibold tracking-widest uppercase px-2.5 py-1 rounded-lg shadow-sm">
+                        Sale
                     </span>
                 </div>
             @endif
@@ -50,7 +50,7 @@
                 class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm shadow-sm border border-borde/50 flex items-center justify-center transition hover:scale-110 active:scale-95"
                 aria-label="{{ $esFavorito ? 'Quitar de favoritos' : 'Guardar en favoritos' }}">
                 <svg class="w-4 h-4 transition-all" fill="{{ $esFavorito ? 'currentColor' : 'none' }}" stroke="currentColor"
-                    viewBox="0 0 24 24" style="color: {{ $esFavorito ? '#ef4444' : '#6B7280' }}">
+                    viewBox="0 0 24 24" style="color: {{ $esFavorito ? '#ef4444' : '#716F6A' }}">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                         d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
@@ -72,9 +72,9 @@
 
         <div class="mt-1.5 flex items-baseline gap-2">
             @if (!empty($producto['oferta']) && !empty($producto['precio_oferta']))
-                <span class="text-xs text-gris line-through">${{ number_format($producto['precio'], 0) }}</span>
-                <span class="text-sm font-semibold text-tinta">${{ number_format($producto['precio_oferta'], 0) }}
+                <span class="text-sm font-semibold text-oferta">${{ number_format($producto['precio_oferta'], 0) }}
                     <span class="text-xs font-normal text-gris">MXN</span></span>
+                <span class="text-xs text-gris/70 line-through">${{ number_format($producto['precio'], 0) }}</span>
             @else
                 <span class="text-sm font-semibold text-tinta">${{ number_format($producto['precio'] ?? 0, 0) }}
                     <span class="text-xs font-normal text-gris">MXN</span></span>
@@ -93,7 +93,7 @@
                 // Optimistic UI
                 btn.dataset.favorito = esFav ? 'false' : 'true';
                 svg.setAttribute('fill', esFav ? 'none' : 'currentColor');
-                svg.style.color = esFav ? '#6B7280' : '#ef4444';
+                svg.style.color = esFav ? '#716F6A' : '#ef4444';
                 btn.setAttribute('aria-label', esFav ? 'Guardar en favoritos' : 'Quitar de favoritos');
 
                 try {
@@ -114,7 +114,7 @@
                     // Sync UI with the backend response in case the local state was stale.
                     btn.dataset.favorito = data.favorito ? 'true' : 'false';
                     svg.setAttribute('fill', data.favorito ? 'currentColor' : 'none');
-                    svg.style.color = data.favorito ? '#ef4444' : '#6B7280';
+                    svg.style.color = data.favorito ? '#ef4444' : '#716F6A';
                     btn.setAttribute('aria-label', data.favorito ? 'Quitar de favoritos' : 'Guardar en favoritos');
 
                     // Actualizar contador en navbar si existe
@@ -146,7 +146,7 @@
                     // Revert on error
                     btn.dataset.favorito = esFav ? 'true' : 'false';
                     svg.setAttribute('fill', esFav ? 'currentColor' : 'none');
-                    svg.style.color = esFav ? '#ef4444' : '#6B7280';
+                    svg.style.color = esFav ? '#ef4444' : '#716F6A';
                 }
             }
         </script>

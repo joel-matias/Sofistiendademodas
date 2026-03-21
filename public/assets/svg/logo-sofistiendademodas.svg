@@ -2,18 +2,18 @@
   <title>Sofis Tienda de Modas</title>
 
   <!-- Corner marks top-left -->
-  <line x1="18" y1="8" x2="28" y2="8" stroke="#111111" stroke-width="1" opacity="0.4"/>
-  <line x1="18" y1="8" x2="18" y2="18" stroke="#111111" stroke-width="1" opacity="0.4"/>
+  <line x1="18" y1="8" x2="28" y2="8" stroke="#1A1A18" stroke-width="1" opacity="0.4"/>
+  <line x1="18" y1="8" x2="18" y2="18" stroke="#1A1A18" stroke-width="1" opacity="0.4"/>
 
   <!-- Corner marks top-right -->
-  <line x1="242" y1="8" x2="232" y2="8" stroke="#111111" stroke-width="1" opacity="0.4"/>
-  <line x1="242" y1="8" x2="242" y2="18" stroke="#111111" stroke-width="1" opacity="0.4"/>
+  <line x1="242" y1="8" x2="232" y2="8" stroke="#1A1A18" stroke-width="1" opacity="0.4"/>
+  <line x1="242" y1="8" x2="242" y2="18" stroke="#1A1A18" stroke-width="1" opacity="0.4"/>
 
   <!-- Thin top rule -->
-  <line x1="22" y1="14" x2="238" y2="14" stroke="#111111" stroke-width="0.5" opacity="0.2"/>
+  <line x1="22" y1="14" x2="238" y2="14" stroke="#1A1A18" stroke-width="0.5" opacity="0.2"/>
 
   <!-- Small centered diamond ornament -->
-  <path d="M130 4 L134 11 L130 18 L126 11 Z" fill="#111111" opacity="0.5"/>
+  <path d="M130 4 L134 11 L130 18 L126 11 Z" fill="#1A1A18" opacity="0.5"/>
 
   <!-- Main SOFIS wordmark -->
   <text x="130" y="45"
@@ -21,26 +21,26 @@
     font-family="Georgia, 'Times New Roman', serif"
     font-size="26"
     font-weight="400"
-    fill="#111111"
+    fill="#1A1A18"
     letter-spacing="13">SOFIS</text>
 
   <!-- Bottom thin rule -->
-  <line x1="22" y1="51" x2="238" y2="51" stroke="#111111" stroke-width="0.5" opacity="0.2"/>
+  <line x1="22" y1="51" x2="238" y2="51" stroke="#1A1A18" stroke-width="0.5" opacity="0.2"/>
 
   <!-- Corner marks bottom-left -->
-  <line x1="18" y1="64" x2="28" y2="64" stroke="#111111" stroke-width="1" opacity="0.4"/>
-  <line x1="18" y1="64" x2="18" y2="54" stroke="#111111" stroke-width="1" opacity="0.4"/>
+  <line x1="18" y1="64" x2="28" y2="64" stroke="#1A1A18" stroke-width="1" opacity="0.4"/>
+  <line x1="18" y1="64" x2="18" y2="54" stroke="#1A1A18" stroke-width="1" opacity="0.4"/>
 
   <!-- Corner marks bottom-right -->
-  <line x1="242" y1="64" x2="232" y2="64" stroke="#111111" stroke-width="1" opacity="0.4"/>
-  <line x1="242" y1="64" x2="242" y2="54" stroke="#111111" stroke-width="1" opacity="0.4"/>
+  <line x1="242" y1="64" x2="232" y2="64" stroke="#1A1A18" stroke-width="1" opacity="0.4"/>
+  <line x1="242" y1="64" x2="242" y2="54" stroke="#1A1A18" stroke-width="1" opacity="0.4"/>
 
   <!-- TIENDA DE MODAS subtitle -->
   <text x="130" y="62"
     text-anchor="middle"
     font-family="Arial, Helvetica, sans-serif"
     font-size="6.5"
-    fill="#111111"
+    fill="#1A1A18"
     letter-spacing="5"
     opacity="0.45">TIENDA DE MODAS</text>
 </svg>

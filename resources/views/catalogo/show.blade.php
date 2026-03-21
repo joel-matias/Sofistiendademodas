@@ -60,17 +60,24 @@
                 </h1>
 
                 {{-- Price --}}
-                <div class="mt-5 flex items-baseline gap-3">
+                <div class="mt-5">
                     @if (!empty($producto['oferta']) && !empty($producto['precio_oferta']))
-                        <span
-                            class="text-3xl font-bold text-tinta">${{ number_format($producto['precio_oferta'], 0) }}</span>
-                        <span class="text-base text-gris font-normal">MXN</span>
-                        <span
-                            class="text-base text-gris line-through ml-1">${{ number_format($producto['precio'], 0) }}</span>
-                        <span class="badge-moda text-[10px] ml-1">Oferta</span>
+                        @php
+                            $pct = round((1 - $producto['precio_oferta'] / $producto['precio']) * 100);
+                        @endphp
+                        <div class="flex items-baseline gap-3 flex-wrap">
+                            <span class="text-3xl font-bold text-oferta">${{ number_format($producto['precio_oferta'], 0) }}</span>
+                            <span class="text-base text-gris font-normal">MXN</span>
+                            <span class="text-base text-gris/60 line-through">${{ number_format($producto['precio'], 0) }}</span>
+                        </div>
+                        <div class="mt-2 flex items-center gap-2">
+                            <span class="badge-oferta">Sale −{{ $pct }}%</span>
+                        </div>
                     @else
-                        <span class="text-3xl font-bold text-tinta">${{ number_format($producto['precio'], 0) }}</span>
-                        <span class="text-base text-gris font-normal">MXN</span>
+                        <div class="flex items-baseline gap-3">
+                            <span class="text-3xl font-bold text-tinta">${{ number_format($producto['precio'], 0) }}</span>
+                            <span class="text-base text-gris font-normal">MXN</span>
+                        </div>
                     @endif
                 </div>
 
@@ -130,7 +137,7 @@
                                 class="w-full flex items-center justify-center gap-2 btn-ghost transition-all">
                                 <svg id="heartShow" class="w-5 h-5 transition-all"
                                     fill="{{ $esFav ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24"
-                                    style="color: {{ $esFav ? '#ef4444' : '#6B7280' }}">
+                                    style="color: {{ $esFav ? '#ef4444' : '#716F6A' }}">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                                         d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                 </svg>
@@ -223,7 +230,7 @@
             // Optimistic UI
             btn.dataset.favorito = esFav ? 'false' : 'true';
             svg.setAttribute('fill', esFav ? 'none' : 'currentColor');
-            svg.style.color = esFav ? '#6B7280' : '#ef4444';
+            svg.style.color = esFav ? '#716F6A' : '#ef4444';
             text.textContent = esFav ? 'Guardar en favoritos' : 'Quitar de favoritos';
 
             try {
@@ -246,7 +253,7 @@
                 // Revert
                 btn.dataset.favorito = esFav ? 'true' : 'false';
                 svg.setAttribute('fill', esFav ? 'currentColor' : 'none');
-                svg.style.color = esFav ? '#ef4444' : '#6B7280';
+                svg.style.color = esFav ? '#ef4444' : '#716F6A';
                 text.textContent = esFav ? 'Quitar de favoritos' : 'Guardar en favoritos';
             }
         }

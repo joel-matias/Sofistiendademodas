@@ -74,6 +74,10 @@
         @apply inline-flex items-center rounded-full bg-moda text-white px-3 py-1 text-[11px] tracking-[0.12em] uppercase font-medium;
     }
 
+    .badge-oferta {
+        @apply inline-flex items-center rounded-full bg-oferta/10 text-oferta border border-oferta/20 px-2.5 py-0.5 text-[10px] tracking-[0.1em] uppercase font-semibold;
+    }
+
     .btn-moda {
         @apply btn bg-moda text-white hover:bg-moda/85 active:scale-[0.98];
     }
