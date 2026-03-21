@@ -8,11 +8,19 @@
 <article class="group relative" data-product-card data-producto-id="{{ $producto['id'] ?? '' }}">
     <a href="{{ route('producto', $producto['slug']) }}" class="block">
         <div class="overflow-hidden rounded-2xl bg-gray-100 border border-borde relative">
-            <div class="aspect-[3/4] overflow-hidden">
+            <div class="aspect-[3/4] overflow-hidden relative">
                 @if (!empty($producto['imagen']))
                     <img src="{{ $producto['imagen'] }}" alt="{{ $producto['nombre'] }}"
-                        class="w-full h-full object-cover transition duration-700 ease-out group-hover:scale-[1.06]"
+                        @class([
+                            'absolute inset-0 w-full h-full object-cover transition duration-700 ease-out group-hover:scale-[1.06]',
+                            'group-hover:opacity-0' => !empty($producto['imagen_hover']),
+                        ])
                         loading="lazy">
+                    @if (!empty($producto['imagen_hover']))
+                        <img src="{{ $producto['imagen_hover'] }}" alt="{{ $producto['nombre'] }}"
+                            class="absolute inset-0 w-full h-full object-cover transition duration-700 ease-out group-hover:scale-[1.06] opacity-0 group-hover:opacity-100"
+                            loading="lazy" aria-hidden="true">
+                    @endif
                 @else
                     <div class="w-full h-full bg-gray-100 flex items-center justify-center">
                         <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
