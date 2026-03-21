@@ -71,12 +71,26 @@
                 </div>
             </div>
 
-            {{-- Imagen --}}
+            {{-- Imagen principal --}}
             <div class="card p-6">
                 <h2 class="font-display text-lg border-b border-borde pb-3 mb-5">Imagen principal</h2>
-                <input type="file" name="imagen" accept="image/*"
+                <input type="file" name="imagen" accept="image/*" id="imagenPrincipalInput"
                     class="block w-full text-sm text-gris file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border file:border-borde file:bg-white file:text-sm file:font-medium hover:file:bg-gray-50 transition">
+                <div id="imagenPrincipalPreview" class="hidden mt-3">
+                    <p class="text-xs text-gris mb-1.5">Vista previa:</p>
+                    <img id="imagenPrincipalPreviewImg" src="" class="w-24 h-32 object-cover rounded-xl border border-borde">
+                </div>
                 <p class="mt-2 text-xs text-gris">JPG, PNG o WebP. Máx. 4 MB.</p>
+            </div>
+
+            {{-- Galería --}}
+            <div class="card p-6">
+                <h2 class="font-display text-lg border-b border-borde pb-3 mb-1">Galería de imágenes</h2>
+                <p class="text-xs text-gris mb-5">Hasta 3 imágenes adicionales. La primera se usa en el hover de las tarjetas del catálogo; todas se muestran en el detalle del producto.</p>
+                <div id="galeriaPreview" class="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-4 hidden"></div>
+                <input type="file" name="galeria[]" accept="image/*" multiple id="galeriaInput"
+                    class="block w-full text-sm text-gris file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border file:border-borde file:bg-white file:text-sm file:font-medium hover:file:bg-gray-50 transition">
+                <p class="mt-2 text-xs text-gris">Hasta 3 imágenes. JPG, PNG o WebP. Máx. 4 MB cada una.</p>
             </div>
 
             {{-- Relaciones --}}
@@ -137,5 +151,38 @@
 
         </form>
     </div>
+
+    <script>
+        // Preview imagen principal
+        document.getElementById('imagenPrincipalInput')?.addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById('imagenPrincipalPreviewImg').src = e.target.result;
+                document.getElementById('imagenPrincipalPreview').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Preview galería
+        document.getElementById('galeriaInput')?.addEventListener('change', function () {
+            const preview = document.getElementById('galeriaPreview');
+            preview.innerHTML = '';
+            const files = Array.from(this.files).slice(0, 3);
+            if (files.length === 0) { preview.classList.add('hidden'); return; }
+            preview.classList.remove('hidden');
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const div = document.createElement('div');
+                    div.className = 'aspect-[3/4] overflow-hidden rounded-xl border border-borde bg-gray-50';
+                    div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                    preview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    </script>
 
 @endsection

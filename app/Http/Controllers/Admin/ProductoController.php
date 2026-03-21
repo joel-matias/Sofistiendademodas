@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Categoria;
 use App\Models\Color;
+use App\Models\ImagenProducto;
 use App\Models\Producto;
 use App\Models\Talla;
 use Illuminate\Http\Request;
@@ -51,6 +52,7 @@ class ProductoController extends Controller
             'precio_oferta' => 'nullable|numeric|min:0',
             'activo'        => 'boolean',
             'imagen'        => 'nullable|image|max:4096',
+            'galeria.*'     => 'nullable|image|max:4096',
             'categorias'    => 'nullable|array',
             'tallas'        => 'nullable|array',
             'colores'       => 'nullable|array',
@@ -64,7 +66,22 @@ class ProductoController extends Controller
             $data['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
 
+        // Galería solo se guarda en imagenes_producto, no en $data
+        unset($data['galeria']);
+
         $producto = Producto::create($data);
+
+        // Galería: hasta 3 imágenes adicionales
+        if ($request->hasFile('galeria')) {
+            foreach (array_slice($request->file('galeria'), 0, 3) as $idx => $img) {
+                $url = $img->store('productos', 'public');
+                $producto->imagenes()->create([
+                    'url'       => $url,
+                    'orden'     => $idx + 1,
+                    'principal' => false,
+                ]);
+            }
+        }
 
         if ($request->filled('categorias')) {
             $producto->categorias()->sync($request->categorias);
@@ -88,10 +105,12 @@ class ProductoController extends Controller
         $categoriasSeleccionadas = $producto->categorias->pluck('id')->toArray();
         $tallasSeleccionadas     = $producto->tallas->pluck('id')->toArray();
         $coloresSeleccionados    = $producto->colores->pluck('id')->toArray();
+        $imagenes            = $producto->imagenes()->orderBy('orden')->get();
 
         return view('admin.productos.edit', compact(
             'producto', 'categorias', 'tallas', 'colores',
-            'categoriasSeleccionadas', 'tallasSeleccionadas', 'coloresSeleccionados'
+            'categoriasSeleccionadas', 'tallasSeleccionadas', 'coloresSeleccionados',
+            'imagenes'
         ));
     }
 
@@ -105,6 +124,7 @@ class ProductoController extends Controller
             'precio_oferta' => 'nullable|numeric|min:0',
             'activo'        => 'boolean',
             'imagen'        => 'nullable|image|max:4096',
+            'galeria.*'     => 'nullable|image|max:4096',
             'categorias'    => 'nullable|array',
             'tallas'        => 'nullable|array',
             'colores'       => 'nullable|array',
@@ -120,7 +140,22 @@ class ProductoController extends Controller
             $data['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
 
+        unset($data['galeria']);
         $producto->update($data);
+
+        // Galería: agregar nuevas (hasta completar 3 en total)
+        if ($request->hasFile('galeria')) {
+            $existentes = $producto->imagenes()->count();
+            $disponibles = max(0, 3 - $existentes);
+            foreach (array_slice($request->file('galeria'), 0, $disponibles) as $idx => $img) {
+                $url = $img->store('productos', 'public');
+                $producto->imagenes()->create([
+                    'url'       => $url,
+                    'orden'     => $existentes + $idx + 1,
+                    'principal' => false,
+                ]);
+            }
+        }
 
         $producto->categorias()->sync($request->input('categorias', []));
         $producto->tallas()->sync($request->input('tallas', []));
@@ -140,5 +175,18 @@ class ProductoController extends Controller
     {
         Producto::withTrashed()->findOrFail($id)->restore();
         return back()->with('success', 'Producto restaurado.');
+    }
+
+    public function destroyImagen(Producto $producto, ImagenProducto $imagen)
+    {
+        abort_if($imagen->producto_id !== $producto->id, 403);
+
+        if ($imagen->url && !str_starts_with($imagen->url, 'http')) {
+            Storage::disk('public')->delete($imagen->url);
+        }
+
+        $imagen->delete();
+
+        return back()->with('success', 'Imagen de galería eliminada.');
     }
 }

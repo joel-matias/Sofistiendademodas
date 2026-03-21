@@ -67,18 +67,71 @@
                 </div>
             </div>
 
+            {{-- Imagen principal --}}
             <div class="card p-6">
                 <h2 class="font-display text-lg border-b border-borde pb-3 mb-5">Imagen principal</h2>
                 @if ($producto->imagen)
-                    <div class="mb-4">
-                        <p class="text-xs text-gris mb-2">Imagen actual:</p>
+                    <div class="mb-4 flex items-start gap-4">
                         <img src="{{ str_starts_with($producto->imagen, 'http') ? $producto->imagen : \Illuminate\Support\Facades\Storage::url($producto->imagen) }}"
-                            class="w-24 h-32 object-cover rounded-xl border border-borde">
+                            class="w-24 h-32 object-cover rounded-xl border border-borde flex-shrink-0">
+                        <div>
+                            <p class="text-xs font-medium text-tinta mb-1">Imagen actual</p>
+                            <p class="text-xs text-gris">Sube una nueva para reemplazarla.</p>
+                        </div>
                     </div>
                 @endif
-                <input type="file" name="imagen" accept="image/*"
+                <input type="file" name="imagen" accept="image/*" id="imagenPrincipalInput"
                     class="block w-full text-sm text-gris file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border file:border-borde file:bg-white file:text-sm file:font-medium hover:file:bg-gray-50 transition">
-                <p class="mt-2 text-xs text-gris">Sube una nueva imagen para reemplazar la actual.</p>
+                <div id="imagenPrincipalPreview" class="hidden mt-3">
+                    <p class="text-xs text-gris mb-1.5">Vista previa:</p>
+                    <img id="imagenPrincipalPreviewImg" src="" class="w-24 h-32 object-cover rounded-xl border border-borde">
+                </div>
+                <p class="mt-2 text-xs text-gris">JPG, PNG o WebP. Máx. 4 MB.</p>
+            </div>
+
+            {{-- Galería --}}
+            <div class="card p-6">
+                <h2 class="font-display text-lg border-b border-borde pb-3 mb-1">Galería de imágenes</h2>
+                <p class="text-xs text-gris mb-5">Hasta 3 imágenes adicionales. Se muestran en el detalle del producto y en el hover de las tarjetas del catálogo.</p>
+
+                @if ($imagenes->isNotEmpty())
+                    <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-5">
+                        @foreach ($imagenes as $img)
+                            <div class="relative group/img">
+                                <div class="aspect-[3/4] overflow-hidden rounded-xl border border-borde bg-gray-50">
+                                    <img src="{{ str_starts_with($img->url, 'http') ? $img->url : \Illuminate\Support\Facades\Storage::url($img->url) }}"
+                                        class="w-full h-full object-cover">
+                                </div>
+                                <form method="POST"
+                                    action="{{ route('admin.productos.imagenes.destroy', [$producto, $img]) }}"
+                                    onsubmit="return confirm('¿Eliminar esta imagen de la galería?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit"
+                                        class="absolute top-1.5 right-1.5 w-6 h-6 bg-white rounded-full shadow-sm border border-borde flex items-center justify-center text-gris hover:text-red-500 hover:border-red-300 transition opacity-0 group-hover/img:opacity-100 text-xs font-bold leading-none">
+                                        ✕
+                                    </button>
+                                </form>
+                                <p class="mt-1 text-center text-[10px] text-gris">#{{ $loop->iteration }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+                @php $disponibles = 3 - $imagenes->count(); @endphp
+
+                @if ($disponibles > 0)
+                    <div id="galeriaPreview" class="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-4 hidden"></div>
+                    <input type="file" name="galeria[]" accept="image/*" multiple id="galeriaInput"
+                        class="block w-full text-sm text-gris file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border file:border-borde file:bg-white file:text-sm file:font-medium hover:file:bg-gray-50 transition">
+                    <p class="mt-2 text-xs text-gris">
+                        Puedes agregar hasta <strong>{{ $disponibles }}</strong> imagen{{ $disponibles > 1 ? 'es' : '' }} más.
+                        La primera imagen de la galería se usa en el hover de las tarjetas.
+                    </p>
+                @else
+                    <p class="text-sm text-gris bg-gray-50 rounded-xl px-4 py-3 border border-borde">
+                        Galería completa (3/3). Elimina alguna para agregar nuevas.
+                    </p>
+                @endif
             </div>
 
             <div class="card p-6 space-y-5">
@@ -138,5 +191,40 @@
 
         </form>
     </div>
+
+    <script>
+        // Preview imagen principal
+        document.getElementById('imagenPrincipalInput')?.addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById('imagenPrincipalPreviewImg').src = e.target.result;
+                document.getElementById('imagenPrincipalPreview').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Preview galería
+        document.getElementById('galeriaInput')?.addEventListener('change', function () {
+            const preview = document.getElementById('galeriaPreview');
+            if (!preview) return;
+            preview.innerHTML = '';
+            const maxFiles = parseInt(this.getAttribute('data-max') || '3');
+            const files = Array.from(this.files).slice(0, maxFiles);
+            if (files.length === 0) { preview.classList.add('hidden'); return; }
+            preview.classList.remove('hidden');
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const div = document.createElement('div');
+                    div.className = 'aspect-[3/4] overflow-hidden rounded-xl border border-borde bg-gray-50';
+                    div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                    preview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    </script>
 
 @endsection

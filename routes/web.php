@@ -49,6 +49,7 @@ Route::prefix('admin')
         Route::put('productos/{producto}', [AdminProductoController::class, 'update'])->name('productos.update');
         Route::delete('productos/{producto}', [AdminProductoController::class, 'destroy'])->name('productos.destroy');
         Route::post('productos/{id}/restaurar', [AdminProductoController::class, 'restore'])->name('productos.restore');
+        Route::delete('productos/{producto}/imagenes/{imagen}', [AdminProductoController::class, 'destroyImagen'])->name('productos.imagenes.destroy');
 
         Route::get('categorias', [AdminCategoriaController::class, 'index'])->name('categorias.index');
         Route::get('categorias/crear', [AdminCategoriaController::class, 'create'])->name('categorias.create');
