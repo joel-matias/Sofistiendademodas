@@ -33,7 +33,7 @@
                 <a href="{{ route('catalogo', ['categoria' => 'accesorios']) }}"
                     class="{{ request()->get('categoria') === 'accesorios' ? 'text-tinta border-b border-tinta pb-0.5' : 'text-gris' }} hover:text-tinta transition">Accesorios</a>
                 <a href="{{ route('catalogo', ['ofertas' => 1]) }}"
-                    class="{{ request()->boolean('ofertas') ? 'text-moda border-b border-moda pb-0.5' : 'text-moda/70' }} hover:text-moda transition">Ofertas</a>
+                    class="{{ request()->boolean('ofertas') ? 'text-oferta border-b border-oferta pb-0.5' : 'text-oferta/70' }} hover:text-oferta transition">Ofertas</a>
             </nav>
 
             <button type="button" onclick="toggleSearch()"
@@ -200,7 +200,7 @@
                     </a>
                 @endforeach
                 <a href="{{ route('catalogo', ['ofertas' => 1]) }}" onclick="closeMenu()"
-                    class="col-span-2 text-center py-3 px-2 text-xs font-semibold tracking-wider uppercase rounded-xl border border-moda/40 text-moda hover:border-moda hover:bg-moda/5 transition">
+                    class="col-span-2 text-center py-3 px-2 text-xs font-semibold tracking-wider uppercase rounded-xl border border-oferta/30 text-oferta hover:border-oferta hover:bg-oferta/5 transition">
                     Ofertas
                 </a>
             </div>
@@ -354,7 +354,7 @@
                 <a href="{{ route('catalogo', ['categoria' => 'accesorios']) }}" onclick="closeSearch()"
                     class="px-3.5 py-1.5 rounded-full text-xs font-medium border border-borde hover:border-tinta hover:bg-white transition text-tinta">Accesorios</a>
                 <a href="{{ route('catalogo', ['ofertas' => 1]) }}" onclick="closeSearch()"
-                    class="px-3.5 py-1.5 rounded-full text-xs font-medium border border-borde border-amber-200 text-amber-600 hover:bg-amber-50 transition">Ofertas</a>
+                    class="px-3.5 py-1.5 rounded-full text-xs font-medium border border-oferta/25 text-oferta hover:bg-oferta/5 transition">Ofertas</a>
             </div>
         </div>
 
@@ -492,7 +492,7 @@
                 btn.type = 'button';
                 btn.className = 'w-full flex items-center gap-3 px-5 py-2.5 hover:bg-gray-50 transition text-left group';
                 btn.innerHTML =
-                    `<svg class="w-3.5 h-3.5 flex-shrink-0" style="color:#9CA3AF" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    `<svg class="w-3.5 h-3.5 flex-shrink-0" style="color:#716F6A" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                     <span class="text-sm text-tinta flex-1 truncate">${srEscape(term)}</span>
@@ -529,11 +529,11 @@
                 const orig  = p.oferta && p.precio_oferta ? p.precio : null;
                 const imgHtml = p.imagen
                     ? `<img src="${srEscape(p.imagen)}" alt="${srEscape(p.nombre)}" class="w-full h-full object-cover" loading="lazy">`
-                    : `<svg class="w-4 h-4" style="color:#D1D5DB" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>`;
+                    : `<svg class="w-4 h-4" style="color:#C8C4BE" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>`;
                 const ofertaBadge = p.oferta
-                    ? `<span style="font-size:10px;background:#FEF3C7;color:#D97706;border:1px solid #FDE68A;padding:1px 6px;border-radius:999px;font-weight:500;flex-shrink:0">Oferta</span>` : '';
+                    ? `<span style="font-size:10px;background:#F4E6EA;color:#9B1D3A;border:1px solid #DFA8B4;padding:1px 7px;border-radius:999px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;flex-shrink:0">Sale</span>` : '';
                 const origHtml = orig
-                    ? `<span style="font-size:11px;color:#9CA3AF;text-decoration:line-through">$${Number(orig).toLocaleString()}</span>` : '';
+                    ? `<span style="font-size:11px;color:#716F6A;text-decoration:line-through">$${Number(orig).toLocaleString()}</span>` : '';
                 a.innerHTML =
                     `<div class="w-10 h-12 rounded-lg overflow-hidden border border-borde bg-gray-100 flex-shrink-0 flex items-center justify-center">${imgHtml}</div>
                     <div class="flex-1 min-w-0">
@@ -544,7 +544,7 @@
                             ${ofertaBadge}
                         </div>
                     </div>
-                    <svg class="w-4 h-4 flex-shrink-0" style="color:#D1D5DB" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 flex-shrink-0" style="color:#C8C4BE" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
                     </svg>`;
                 a.addEventListener('click', srHidePanel);

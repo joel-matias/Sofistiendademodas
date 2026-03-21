@@ -120,20 +120,21 @@
     </section>
 
     <section class="bg-white border-b border-borde">
-        <div class="container-full py-3 sm:py-0 grid grid-cols-2 sm:grid-cols-4 sm:divide-x divide-borde text-center">
+        <div class="container-full py-0 grid grid-cols-2 sm:grid-cols-4 sm:divide-x divide-borde text-center">
             @foreach ([
-                ['icon' => 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10', 'text' => 'Envíos rápidos'],
-                ['icon' => 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15', 'text' => 'Cambios fáciles'],
-                ['icon' => 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', 'text' => 'Calidad garantizada'],
-                ['icon' => 'M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z', 'text' => 'Atención personalizada']
+                ['icon' => 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10', 'text' => 'Envíos rápidos', 'sub' => 'A todo el país'],
+                ['icon' => 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15', 'text' => 'Cambios fáciles', 'sub' => 'Sin complicaciones'],
+                ['icon' => 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', 'text' => 'Calidad garantizada', 'sub' => 'Piezas seleccionadas'],
+                ['icon' => 'M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z', 'text' => 'Atención personal', 'sub' => 'Siempre disponibles']
             ] as $idx => $p)
-                <div class="px-3 py-3 sm:py-4 flex flex-col items-center gap-1.5
+                <div class="px-4 py-4 sm:py-5 flex flex-col items-center gap-1
                     {{ $idx === 1 || $idx === 3 ? 'border-l border-borde sm:border-0' : '' }}
                     {{ $idx >= 2 ? 'border-t border-borde sm:border-0' : '' }}">
-                    <svg class="w-4 h-4 text-moda" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-moda mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $p['icon'] }}" />
                     </svg>
-                    <p class="text-[11px] sm:text-xs font-semibold tracking-wide text-tinta">{{ $p['text'] }}</p>
+                    <p class="text-[11px] font-semibold tracking-wide text-tinta">{{ $p['text'] }}</p>
+                    <p class="text-[10px] text-gris hidden sm:block">{{ $p['sub'] }}</p>
                 </div>
             @endforeach
         </div>
@@ -266,11 +267,12 @@
                 </h2>
                 <p class="mt-3 text-white/50 text-sm max-w-xs hidden sm:block">Descubre las piezas que definen cada temporada.</p>
                 <div class="mt-7 flex flex-wrap gap-3">
-                    <a href="{{ route('catalogo', ['ofertas' => 1]) }}" class="btn-outline-white">
+                    <a href="{{ route('catalogo', ['ofertas' => 1]) }}"
+                        class="btn bg-oferta text-white hover:bg-oferta/85 active:scale-[0.98]">
                         Ver ofertas especiales
                     </a>
-                    <a href="{{ route('catalogo') }}" class="btn text-white/60 hover:text-white transition text-sm px-4 py-3">
-                        Todo el catálogo →
+                    <a href="{{ route('catalogo') }}" class="btn-outline-white">
+                        Todo el catálogo
                     </a>
                 </div>
             </div>

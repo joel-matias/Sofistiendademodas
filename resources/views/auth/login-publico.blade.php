@@ -23,9 +23,11 @@
                 <img src="{{ asset('assets/svg/logo-sofistiendademodas.svg') }}" alt="Sofis"
                     class="h-14 mx-auto object-contain">
             </a>
+            <p class="mt-2 text-[10px] tracking-[0.25em] uppercase text-gris/60">Tu tienda de moda</p>
         </div>
 
         <div class="card p-8">
+            <div class="w-8 h-px bg-moda mx-auto mb-5"></div>
             <h1 class="font-display text-2xl text-center mb-1">Bienvenida/o</h1>
             <p class="text-center text-sm text-gris mb-6">Inicia sesión en tu cuenta</p>
 

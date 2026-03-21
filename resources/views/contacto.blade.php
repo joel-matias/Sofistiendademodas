@@ -8,8 +8,8 @@
 
         <div class="max-w-2xl mx-auto">
             <p class="text-[11px] tracking-[0.2em] uppercase text-gris mb-2">Contacto</p>
-            <h1 class="section-title mb-2">¿Cómo podemos ayudarte?</h1>
-            <p class="text-gris mb-10">Escríbenos y te responderemos a la brevedad.</p>
+            <h1 class="section-title mb-3">¿Cómo podemos<br class="sm:hidden"> ayudarte?</h1>
+            <p class="text-gris text-sm sm:text-base mb-10 max-w-md">Escríbenos y te responderemos a la brevedad. Estamos para servirte.</p>
 
             <div class="grid sm:grid-cols-2 gap-6 mb-10">
                 <div class="card p-6 flex items-start gap-4 hover:border-moda/30 transition-colors duration-200">

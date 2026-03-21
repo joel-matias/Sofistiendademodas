@@ -39,7 +39,7 @@ class CatalogoController extends Controller
             ];
         })->toArray();
 
-        $destacados = Producto::with('categorias')
+        $destacados = Producto::with(['categorias', 'imagenes'])
             ->where('activo', true)
             ->orderByDesc('created_at')
             ->limit(10)
@@ -47,6 +47,9 @@ class CatalogoController extends Controller
             ->map(function ($p) {
 
                 $categoriaPrincipal = $p->categorias->first();
+                $imagenHover = $p->imagenes->isNotEmpty()
+                    ? $this->urlImagen($p->imagenes->first()->url)
+                    : null;
 
                 return [
                     'id' => $p->id,
@@ -55,6 +58,7 @@ class CatalogoController extends Controller
                     'slug' => $p->slug,
                     'descripcion' => $p->descripcion,
                     'imagen' => $this->urlImagen($p->imagen),
+                    'imagen_hover' => $imagenHover,
                     'categoria' => $categoriaPrincipal ? $categoriaPrincipal->nombre : '',
                     'categorias' => $p->categorias->pluck('nombre')->implode(', '),
                     'oferta' => (bool) $p->oferta,
@@ -81,7 +85,7 @@ class CatalogoController extends Controller
     {
         $categoriaSlug = $request->query('categoria');
 
-        $query = Producto::with('categorias')->where('activo', true);
+        $query = Producto::with(['categorias', 'imagenes'])->where('activo', true);
         if ($request->boolean('ofertas')) {
             $query->where('oferta', true);
         }
@@ -132,6 +136,9 @@ class CatalogoController extends Controller
         $productos->getCollection()->transform(function ($p) {
 
             $categoriaPrincipal = $p->categorias->first();
+            $imagenHover = $p->imagenes->isNotEmpty()
+                ? $this->urlImagen($p->imagenes->first()->url)
+                : null;
 
             return [
                 'id' => $p->id,
@@ -139,6 +146,7 @@ class CatalogoController extends Controller
                 'precio' => $p->precio,
                 'slug' => $p->slug,
                 'imagen' => $this->urlImagen($p->imagen),
+                'imagen_hover' => $imagenHover,
                 'categoria' => $categoriaPrincipal ? $categoriaPrincipal->nombre : '',
                 'categorias' => $p->categorias->pluck('nombre')->implode(', '),
                 'oferta' => (bool) $p->oferta,
@@ -308,7 +316,7 @@ class CatalogoController extends Controller
         // ✅ Recomendados por categorías (mismas categorías)
         $categoriaIds = $p->categorias->pluck('id')->toArray();
 
-        $recomendados = Producto::with('categorias')
+        $recomendados = Producto::with(['categorias', 'imagenes'])
             ->where('activo', true)
             ->where('id', '!=', $p->id)
             ->whereHas('categorias', function ($q) use ($categoriaIds) {
@@ -319,12 +327,17 @@ class CatalogoController extends Controller
             ->get()
             ->map(function ($rp) {
                 $catPrincipal = $rp->categorias->first();
+                $imagenHover = $rp->imagenes->isNotEmpty()
+                    ? $this->urlImagen($rp->imagenes->first()->url)
+                    : null;
 
                 return [
+                    'id' => $rp->id,
                     'nombre' => $rp->nombre,
                     'precio' => $rp->precio,
                     'slug' => $rp->slug,
                     'imagen' => $this->urlImagen($rp->imagen),
+                    'imagen_hover' => $imagenHover,
                     'categoria' => $catPrincipal?->nombre ?? '',
                     'categorias' => $rp->categorias->pluck('nombre')->implode(', '),
                     'oferta' => (bool) $rp->oferta,

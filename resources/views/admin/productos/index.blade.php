@@ -133,7 +133,7 @@
                                 <p class="font-medium">{{ $producto->nombre }}</p>
                                 @if ($producto->oferta)
                                     <span
-                                        class="text-[10px] bg-amber-100 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded-full">Oferta</span>
+                                        class="text-[10px] bg-oferta/10 text-oferta border border-oferta/20 px-1.5 py-0.5 rounded-full font-semibold">Sale</span>
                                 @endif
                                 @if ($producto->trashed())
                                     <span
