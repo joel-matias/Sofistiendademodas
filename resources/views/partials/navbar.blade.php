@@ -627,6 +627,7 @@
         window.addEventListener('scroll', () => {
             if (!ticking) {
                 requestAnimationFrame(() => {
+                    ticking = false;
                     const cur = window.scrollY,
                         delta = cur - last;
                     if (Math.abs(delta) < 8) return;
@@ -638,7 +639,6 @@
                             h.classList.remove('-translate-y-full');
                     }
                     last = cur <= 0 ? 0 : cur;
-                    ticking = false;
                 });
                 ticking = true;
             }
