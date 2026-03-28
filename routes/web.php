@@ -18,12 +18,14 @@ Route::get('/catalogo', [CatalogoController::class, 'catalogo'])->name('catalogo
 Route::get('/producto/{slug}', [CatalogoController::class, 'producto'])->name('producto');
 Route::get('/nosotros', [CatalogoController::class, 'nosotros'])->name('nosotros');
 Route::get('/contacto', [CatalogoController::class, 'contacto'])->name('contacto');
-Route::get('/buscar/sugerencias', [CatalogoController::class, 'sugerenciasBusqueda'])->name('buscar.sugerencias');
+Route::get('/buscar/sugerencias', [CatalogoController::class, 'sugerenciasBusqueda'])
+    ->middleware('throttle:busqueda')
+    ->name('buscar.sugerencias');
 
 Route::get('/login', [PublicAuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [PublicAuthController::class, 'login'])->name('login.post');
+Route::post('/login', [PublicAuthController::class, 'login'])->middleware('throttle:login')->name('login.post');
 Route::get('/registro', [PublicAuthController::class, 'showRegister'])->name('registro');
-Route::post('/registro', [PublicAuthController::class, 'register'])->name('registro.post');
+Route::post('/registro', [PublicAuthController::class, 'register'])->middleware('throttle:registro')->name('registro.post');
 Route::post('/logout', [PublicAuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
@@ -32,7 +34,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/admin/login', [LoginController::class, 'showLogin'])->name('admin.login');
-Route::post('/admin/login', [LoginController::class, 'login'])->name('admin.login.post');
+Route::post('/admin/login', [LoginController::class, 'login'])->middleware('throttle:admin-login')->name('admin.login.post');
 Route::post('/admin/logout', [LoginController::class, 'logout'])->name('admin.logout');
 
 Route::prefix('admin')

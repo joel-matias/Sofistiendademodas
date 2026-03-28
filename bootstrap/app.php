@@ -14,6 +14,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
+
+        // Cabeceras de seguridad en todas las respuestas web
+        $middleware->web(append: [
+            \App\Http\Middleware\SecurityHeaders::class,
+            \App\Http\Middleware\ShareViewData::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
