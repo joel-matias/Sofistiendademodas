@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
 
 class PublicAuthController extends Controller
@@ -27,6 +28,10 @@ class PublicAuthController extends Controller
         $credentials = $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required'],
+        ], [
+            'email.required'    => 'El correo electrónico es obligatorio.',
+            'email.email'       => 'Ingresa un correo electrónico válido.',
+            'password.required' => 'La contraseña es obligatoria.',
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
@@ -56,22 +61,37 @@ class PublicAuthController extends Controller
     // ── PROCESS REGISTER ────────────────────────────────────────────────────
     public function register(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::min(8)],
+        ], [
+            'name.required'      => 'Tu nombre es obligatorio.',
+            'name.max'           => 'El nombre no puede superar los 255 caracteres.',
+            'email.required'     => 'El correo electrónico es obligatorio.',
+            'email.email'        => 'Ingresa un correo electrónico válido.',
+            'email.unique'       => 'Ya existe una cuenta con ese correo electrónico.',
+            'password.required'  => 'La contraseña es obligatoria.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+            'password.min'       => 'La contraseña debe tener al menos 8 caracteres.',
         ]);
 
-        $user = User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            'password' => $data['password'],
-            'role'     => 'user',
-        ]);
+        try {
+            $user = User::create([
+                'name'     => $request->name,
+                'email'    => $request->email,
+                'password' => $request->password,
+                'role'     => 'user',
+            ]);
 
-        Auth::login($user);
+            Auth::login($user);
 
-        return redirect()->route('home')->with('success', '¡Bienvenida/o a Sofis! Tu cuenta ha sido creada.');
+            return redirect()->route('home')->with('success', '¡Bienvenida/o a Sofis! Tu cuenta ha sido creada.');
+
+        } catch (\Exception $e) {
+            Log::error('Error al registrar usuario', ['email' => $request->email, 'error' => $e->getMessage()]);
+            return back()->with('error', 'Ocurrió un error al crear tu cuenta. Por favor, intenta de nuevo.');
+        }
     }
 
     // ── LOGOUT ──────────────────────────────────────────────────────────────
