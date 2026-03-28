@@ -10,6 +10,7 @@ use App\Models\ImagenProducto;
 use App\Models\Producto;
 use App\Models\Talla;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -76,6 +77,8 @@ class ProductoController extends Controller
             $producto->tallas()->sync($request->input('tallas', []));
             $producto->colores()->sync($request->input('colores', []));
 
+            Cache::forget('home_destacados');
+
             return redirect()->route('admin.productos.index')
                 ->with('success', 'Producto creado correctamente.');
 
@@ -141,6 +144,8 @@ class ProductoController extends Controller
             $producto->tallas()->sync($request->input('tallas', []));
             $producto->colores()->sync($request->input('colores', []));
 
+            Cache::forget('home_destacados');
+
             return redirect()->route('admin.productos.index')
                 ->with('success', 'Producto actualizado correctamente.');
 
@@ -158,6 +163,7 @@ class ProductoController extends Controller
     {
         try {
             $producto->delete();
+            Cache::forget('home_destacados');
             return back()->with('success', 'Producto eliminado.');
         } catch (\Exception $e) {
             Log::error('Error al eliminar producto', [

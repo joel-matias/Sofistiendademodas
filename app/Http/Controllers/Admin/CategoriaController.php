@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CategoriaRequest;
 use App\Models\Categoria;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -33,6 +34,7 @@ class CategoriaController extends Controller
             }
 
             Categoria::create($data);
+            Cache::forget('home_categorias');
 
             return redirect()->route('admin.categorias.index')
                 ->with('success', 'Categoría creada correctamente.');
@@ -62,6 +64,7 @@ class CategoriaController extends Controller
             }
 
             $categoria->update($data);
+            Cache::forget('home_categorias');
 
             return redirect()->route('admin.categorias.index')
                 ->with('success', 'Categoría actualizada correctamente.');
@@ -83,6 +86,7 @@ class CategoriaController extends Controller
                 Storage::disk('public')->delete($categoria->imagen);
             }
             $categoria->delete();
+            Cache::forget('home_categorias');
             return back()->with('success', 'Categoría eliminada.');
         } catch (\Exception $e) {
             Log::error('Error al eliminar categoría', ['categoria' => $categoria->id, 'error' => $e->getMessage()]);

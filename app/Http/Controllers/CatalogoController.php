@@ -6,6 +6,7 @@ use App\Models\Categoria;
 use App\Models\Cover;
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class CatalogoController extends Controller
@@ -28,54 +29,63 @@ class CatalogoController extends Controller
 
     public function home()
     {
-        $categorias = Categoria::all()->map(function ($c) {
-            return [
-                'titulo' => $c->nombre,
-                'img' => $this->urlImagen($c->imagen) ?? asset('assets/img/placeholder-category.jpg'),
-                'nombre' => $c->nombre,
-                'imagen' => $this->urlImagen($c->imagen) ?? asset('assets/img/placeholder-category.jpg'),
-                'slug' => $c->slug,
-            ];
-        })->toArray();
-
-        $destacados = Producto::with(['categorias', 'imagenes'])
-            ->where('activo', true)
-            ->orderByDesc('created_at')
-            ->limit(10)
-            ->get()
-            ->map(function ($p) {
-
-                $categoriaPrincipal = $p->categorias->first();
-                $imagenHover = $p->imagenes->isNotEmpty()
-                    ? $this->urlImagen($p->imagenes->first()->url)
-                    : null;
-
+        // Categorías y covers cambian raramente → se cachean 10 minutos.
+        // Se invalidan automáticamente desde los controllers admin (ver CoverController / CategoriaController).
+        $categorias = Cache::remember('home_categorias', 600, function () {
+            return Categoria::orderBy('nombre')->get()->map(function ($c) {
+                $img = $this->urlImagen($c->imagen) ?? asset('assets/img/placeholder-category.jpg');
                 return [
-                    'id' => $p->id,
-                    'nombre' => $p->nombre,
-                    'precio' => $p->precio,
-                    'slug' => $p->slug,
-                    'descripcion' => $p->descripcion,
-                    'imagen' => $this->urlImagen($p->imagen),
-                    'imagen_hover' => $imagenHover,
-                    'categoria' => $categoriaPrincipal ? $categoriaPrincipal->nombre : '',
-                    'categorias' => $p->categorias->pluck('nombre')->implode(', '),
-                    'oferta' => (bool) $p->oferta,
-                    'precio_oferta' => $p->precio_oferta,
+                    'titulo'  => $c->nombre,
+                    'img'     => $img,
+                    'nombre'  => $c->nombre,
+                    'imagen'  => $img,
+                    'slug'    => $c->slug,
                 ];
             })->toArray();
+        });
 
-        $covers = Cover::activos()->get()->map(function ($c) {
-            return [
-                'titulo'      => $c->titulo,
-                'subtitulo'   => $c->subtitulo,
-                'texto_boton' => $c->texto_boton,
-                'url_boton'   => $c->url_boton,
-                'imagen'      => $c->imagen
-                    ? (str_starts_with($c->imagen, 'http') ? $c->imagen : Storage::url($c->imagen))
-                    : null,
-            ];
-        })->toArray();
+        $covers = Cache::remember('home_covers', 600, function () {
+            return Cover::activos()->get()->map(function ($c) {
+                return [
+                    'titulo'      => $c->titulo,
+                    'subtitulo'   => $c->subtitulo,
+                    'texto_boton' => $c->texto_boton,
+                    'url_boton'   => $c->url_boton,
+                    'imagen'      => $c->imagen
+                        ? (str_starts_with($c->imagen, 'http') ? $c->imagen : Storage::url($c->imagen))
+                        : null,
+                ];
+            })->toArray();
+        });
+
+        // Productos destacados: cambian con más frecuencia → caché de 5 minutos
+        $destacados = Cache::remember('home_destacados', 300, function () {
+            return Producto::with(['categorias', 'imagenes'])
+                ->where('activo', true)
+                ->orderByDesc('created_at')
+                ->limit(10)
+                ->get()
+                ->map(function ($p) {
+                    $categoriaPrincipal = $p->categorias->first();
+                    $imagenHover = $p->imagenes->isNotEmpty()
+                        ? $this->urlImagen($p->imagenes->first()->url)
+                        : null;
+
+                    return [
+                        'id'           => $p->id,
+                        'nombre'       => $p->nombre,
+                        'precio'       => $p->precio,
+                        'slug'         => $p->slug,
+                        'descripcion'  => $p->descripcion,
+                        'imagen'       => $this->urlImagen($p->imagen),
+                        'imagen_hover' => $imagenHover,
+                        'categoria'    => $categoriaPrincipal ? $categoriaPrincipal->nombre : '',
+                        'categorias'   => $p->categorias->pluck('nombre')->implode(', '),
+                        'oferta'       => (bool) $p->oferta,
+                        'precio_oferta' => $p->precio_oferta,
+                    ];
+                })->toArray();
+        });
 
         return view('home', compact('categorias', 'destacados', 'covers'));
     }
@@ -158,43 +168,41 @@ class CatalogoController extends Controller
 
     public function sugerenciasBusqueda(Request $request)
     {
-        $q = trim((string) $request->query('q', ''));
+        // Limitar longitud del término para evitar queries LIKE excesivamente largas
+        $q = mb_substr(trim((string) $request->query('q', '')), 0, 100);
 
         if (mb_strlen($q) < 2) {
             return response()->json(['terminos' => [], 'productos' => [], 'total' => 0]);
         }
 
-        $where = function ($query) use ($q) {
-            $query->where('nombre', 'like', "%{$q}%")
-                  ->orWhere('descripcion', 'like', "%{$q}%");
-        };
+        $where = fn($query) => $query
+            ->where('nombre', 'like', "%{$q}%")
+            ->orWhere('descripcion', 'like', "%{$q}%");
 
+        // Query 1: conteo total de coincidencias
         $total = Producto::where('activo', true)->where($where)->count();
 
-        $productos = Producto::where('activo', true)
+        // Query 2: productos (top 5) → los primeros 4 se muestran como cards,
+        // sus nombres sirven como términos sugeridos (evita una 3ª query separada)
+        $resultados = Producto::where('activo', true)
             ->where($where)
             ->orderBy('nombre')
-            ->limit(4)
-            ->get(['id', 'nombre', 'slug', 'imagen', 'precio', 'oferta', 'precio_oferta'])
-            ->map(function ($p) {
-                return [
-                    'nombre'        => $p->nombre,
-                    'slug'          => $p->slug,
-                    'imagen'        => $this->urlImagen($p->imagen),
-                    'precio'        => $p->precio,
-                    'oferta'        => (bool) $p->oferta,
-                    'precio_oferta' => $p->precio_oferta,
-                    'url'           => route('producto', $p->slug),
-                ];
-            });
-
-        $terminos = Producto::where('activo', true)
-            ->where('nombre', 'like', "%{$q}%")
-            ->orderBy('nombre')
             ->limit(5)
-            ->pluck('nombre')
-            ->values()
-            ->toArray();
+            ->get(['id', 'nombre', 'slug', 'imagen', 'precio', 'oferta', 'precio_oferta']);
+
+        $terminos = $resultados->pluck('nombre')->values()->toArray();
+
+        $productos = $resultados->take(4)->map(function ($p) {
+            return [
+                'nombre'        => $p->nombre,
+                'slug'          => $p->slug,
+                'imagen'        => $this->urlImagen($p->imagen),
+                'precio'        => $p->precio,
+                'oferta'        => (bool) $p->oferta,
+                'precio_oferta' => $p->precio_oferta,
+                'url'           => route('producto', $p->slug),
+            ];
+        });
 
         return response()->json([
             'terminos' => $terminos,
