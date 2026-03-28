@@ -11,8 +11,11 @@ use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\CoverController;
 use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 Route::get('/', [CatalogoController::class, 'home'])->name('home');
 Route::get('/catalogo', [CatalogoController::class, 'catalogo'])->name('catalogo');

@@ -1,6 +1,61 @@
 @extends('layouts.app')
 
-@section('title', $producto['nombre'] . ' | Sofis Tienda de Modas')
+@section('title', $producto['nombre'] . ' | ' . config('seo.site_name'))
+@section('og_type', 'product')
+@section('canonical', route('producto', $producto['slug']))
+@section('description',
+    $producto['descripcion']
+        ? mb_strimwidth(strip_tags($producto['descripcion']), 0, 160, '…')
+        : 'Descubre ' . $producto['nombre'] . ' en ' . config('seo.site_name') . '. Moda y estilo a tu alcance.'
+)
+@if ($producto['imagen'])
+    @section('og_image', $producto['imagen'])
+@endif
+
+@push('head')
+{{-- ── JSON-LD: Producto ──────────────────────────────────────────────────── --}}
+{{-- Permite a Google mostrar precio y disponibilidad como rich snippets     --}}
+@php
+    $precioFinal = ($producto['oferta'] && $producto['precio_oferta'])
+        ? $producto['precio_oferta']
+        : $producto['precio'];
+
+    $ldProduct = [
+        '@context' => 'https://schema.org',
+        '@type'    => 'Product',
+        'name'     => $producto['nombre'],
+        'url'      => route('producto', $producto['slug']),
+        'image'    => $producto['imagenes'] ?: [$producto['imagen']],
+        'brand'    => ['@type' => 'Brand', 'name' => config('seo.site_name')],
+        'offers'   => [
+            '@type'         => 'Offer',
+            'priceCurrency' => 'MXN',
+            'price'         => number_format((float) $precioFinal, 2, '.', ''),
+            'availability'  => 'https://schema.org/InStock',
+            'url'           => route('producto', $producto['slug']),
+            'seller'        => ['@type' => 'Organization', 'name' => config('seo.site_name')],
+        ],
+    ];
+    if (!empty($producto['descripcion'])) $ldProduct['description'] = $producto['descripcion'];
+    if (!empty($producto['categoria']))   $ldProduct['category']    = $producto['categoria'];
+@endphp
+<script type="application/ld+json">
+{!! json_encode($ldProduct, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
+
+{{-- ── JSON-LD: BreadcrumbList ───────────────────────────────────────────── --}}
+<script type="application/ld+json">
+{!! json_encode([
+    '@context'        => 'https://schema.org',
+    '@type'           => 'BreadcrumbList',
+    'itemListElement' => [
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Inicio',   'item' => route('home')],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Catálogo', 'item' => route('catalogo')],
+        ['@type' => 'ListItem', 'position' => 3, 'name' => $producto['nombre']],
+    ],
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+</script>
+@endpush
 
 @section('content')
 
@@ -119,7 +174,7 @@
 
                 {{-- CTA --}}
                 <div class="mt-8 space-y-3">
-                    <a href="https://wa.me/529512680214?text={{ urlencode('Hola, me interesa el producto: ' . $producto['nombre'] . ' ($' . number_format($producto['precio_oferta'] ?? $producto['precio'], 0) . ' MXN) — ' . url()->current()) }}"
+                    <a href="https://wa.me/{{ config('seo.whatsapp') }}?text={{ urlencode('Hola, me interesa el producto: ' . $producto['nombre'] . ' ($' . number_format($producto['precio_oferta'] ?? $producto['precio'], 0) . ' MXN) — ' . url()->current()) }}"
                         target="_blank" rel="noopener"
                         class="btn w-full text-center flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white active:scale-[0.98]">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

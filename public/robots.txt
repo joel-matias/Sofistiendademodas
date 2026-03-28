@@ -1,2 +1,15 @@
 User-agent: *
-Disallow:
+
+# Bloquear rutas privadas y de administración
+Disallow: /admin
+Disallow: /admin/
+Disallow: /email/verify
+Disallow: /mis-favoritos
+Disallow: /login
+Disallow: /registro
+
+# Permitir todo lo demás
+Allow: /
+
+# Sitemap (reemplazar con la URL real del dominio en producción)
+Sitemap: /sitemap.xml

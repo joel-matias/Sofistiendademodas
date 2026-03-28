@@ -1,8 +1,43 @@
 @extends('layouts.app')
 
 @section('title', isset($categoriaSeleccionada)
-    ? $categoriaSeleccionada['nombre'] . ' · Catálogo | Sofis'
-    : (request()->boolean('nuevo') ? 'Lo Nuevo · Catálogo | Sofis' : 'Catálogo | Sofis'))
+    ? $categoriaSeleccionada['nombre'] . ' · Catálogo | ' . config('seo.site_name')
+    : (request()->boolean('nuevo')
+        ? 'Lo Nuevo · Catálogo | ' . config('seo.site_name')
+        : 'Catálogo | ' . config('seo.site_name')))
+
+@php
+    $filtrosUx   = array_filter(request()->only(['talla', 'color', 'orden', 'search', 'nuevo', 'ofertas']));
+    $soloCategoria = !empty(request('categoria')) && empty($filtrosUx);
+
+    $seoRobots    = $filtrosUx ? 'noindex, follow' : 'index, follow';
+    $seoCanonical = $soloCategoria
+        ? route('catalogo', ['categoria' => request('categoria')])
+        : route('catalogo');
+@endphp
+
+@section('robots',   $seoRobots)
+@section('canonical', $seoCanonical)
+@section('description', isset($categoriaSeleccionada)
+    ? 'Explora nuestra colección de ' . $categoriaSeleccionada['nombre'] . ' en ' . config('seo.site_name') . '. Encuentra las últimas tendencias en moda.'
+    : config('seo.description'))
+
+@push('head')
+{{-- ── JSON-LD: BreadcrumbList del catálogo ───────────────────────────────── --}}
+<script type="application/ld+json">
+{!! json_encode([
+    '@context'        => 'https://schema.org',
+    '@type'           => 'BreadcrumbList',
+    'itemListElement' => array_values(array_filter([
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Inicio',   'item' => route('home')],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Catálogo', 'item' => route('catalogo')],
+        isset($categoriaSeleccionada)
+            ? ['@type' => 'ListItem', 'position' => 3, 'name' => $categoriaSeleccionada['nombre']]
+            : null,
+    ])),
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+</script>
+@endpush
 
 @section('content')
 
