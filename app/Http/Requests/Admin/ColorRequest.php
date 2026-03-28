@@ -9,7 +9,7 @@ class ColorRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public function rules(): array
