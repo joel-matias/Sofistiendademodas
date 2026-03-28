@@ -119,7 +119,7 @@
 
                 {{-- CTA --}}
                 <div class="mt-8 space-y-3">
-                    <a href="https://wa.me/521234567890?text={{ urlencode('Hola, me interesa el producto: ' . $producto['nombre'] . ' ($' . number_format($producto['precio_oferta'] ?? $producto['precio'], 0) . ' MXN) — ' . url()->current()) }}"
+                    <a href="https://wa.me/529512680214?text={{ urlencode('Hola, me interesa el producto: ' . $producto['nombre'] . ' ($' . number_format($producto['precio_oferta'] ?? $producto['precio'], 0) . ' MXN) — ' . url()->current()) }}"
                         target="_blank" rel="noopener"
                         class="btn w-full text-center flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white active:scale-[0.98]">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
