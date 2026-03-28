@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PublicAuthController;
 use App\Http\Controllers\Admin\DashboardController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Admin\ProductoController as AdminProductoController;
 use App\Http\Controllers\Admin\CategoriaController as AdminCategoriaController;
 use App\Http\Controllers\Admin\TallaController;
@@ -29,8 +30,25 @@ Route::post('/registro', [PublicAuthController::class, 'register'])->middleware(
 Route::post('/logout', [PublicAuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/mis-favoritos', [WishlistController::class, 'index'])->name('favoritos.index');
-    Route::post('/favoritos/{producto}', [WishlistController::class, 'toggle'])->name('favoritos.toggle');
+    // Verificación de email
+    Route::get('/email/verify', fn () => view('auth.verify-email'))
+        ->name('verification.notice');
+
+    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        $request->fulfill();
+        return redirect()->route('home')->with('success', '¡Correo verificado! Ya puedes acceder a todas las funciones.');
+    })->middleware('signed')->name('verification.verify');
+
+    Route::post('/email/verification-notification', function (Illuminate\Http\Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('resent', true);
+    })->middleware('throttle:6,1')->name('verification.send');
+
+    // Rutas que requieren email verificado
+    Route::middleware('verified')->group(function () {
+        Route::get('/mis-favoritos', [WishlistController::class, 'index'])->name('favoritos.index');
+        Route::post('/favoritos/{producto}', [WishlistController::class, 'toggle'])->name('favoritos.toggle');
+    });
 });
 
 Route::get('/admin/login', [LoginController::class, 'showLogin'])->name('admin.login');

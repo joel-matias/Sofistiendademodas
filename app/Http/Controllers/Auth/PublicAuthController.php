@@ -84,9 +84,11 @@ class PublicAuthController extends Controller
                 'role'     => 'user',
             ]);
 
+            $user->sendEmailVerificationNotification();
             Auth::login($user);
 
-            return redirect()->route('home')->with('success', '¡Bienvenida/o a Sofis! Tu cuenta ha sido creada.');
+            return redirect()->route('verification.notice')
+                ->with('success', '¡Bienvenida/o a Sofis! Revisa tu correo para verificar tu cuenta.');
 
         } catch (\Exception $e) {
             Log::error('Error al registrar usuario', ['email' => $request->email, 'error' => $e->getMessage()]);
