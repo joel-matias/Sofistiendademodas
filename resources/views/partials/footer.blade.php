@@ -6,7 +6,7 @@
 
         <div class="lg:col-span-1">
             <a href="{{ route('home') }}">
-                <img src="{{ asset('assets/svg/logo-sofistiendademodas.svg') }}" alt="Sofis"
+                <img src="{{ asset('assets/img/logo.png') }}" alt="Sofis"
                     class="h-10 object-contain brightness-0 invert mb-4">
             </a>
             <p class="text-sm text-white/60 leading-relaxed max-w-xs">

@@ -20,7 +20,7 @@
         {{-- Logo --}}
         <div class="text-center mb-8">
             <a href="{{ route('home') }}">
-                <img src="{{ asset('assets/svg/logo-sofistiendademodas.svg') }}" alt="Sofis"
+                <img src="{{ asset('assets/img/logo.png') }}" alt="Sofis"
                     class="h-14 mx-auto object-contain">
             </a>
             <p class="mt-2 text-[10px] tracking-[0.25em] uppercase text-gris/60">Tu tienda de moda</p>

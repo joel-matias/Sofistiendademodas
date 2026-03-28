@@ -24,7 +24,7 @@
         {{-- Logo área --}}
         <div class="h-16 flex items-center px-6 border-b border-white/10 flex-shrink-0">
             <a href="{{ route('home') }}" target="_blank" class="flex items-center gap-2">
-                <img src="{{ asset('assets/svg/logo-sofistiendademodas.svg') }}" alt="Sofis"
+                <img src="{{ asset('assets/img/logo.png') }}" alt="Sofis"
                     class="h-8 object-contain brightness-0 invert">
             </a>
         </div>

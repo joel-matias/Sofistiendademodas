@@ -15,7 +15,7 @@
 
         <div class="absolute left-1/2 -translate-x-1/2">
             <a href="{{ route('home') }}">
-                <img src="{{ asset('assets/svg/logo-sofistiendademodas.svg') }}" alt="Sofis Tienda de Modas"
+                <img src="{{ asset('assets/img/logo.png') }}" alt="Sofis Tienda de Modas"
                     class="h-10 sm:h-12 object-contain">
             </a>
         </div>
@@ -164,7 +164,7 @@
 
     <div class="h-16 sm:h-20 flex items-center justify-between px-5 border-b border-borde">
         <a href="{{ route('home') }}" onclick="closeMenu()">
-            <img src="{{ asset('assets/svg/logo-sofistiendademodas.svg') }}" alt="Sofis"
+            <img src="{{ asset('assets/img/logo.png') }}" alt="Sofis"
                 class="h-9 object-contain">
         </a>
         <button type="button" onclick="closeMenu()"

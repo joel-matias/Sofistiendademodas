@@ -20,7 +20,7 @@
         {{-- Logo --}}
         <div class="text-center mb-8">
             <a href="{{ route('home') }}">
-                <img src="{{ asset('assets/svg/logo-sofistiendademodas.svg') }}" alt="Sofis Tienda de Modas"
+                <img src="{{ asset('assets/img/logo.png') }}" alt="Sofis Tienda de Modas"
                     class="h-16 mx-auto object-contain">
             </a>
             <p class="mt-3 text-xs tracking-[0.25em] uppercase text-gris">Panel de Administración</p>
