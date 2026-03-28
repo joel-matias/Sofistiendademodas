@@ -44,7 +44,7 @@
         <div>
             <p class="text-[10px] tracking-[0.2em] uppercase text-white/40 mb-4">Catálogo</p>
             <ul class="space-y-2.5">
-                <li><a href="{{ route('catalogo', ['categoria' => 'lo-nuevo']) }}"
+                <li><a href="{{ route('catalogo', ['nuevo' => 1]) }}"
                         class="text-sm text-white/70 hover:text-white transition">Lo nuevo</a></li>
                 <li><a href="{{ route('catalogo', ['categoria' => 'ropa']) }}"
                         class="text-sm text-white/70 hover:text-white transition">Ropa</a></li>

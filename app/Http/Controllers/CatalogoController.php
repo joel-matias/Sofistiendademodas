@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
+use App\Models\Color;
 use App\Models\Cover;
 use App\Models\Producto;
+use App\Models\Talla;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -92,78 +94,92 @@ class CatalogoController extends Controller
 
     public function catalogo(Request $request)
     {
-        $categoriaSlug = $request->query('categoria');
+        // Opciones de filtro disponibles desde BD
+        $todasLasTallas  = Talla::orderBy('nombre')->get(['id', 'nombre', 'slug']);
+        $todosLosColores = Color::orderBy('nombre')->get(['id', 'nombre', 'slug', 'hex']);
 
         $query = Producto::with(['categorias', 'imagenes'])->where('activo', true);
+
+        // Filtro: ofertas
         if ($request->boolean('ofertas')) {
             $query->where('oferta', true);
         }
+
+        // Filtro: nuevo — productos de los últimos 30 días
+        if ($request->boolean('nuevo')) {
+            $query->where('created_at', '>=', now()->subDays(30));
+        }
+
+        // Filtro: categoría (many-to-many)
         $categoriaSeleccionada = null;
-
-        if ($categoriaSlug) {
-
+        if ($categoriaSlug = $request->query('categoria')) {
             $categoria = Categoria::where('slug', $categoriaSlug)->first();
-
             if (! $categoria) {
                 $nombre = str_replace('-', ' ', $categoriaSlug);
                 $categoria = Categoria::whereRaw('LOWER(nombre) = ?', [strtolower($nombre)])->first();
             }
-
             if ($categoria) {
-                $categoriaSeleccionada = [
-                    'nombre' => $categoria->nombre,
-                    'slug' => $categoria->slug,
-                ];
-
-                // ✅ filtro many-to-many
-                $query->whereHas('categorias', function ($q) use ($categoria) {
-                    $q->where('categorias.id', $categoria->id);
-                });
+                $categoriaSeleccionada = ['nombre' => $categoria->nombre, 'slug' => $categoria->slug];
+                $query->whereHas('categorias', fn($q) => $q->where('categorias.id', $categoria->id));
             }
         }
 
+        // Filtro: búsqueda de texto
         if ($request->filled('search')) {
             $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('nombre', 'like', "%{$search}%")
-                    ->orWhere('descripcion', 'like', "%{$search}%");
-            });
+            $query->where(fn($q) => $q
+                ->where('nombre', 'like', "%{$search}%")
+                ->orWhere('descripcion', 'like', "%{$search}%")
+            );
         }
 
-        $orden = $request->input('orden');
-
-        if ($orden === 'precio_menor') {
-            $query->orderBy('precio', 'asc');
-        } elseif ($orden === 'precio_mayor') {
-            $query->orderBy('precio', 'desc');
-        } else {
-            $query->orderByDesc('created_at');
+        // Filtro: talla — busca por slug en la relación many-to-many
+        if ($request->filled('talla')) {
+            $tallaSlug = $request->input('talla');
+            $query->whereHas('tallas', fn($q) => $q->where('tallas.slug', $tallaSlug));
         }
+
+        // Filtro: color — busca por slug en la relación many-to-many
+        if ($request->filled('color')) {
+            $colorSlug = $request->input('color');
+            $query->whereHas('colores', fn($q) => $q->where('colores.slug', $colorSlug));
+        }
+
+        // Ordenamiento
+        match ($request->input('orden')) {
+            'precio_menor' => $query->orderBy('precio', 'asc'),
+            'precio_mayor' => $query->orderBy('precio', 'desc'),
+            default        => $query->orderByDesc('created_at'),
+        };
 
         $productos = $query->paginate(24)->withQueryString();
 
         $productos->getCollection()->transform(function ($p) {
-
             $categoriaPrincipal = $p->categorias->first();
             $imagenHover = $p->imagenes->isNotEmpty()
                 ? $this->urlImagen($p->imagenes->first()->url)
                 : null;
 
             return [
-                'id' => $p->id,
-                'nombre' => $p->nombre,
-                'precio' => $p->precio,
-                'slug' => $p->slug,
-                'imagen' => $this->urlImagen($p->imagen),
-                'imagen_hover' => $imagenHover,
-                'categoria' => $categoriaPrincipal ? $categoriaPrincipal->nombre : '',
-                'categorias' => $p->categorias->pluck('nombre')->implode(', '),
-                'oferta' => (bool) $p->oferta,
+                'id'            => $p->id,
+                'nombre'        => $p->nombre,
+                'precio'        => $p->precio,
+                'slug'          => $p->slug,
+                'imagen'        => $this->urlImagen($p->imagen),
+                'imagen_hover'  => $imagenHover,
+                'categoria'     => $categoriaPrincipal ? $categoriaPrincipal->nombre : '',
+                'categorias'    => $p->categorias->pluck('nombre')->implode(', '),
+                'oferta'        => (bool) $p->oferta,
                 'precio_oferta' => $p->precio_oferta,
             ];
         });
 
-        return view('catalogo.index', compact('productos', 'categoriaSeleccionada'));
+        return view('catalogo.index', compact(
+            'productos',
+            'categoriaSeleccionada',
+            'todasLasTallas',
+            'todosLosColores'
+        ));
     }
 
     public function sugerenciasBusqueda(Request $request)
