@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Categoria;
 use App\Models\Cover;
 use App\Models\Producto;
-use App\Models\Talla;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -155,56 +154,6 @@ class CatalogoController extends Controller
         });
 
         return view('catalogo.index', compact('productos', 'categoriaSeleccionada'));
-    }
-
-    public function index(Request $request)
-    {
-        $query = Producto::query();
-
-        // ✅ Search
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('nombre', 'like', "%{$search}%")
-                    ->orWhere('descripcion', 'like', "%{$search}%");
-            });
-        }
-
-        // ✅ Talla (por slug)
-        if ($request->filled('talla')) {
-            $tallaSlug = $request->talla;
-
-            $query->whereHas('tallas', function ($q) use ($tallaSlug) {
-                $q->where('slug', $tallaSlug);
-            });
-        }
-
-        // ✅ Orden
-        if ($request->filled('orden')) {
-            if ($request->orden === 'nuevos') {
-                $query->orderBy('created_at', 'desc');
-            }
-
-            if ($request->orden === 'precio_asc') {
-                $query->orderByRaw('COALESCE(precio_oferta, precio) asc');
-            }
-
-            if ($request->orden === 'precio_desc') {
-                $query->orderByRaw('COALESCE(precio_oferta, precio) desc');
-            }
-        } else {
-            $query->orderBy('created_at', 'desc');
-        }
-
-        $productos = $query->paginate(24);
-
-        $tallas = Talla::orderBy('nombre')->get();
-
-        return view('catalogo.index', [
-            'productos' => $productos,
-            'tallas' => $tallas,
-            'categoriaSeleccionada' => null,
-        ]);
     }
 
     public function sugerenciasBusqueda(Request $request)
