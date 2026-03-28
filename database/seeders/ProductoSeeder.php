@@ -72,7 +72,7 @@ class ProductoSeeder extends Seeder
             // ── BLUSAS ────────────────────────────────────────────────────
             [
                 'nombre' => 'Blusa de lino beige',
-                'precio' => 429, 'categorias' => ['Blusas', 'Lo nuevo'],
+                'precio' => 429, 'categorias' => ['Blusas'],
                 'img' => $imgs['blusas'][0], 'galeria' => [$imgs['blusas'][1], $imgs['blusas'][2]],
                 'oferta' => false, 'tallas' => ['XS','S','M','L'], 'colores' => ['Beige','Blanco'],
                 'desc' => 'Blusa confeccionada en lino natural, fresca y cómoda para el día a día.',
@@ -93,7 +93,7 @@ class ProductoSeeder extends Seeder
             ],
             [
                 'nombre' => 'Blusa off-shoulder blanca',
-                'precio' => 469, 'categorias' => ['Blusas', 'Lo nuevo'],
+                'precio' => 469, 'categorias' => ['Blusas'],
                 'img' => $imgs['blusas'][3], 'galeria' => [$imgs['blusas'][4], $imgs['blusas'][0]],
                 'oferta' => false, 'tallas' => ['S','M','L'], 'colores' => ['Blanco','Crema'],
                 'desc' => 'Diseño off-shoulder atemporal, ideal para combinar con cualquier bottom.',
@@ -109,7 +109,7 @@ class ProductoSeeder extends Seeder
             // ── VESTIDOS ──────────────────────────────────────────────────
             [
                 'nombre' => 'Vestido midi floral',
-                'precio' => 1199, 'categorias' => ['Vestidos', 'Lo nuevo'],
+                'precio' => 1199, 'categorias' => ['Vestidos'],
                 'img' => $imgs['vestidos'][0], 'galeria' => [$imgs['vestidos'][2], $imgs['vestidos'][4]],
                 'oferta' => false, 'tallas' => ['XS','S','M','L'], 'colores' => ['Rosa palo','Crema'],
                 'desc' => 'Vestido midi con estampado floral, perfecto para ocasiones especiales.',
@@ -138,7 +138,7 @@ class ProductoSeeder extends Seeder
             ],
             [
                 'nombre' => 'Vestido mini satinado',
-                'precio' => 1299, 'categorias' => ['Vestidos', 'Lo nuevo'],
+                'precio' => 1299, 'categorias' => ['Vestidos'],
                 'img' => $imgs['vestidos'][4], 'galeria' => [$imgs['vestidos'][0], $imgs['vestidos'][3]],
                 'oferta' => false, 'tallas' => ['XS','S','M'], 'colores' => ['Champagne','Negro'],
                 'desc' => 'Mini vestido de tela satinada, elegante y versátil para noche.',
@@ -154,7 +154,7 @@ class ProductoSeeder extends Seeder
             ],
             [
                 'nombre' => 'Jeans mom fit beige',
-                'precio' => 849, 'categorias' => ['Jeans', 'Lo nuevo'],
+                'precio' => 849, 'categorias' => ['Jeans'],
                 'img' => $imgs['jeans'][1], 'galeria' => [$imgs['jeans'][0]],
                 'oferta' => false, 'tallas' => ['S','M','L','XL'], 'colores' => ['Beige','Crema'],
                 'desc' => 'Jeans mom fit en tono beige, cómodos y tendencia esta temporada.',
@@ -177,7 +177,7 @@ class ProductoSeeder extends Seeder
             // ── FALDAS ────────────────────────────────────────────────────
             [
                 'nombre' => 'Falda midi plisada beis',
-                'precio' => 699, 'categorias' => ['Faldas', 'Lo nuevo'],
+                'precio' => 699, 'categorias' => ['Faldas'],
                 'img' => $imgs['faldas'][0], 'galeria' => [$imgs['faldas'][1], $imgs['faldas'][2]],
                 'oferta' => false, 'tallas' => ['XS','S','M','L'], 'colores' => ['Beige','Crema','Camel'],
                 'desc' => 'Falda midi plisada de caída elegante, perfecta para la oficina.',
@@ -200,7 +200,7 @@ class ProductoSeeder extends Seeder
             // ── TOPS ──────────────────────────────────────────────────────
             [
                 'nombre' => 'Top ribana sin mangas',
-                'precio' => 299, 'categorias' => ['Tops', 'Lo nuevo'],
+                'precio' => 299, 'categorias' => ['Tops'],
                 'img' => $imgs['tops'][0], 'galeria' => [$imgs['tops'][1], $imgs['tops'][2]],
                 'oferta' => false, 'tallas' => ['XS','S','M','L','XL'], 'colores' => ['Negro','Blanco','Burdeos'],
                 'desc' => 'Top de ribana ajustado, básico imprescindible en cualquier temporada.',
@@ -224,7 +224,7 @@ class ProductoSeeder extends Seeder
             // ── ABRIGOS ───────────────────────────────────────────────────
             [
                 'nombre' => 'Gabardina camel clásica',
-                'precio' => 2499, 'categorias' => ['Abrigos', 'Lo nuevo'],
+                'precio' => 2499, 'categorias' => ['Abrigos'],
                 'img' => $imgs['abrigos'][0], 'galeria' => [$imgs['abrigos'][1], $imgs['abrigos'][3]],
                 'oferta' => false, 'tallas' => ['XS','S','M','L','XL'], 'colores' => ['Camel'],
                 'desc' => 'Gabardina de corte clásico en tono camel, el básico de temporada.',
@@ -245,7 +245,7 @@ class ProductoSeeder extends Seeder
             ],
             [
                 'nombre' => 'Blazer estructurado crema',
-                'precio' => 1299, 'categorias' => ['Abrigos', 'Lo nuevo'],
+                'precio' => 1299, 'categorias' => ['Abrigos'],
                 'img' => $imgs['abrigos'][3], 'galeria' => [$imgs['abrigos'][0]],
                 'oferta' => false, 'tallas' => ['XS','S','M','L'], 'colores' => ['Crema','Beige'],
                 'desc' => 'Blazer de corte estructurado, perfecto para el look business casual.',
@@ -254,7 +254,7 @@ class ProductoSeeder extends Seeder
             // ── CALZADO ───────────────────────────────────────────────────
             [
                 'nombre' => 'Mules de punta fina beige',
-                'precio' => 999, 'categorias' => ['Calzado', 'Lo nuevo'],
+                'precio' => 999, 'categorias' => ['Calzado'],
                 'img' => $imgs['calzado'][0], 'galeria' => [$imgs['calzado'][2], $imgs['calzado'][4]],
                 'oferta' => false, 'tallas' => ['35','36','37','38','39'], 'colores' => ['Beige','Negro'],
                 'desc' => 'Mules de punta fina con tacón bajo, elegantes y cómodas.',
@@ -297,7 +297,7 @@ class ProductoSeeder extends Seeder
             ],
             [
                 'nombre' => 'Sneakers retro blanco roto',
-                'precio' => 1099, 'categorias' => ['Calzado', 'Lo nuevo'],
+                'precio' => 1099, 'categorias' => ['Calzado'],
                 'img' => $imgs['calzado'][1], 'galeria' => [$imgs['calzado'][3], $imgs['calzado'][4]],
                 'oferta' => false, 'tallas' => ['35','36','37','38','39','40'], 'colores' => ['Crema','Blanco'],
                 'desc' => 'Sneakers de corte retro en blanco roto, básico del guardarropa.',
@@ -327,7 +327,7 @@ class ProductoSeeder extends Seeder
             ],
             [
                 'nombre' => 'Pañuelo seda estampado',
-                'precio' => 299, 'categorias' => ['Accesorios', 'Lo nuevo'],
+                'precio' => 299, 'categorias' => ['Accesorios'],
                 'img' => $imgs['accesorios'][3], 'galeria' => [$imgs['accesorios'][1], $imgs['accesorios'][2]],
                 'oferta' => false, 'tallas' => [], 'colores' => ['Rosa','Azul cielo','Beige'],
                 'desc' => 'Pañuelo de seda con estampado geométrico, mil usos y mucho estilo.',
@@ -350,7 +350,7 @@ class ProductoSeeder extends Seeder
             // ── ROPA ──────────────────────────────────────────────────────
             [
                 'nombre' => 'Conjunto lino pantalón-blusa',
-                'precio' => 1299, 'categorias' => ['Ropa', 'Lo nuevo'],
+                'precio' => 1299, 'categorias' => ['Ropa'],
                 'img' => $imgs['blusas'][0], 'galeria' => [$imgs['blusas'][3], $imgs['tops'][0]],
                 'oferta' => false, 'tallas' => ['S','M','L'], 'colores' => ['Beige','Blanco'],
                 'desc' => 'Conjunto de dos piezas en lino: pantalón palazzo y blusa suelta.',
@@ -379,7 +379,7 @@ class ProductoSeeder extends Seeder
             ],
             [
                 'nombre' => 'Camisa de rayas marineras',
-                'precio' => 649, 'categorias' => ['Ropa', 'Lo nuevo'],
+                'precio' => 649, 'categorias' => ['Ropa'],
                 'img' => $imgs['blusas'][2], 'galeria' => [$imgs['blusas'][0]],
                 'oferta' => false, 'tallas' => ['XS','S','M','L','XL'], 'colores' => ['Azul marino','Blanco'],
                 'desc' => 'Camisa de rayas marineras clásica en algodón de alta calidad.',
@@ -400,7 +400,7 @@ class ProductoSeeder extends Seeder
             ],
             [
                 'nombre' => 'Pantalón palazzo negro',
-                'precio' => 849, 'categorias' => ['Ropa', 'Lo nuevo'],
+                'precio' => 849, 'categorias' => ['Ropa'],
                 'img' => $imgs['faldas'][0], 'galeria' => [$imgs['jeans'][2]],
                 'oferta' => false, 'tallas' => ['XS','S','M','L','XL'], 'colores' => ['Negro'],
                 'desc' => 'Pantalón de pierna ancha tipo palazzo, fluido y elegante.',
@@ -415,7 +415,7 @@ class ProductoSeeder extends Seeder
             ],
             [
                 'nombre' => 'Chaleco acolchado camel',
-                'precio' => 999, 'categorias' => ['Ropa', 'Lo nuevo'],
+                'precio' => 999, 'categorias' => ['Ropa'],
                 'img' => $imgs['abrigos'][0], 'galeria' => [$imgs['abrigos'][2]],
                 'oferta' => false, 'tallas' => ['XS','S','M','L','XL'], 'colores' => ['Camel','Negro'],
                 'desc' => 'Chaleco acolchado sin mangas, ligero y abrigador para el otoño.',

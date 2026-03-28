@@ -11,7 +11,6 @@ class CategoriaSeeder extends Seeder
     public function run(): void
     {
         $categorias = [
-            ['nombre' => 'Lo nuevo',    'imagen' => 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1200&auto=format&fit=crop'],
             ['nombre' => 'Blusas',      'imagen' => 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1200&auto=format&fit=crop'],
             ['nombre' => 'Vestidos',    'imagen' => 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1200&auto=format&fit=crop'],
             ['nombre' => 'Jeans',       'imagen' => 'https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=1200&auto=format&fit=crop'],
