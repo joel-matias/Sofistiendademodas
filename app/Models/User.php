@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\VerificarEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -30,6 +31,15 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
         ];
+    }
+
+    /**
+     * Usa la notificación personalizada en español en lugar de la de Laravel por defecto.
+     * Se llama al registrar un nuevo usuario en PublicAuthController::register().
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerificarEmail());
     }
 
     public function isAdmin(): bool

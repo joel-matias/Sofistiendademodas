@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Listeners\EnviarEmailVerificado;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,6 +16,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Envía el correo de bienvenida cuando el usuario verifica su email
+        Event::listen(Verified::class, EnviarEmailVerificado::class);
+
         $this->configureRateLimiting();
     }
 
