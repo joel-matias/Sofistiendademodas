@@ -51,7 +51,10 @@
                     <div>
                         <label class="block text-xs tracking-widest uppercase text-gris mb-1.5">Precio oferta (MXN)</label>
                         <input type="number" name="precio_oferta" value="{{ old('precio_oferta') }}" min="0"
-                            step="0.01" class="input" placeholder="0.00">
+                            step="0.01" class="input @error('precio_oferta') border-red-400 @enderror" placeholder="0.00">
+                        @error('precio_oferta')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
@@ -75,7 +78,10 @@
             <div class="card p-6">
                 <h2 class="font-display text-lg border-b border-borde pb-3 mb-5">Imagen principal</h2>
                 <input type="file" name="imagen" accept="image/*" id="imagenPrincipalInput"
-                    class="block w-full text-sm text-gris file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border file:border-borde file:bg-white file:text-sm file:font-medium hover:file:bg-gray-50 transition">
+                    class="block w-full text-sm text-gris file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border file:border-borde file:bg-white file:text-sm file:font-medium hover:file:bg-gray-50 transition @error('imagen') ring-1 ring-red-400 rounded-xl @enderror">
+                @error('imagen')
+                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                @enderror
                 <div id="imagenPrincipalPreview" class="hidden mt-3">
                     <p class="text-xs text-gris mb-1.5">Vista previa:</p>
                     <img id="imagenPrincipalPreviewImg" src="" class="w-24 h-32 object-cover rounded-xl border border-borde">
@@ -90,6 +96,12 @@
                 <div id="galeriaPreview" class="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-4 hidden"></div>
                 <input type="file" name="galeria[]" accept="image/*" multiple id="galeriaInput"
                     class="block w-full text-sm text-gris file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border file:border-borde file:bg-white file:text-sm file:font-medium hover:file:bg-gray-50 transition">
+                @error('galeria')
+                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                @enderror
+                @error('galeria.*')
+                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                @enderror
                 <p class="mt-2 text-xs text-gris">Hasta 3 imágenes. JPG, PNG o WebP. Máx. 4 MB cada una.</p>
             </div>
 

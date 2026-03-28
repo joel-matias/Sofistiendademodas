@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\CoverRequest;
 use App\Models\Cover;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class CoverController extends Controller
@@ -20,27 +22,25 @@ class CoverController extends Controller
         return view('admin.covers.create');
     }
 
-    public function store(Request $request)
+    public function store(CoverRequest $request)
     {
-        $data = $request->validate([
-            'titulo'      => 'required|string|max:150',
-            'subtitulo'   => 'nullable|string|max:255',
-            'texto_boton' => 'nullable|string|max:80',
-            'url_boton'   => 'nullable|string|max:255',
-            'imagen'      => 'nullable|image|max:4096',
-            'orden'       => 'required|integer|min:0',
-            'activo'      => 'nullable|boolean',
-        ]);
+        try {
+            $data = $request->validated();
 
-        if ($request->hasFile('imagen')) {
-            $data['imagen'] = $request->file('imagen')->store('covers', 'public');
+            if ($request->hasFile('imagen')) {
+                $data['imagen'] = $request->file('imagen')->store('covers', 'public');
+            }
+
+            $data['activo'] = $request->boolean('activo');
+
+            Cover::create($data);
+
+            return redirect()->route('admin.covers.index')->with('success', 'Cover creado correctamente.');
+
+        } catch (\Exception $e) {
+            Log::error('Error al crear cover', ['error' => $e->getMessage(), 'usuario' => auth()->id()]);
+            return back()->with('error', 'Ocurrió un error al guardar el cover. Por favor, intenta de nuevo.');
         }
-
-        $data['activo'] = $request->boolean('activo');
-
-        Cover::create($data);
-
-        return redirect()->route('admin.covers.index')->with('success', 'Cover creado.');
     }
 
     public function edit(Cover $cover)
@@ -48,30 +48,32 @@ class CoverController extends Controller
         return view('admin.covers.edit', compact('cover'));
     }
 
-    public function update(Request $request, Cover $cover)
+    public function update(CoverRequest $request, Cover $cover)
     {
-        $data = $request->validate([
-            'titulo'      => 'required|string|max:150',
-            'subtitulo'   => 'nullable|string|max:255',
-            'texto_boton' => 'nullable|string|max:80',
-            'url_boton'   => 'nullable|string|max:255',
-            'imagen'      => 'nullable|image|max:4096',
-            'orden'       => 'required|integer|min:0',
-            'activo'      => 'nullable|boolean',
-        ]);
+        try {
+            $data = $request->validated();
 
-        if ($request->hasFile('imagen')) {
-            if ($cover->imagen && !str_starts_with($cover->imagen, 'http')) {
-                Storage::disk('public')->delete($cover->imagen);
+            if ($request->hasFile('imagen')) {
+                if ($cover->imagen && !str_starts_with($cover->imagen, 'http')) {
+                    Storage::disk('public')->delete($cover->imagen);
+                }
+                $data['imagen'] = $request->file('imagen')->store('covers', 'public');
             }
-            $data['imagen'] = $request->file('imagen')->store('covers', 'public');
+
+            $data['activo'] = $request->boolean('activo');
+
+            $cover->update($data);
+
+            return redirect()->route('admin.covers.index')->with('success', 'Cover actualizado correctamente.');
+
+        } catch (\Exception $e) {
+            Log::error('Error al actualizar cover', [
+                'cover'   => $cover->id,
+                'error'   => $e->getMessage(),
+                'usuario' => auth()->id(),
+            ]);
+            return back()->with('error', 'Ocurrió un error al guardar los cambios. Por favor, intenta de nuevo.');
         }
-
-        $data['activo'] = $request->boolean('activo');
-
-        $cover->update($data);
-
-        return redirect()->route('admin.covers.index')->with('success', 'Cover actualizado.');
     }
 
     public function reorder(Request $request)
@@ -82,20 +84,28 @@ class CoverController extends Controller
             'orden.*.orden' => 'required|integer|min:0',
         ]);
 
-        foreach ($request->input('orden') as $item) {
-            Cover::where('id', $item['id'])->update(['orden' => $item['orden']]);
+        try {
+            foreach ($request->input('orden') as $item) {
+                Cover::where('id', $item['id'])->update(['orden' => $item['orden']]);
+            }
+            return response()->json(['ok' => true]);
+        } catch (\Exception $e) {
+            Log::error('Error al reordenar covers', ['error' => $e->getMessage(), 'usuario' => auth()->id()]);
+            return response()->json(['ok' => false, 'mensaje' => 'Error al guardar el orden.'], 500);
         }
-
-        return response()->json(['ok' => true]);
     }
 
     public function destroy(Cover $cover)
     {
-        if ($cover->imagen && !str_starts_with($cover->imagen, 'http')) {
-            Storage::disk('public')->delete($cover->imagen);
+        try {
+            if ($cover->imagen && !str_starts_with($cover->imagen, 'http')) {
+                Storage::disk('public')->delete($cover->imagen);
+            }
+            $cover->delete();
+            return back()->with('success', 'Cover eliminado.');
+        } catch (\Exception $e) {
+            Log::error('Error al eliminar cover', ['cover' => $cover->id, 'error' => $e->getMessage()]);
+            return back()->with('error', 'No se pudo eliminar el cover. Por favor, intenta de nuevo.');
         }
-        $cover->delete();
-
-        return back()->with('success', 'Cover eliminado.');
     }
 }

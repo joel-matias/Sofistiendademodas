@@ -30,9 +30,13 @@
                         oninput="document.getElementById('hex_input_edit').value = this.value"
                         class="w-10 h-10 rounded-lg border border-borde cursor-pointer p-1">
                     <input type="text" name="hex" id="hex_input_edit" value="{{ old('hex', $color->hex) }}"
-                        placeholder="#000000" maxlength="7" class="input flex-1 font-mono text-sm"
+                        placeholder="#000000" maxlength="7"
+                        class="input flex-1 font-mono text-sm @error('hex') border-red-400 @enderror"
                         oninput="if(this.value.match(/^#[0-9a-fA-F]{6}$/)) document.querySelector('input[name=hex_picker]').value = this.value">
                 </div>
+                @error('hex')
+                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                @enderror
             </div>
             <div class="flex gap-3">
                 <button type="submit" class="btn-primary">Actualizar</button>

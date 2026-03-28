@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\CategoriaRequest;
 use App\Models\Categoria;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -21,24 +22,25 @@ class CategoriaController extends Controller
         return view('admin.categorias.create');
     }
 
-    public function store(Request $request)
+    public function store(CategoriaRequest $request)
     {
-        $data = $request->validate([
-            'nombre'      => 'required|string|max:255|unique:categorias,nombre',
-            'descripcion' => 'nullable|string',
-            'imagen'      => 'nullable|image|max:4096',
-        ]);
+        try {
+            $data = $request->validated();
+            $data['slug'] = Str::slug($data['nombre']);
 
-        $data['slug'] = Str::slug($data['nombre']);
+            if ($request->hasFile('imagen')) {
+                $data['imagen'] = $request->file('imagen')->store('categorias', 'public');
+            }
 
-        if ($request->hasFile('imagen')) {
-            $data['imagen'] = $request->file('imagen')->store('categorias', 'public');
+            Categoria::create($data);
+
+            return redirect()->route('admin.categorias.index')
+                ->with('success', 'Categoría creada correctamente.');
+
+        } catch (\Exception $e) {
+            Log::error('Error al crear categoría', ['error' => $e->getMessage(), 'usuario' => auth()->id()]);
+            return back()->with('error', 'Ocurrió un error al guardar la categoría. Por favor, intenta de nuevo.');
         }
-
-        Categoria::create($data);
-
-        return redirect()->route('admin.categorias.index')
-            ->with('success', 'Categoría creada correctamente.');
     }
 
     public function edit(Categoria $categoria)
@@ -46,35 +48,45 @@ class CategoriaController extends Controller
         return view('admin.categorias.edit', compact('categoria'));
     }
 
-    public function update(Request $request, Categoria $categoria)
+    public function update(CategoriaRequest $request, Categoria $categoria)
     {
-        $data = $request->validate([
-            'nombre'      => 'required|string|max:255|unique:categorias,nombre,' . $categoria->id,
-            'descripcion' => 'nullable|string',
-            'imagen'      => 'nullable|image|max:4096',
-        ]);
+        try {
+            $data = $request->validated();
+            $data['slug'] = Str::slug($data['nombre']);
 
-        $data['slug'] = Str::slug($data['nombre']);
-
-        if ($request->hasFile('imagen')) {
-            if ($categoria->imagen && !str_starts_with($categoria->imagen, 'http')) {
-                Storage::disk('public')->delete($categoria->imagen);
+            if ($request->hasFile('imagen')) {
+                if ($categoria->imagen && !str_starts_with($categoria->imagen, 'http')) {
+                    Storage::disk('public')->delete($categoria->imagen);
+                }
+                $data['imagen'] = $request->file('imagen')->store('categorias', 'public');
             }
-            $data['imagen'] = $request->file('imagen')->store('categorias', 'public');
+
+            $categoria->update($data);
+
+            return redirect()->route('admin.categorias.index')
+                ->with('success', 'Categoría actualizada correctamente.');
+
+        } catch (\Exception $e) {
+            Log::error('Error al actualizar categoría', [
+                'categoria' => $categoria->id,
+                'error'     => $e->getMessage(),
+                'usuario'   => auth()->id(),
+            ]);
+            return back()->with('error', 'Ocurrió un error al guardar los cambios. Por favor, intenta de nuevo.');
         }
-
-        $categoria->update($data);
-
-        return redirect()->route('admin.categorias.index')
-            ->with('success', 'Categoría actualizada correctamente.');
     }
 
     public function destroy(Categoria $categoria)
     {
-        if ($categoria->imagen && !str_starts_with($categoria->imagen, 'http')) {
-            Storage::disk('public')->delete($categoria->imagen);
+        try {
+            if ($categoria->imagen && !str_starts_with($categoria->imagen, 'http')) {
+                Storage::disk('public')->delete($categoria->imagen);
+            }
+            $categoria->delete();
+            return back()->with('success', 'Categoría eliminada.');
+        } catch (\Exception $e) {
+            Log::error('Error al eliminar categoría', ['categoria' => $categoria->id, 'error' => $e->getMessage()]);
+            return back()->with('error', 'No se pudo eliminar la categoría. Por favor, intenta de nuevo.');
         }
-        $categoria->delete();
-        return back()->with('success', 'Categoría eliminada.');
     }
 }

@@ -34,6 +34,9 @@
                 <label class="block text-xs tracking-widest uppercase text-gris mb-1.5">Imagen</label>
                 <input type="file" name="imagen" accept="image/*"
                     class="block w-full text-sm text-gris file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border file:border-borde file:bg-white file:text-sm file:font-medium hover:file:bg-gray-50 transition">
+                @error('imagen')
+                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
             <div class="flex gap-3 pt-2">

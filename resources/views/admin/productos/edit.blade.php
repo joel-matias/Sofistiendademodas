@@ -47,7 +47,10 @@
                         <label class="block text-xs tracking-widest uppercase text-gris mb-1.5">Precio oferta (MXN)</label>
                         <input type="number" name="precio_oferta"
                             value="{{ old('precio_oferta', $producto->precio_oferta) }}" min="0" step="0.01"
-                            class="input">
+                            class="input @error('precio_oferta') border-red-400 @enderror">
+                        @error('precio_oferta')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
@@ -81,7 +84,10 @@
                     </div>
                 @endif
                 <input type="file" name="imagen" accept="image/*" id="imagenPrincipalInput"
-                    class="block w-full text-sm text-gris file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border file:border-borde file:bg-white file:text-sm file:font-medium hover:file:bg-gray-50 transition">
+                    class="block w-full text-sm text-gris file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border file:border-borde file:bg-white file:text-sm file:font-medium hover:file:bg-gray-50 transition @error('imagen') ring-1 ring-red-400 rounded-xl @enderror">
+                @error('imagen')
+                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                @enderror
                 <div id="imagenPrincipalPreview" class="hidden mt-3">
                     <p class="text-xs text-gris mb-1.5">Vista previa:</p>
                     <img id="imagenPrincipalPreviewImg" src="" class="w-24 h-32 object-cover rounded-xl border border-borde">
@@ -102,15 +108,13 @@
                                     <img src="{{ str_starts_with($img->url, 'http') ? $img->url : \Illuminate\Support\Facades\Storage::url($img->url) }}"
                                         class="w-full h-full object-cover">
                                 </div>
-                                <form method="POST"
-                                    action="{{ route('admin.productos.imagenes.destroy', [$producto, $img]) }}"
-                                    onsubmit="return confirm('¿Eliminar esta imagen de la galería?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit"
-                                        class="absolute top-1.5 right-1.5 w-6 h-6 bg-white rounded-full shadow-sm border border-borde flex items-center justify-center text-gris hover:text-red-500 hover:border-red-300 transition opacity-0 group-hover/img:opacity-100 text-xs font-bold leading-none">
-                                        ✕
-                                    </button>
-                                </form>
+                                <button type="button"
+                                    data-url="{{ route('admin.productos.imagenes.destroy', [$producto, $img]) }}"
+                                    data-token="{{ csrf_token() }}"
+                                    onclick="deleteGalleryImage(this)"
+                                    class="absolute top-1.5 right-1.5 w-6 h-6 bg-white rounded-full shadow-sm border border-borde flex items-center justify-center text-gris hover:text-red-500 hover:border-red-300 transition opacity-0 group-hover/img:opacity-100 text-xs font-bold leading-none">
+                                    ✕
+                                </button>
                                 <p class="mt-1 text-center text-[10px] text-gris">#{{ $loop->iteration }}</p>
                             </div>
                         @endforeach
@@ -123,6 +127,12 @@
                     <div id="galeriaPreview" class="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-4 hidden"></div>
                     <input type="file" name="galeria[]" accept="image/*" multiple id="galeriaInput"
                         class="block w-full text-sm text-gris file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border file:border-borde file:bg-white file:text-sm file:font-medium hover:file:bg-gray-50 transition">
+                    @error('galeria')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                    @error('galeria.*')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                     <p class="mt-2 text-xs text-gris">
                         Puedes agregar hasta <strong>{{ $disponibles }}</strong> imagen{{ $disponibles > 1 ? 'es' : '' }} más.
                         La primera imagen de la galería se usa en el hover de las tarjetas.
@@ -193,6 +203,19 @@
     </div>
 
     <script>
+        // Eliminar imagen de galería sin forms anidados
+        function deleteGalleryImage(btn) {
+            if (!confirm('¿Eliminar esta imagen de la galería?')) return;
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = btn.dataset.url;
+            form.innerHTML =
+                '<input type="hidden" name="_token" value="' + btn.dataset.token + '">' +
+                '<input type="hidden" name="_method" value="DELETE">';
+            document.body.appendChild(form);
+            form.submit();
+        }
+
         // Preview imagen principal
         document.getElementById('imagenPrincipalInput')?.addEventListener('change', function () {
             const file = this.files[0];
