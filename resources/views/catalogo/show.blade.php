@@ -71,7 +71,7 @@
                             <span class="text-base text-gris/60 line-through">${{ number_format($producto['precio'], 0) }}</span>
                         </div>
                         <div class="mt-2 flex items-center gap-2">
-                            <span class="badge-oferta">Sale −{{ $pct }}%</span>
+                            <span class="badge-oferta">Oferta −{{ $pct }}%</span>
                         </div>
                     @else
                         <div class="flex items-baseline gap-3">

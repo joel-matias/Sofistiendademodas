@@ -36,7 +36,7 @@
                 <div class="absolute top-3 left-3">
                     <span
                         class="inline-flex items-center bg-oferta text-white text-[10px] font-semibold tracking-widest uppercase px-2.5 py-1 rounded-lg shadow-sm">
-                        Sale
+                        Oferta
                     </span>
                 </div>
             @endif
