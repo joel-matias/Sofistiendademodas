@@ -2,12 +2,15 @@
 
 namespace Database\Seeders;
 
+use App\Services\ImageService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class CategoriaSeeder extends Seeder
 {
+    public function __construct(private ImageService $imageService) {}
+
     public function run(): void
     {
         $categorias = [
@@ -23,19 +26,38 @@ class CategoriaSeeder extends Seeder
         ];
 
         foreach ($categorias as $c) {
+            $imagenPath = $this->descargarImagen($c['imagen'], 'categorias', 800);
+
             DB::table('categorias')->updateOrInsert(
                 ['slug' => Str::slug($c['nombre'])],
                 [
-                    'nombre'      => $c['nombre'],
-                    'slug'        => Str::slug($c['nombre']),
+                    'nombre' => $c['nombre'],
+                    'slug' => Str::slug($c['nombre']),
                     'descripcion' => null,
-                    'imagen'      => $c['imagen'],
-                    'created_at'  => now(),
-                    'updated_at'  => now(),
+                    'imagen' => $imagenPath,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]
             );
+
+            $this->command->line("  ✓ {$c['nombre']}");
         }
 
         $this->command->info('✓ Categorías creadas');
+    }
+
+    /**
+     * Descarga una imagen remota, la convierte a WebP y devuelve la ruta relativa.
+     * Si falla, loguea una advertencia y devuelve la URL original como fallback.
+     */
+    private function descargarImagen(string $url, string $directorio, int $maxWidth): string
+    {
+        try {
+            return $this->imageService->storeFromUrl($url, $directorio, $maxWidth);
+        } catch (\Throwable $e) {
+            $this->command->warn("  ⚠ No se pudo convertir imagen: {$url} — {$e->getMessage()}");
+
+            return $url; // fallback: guardar URL original
+        }
     }
 }
