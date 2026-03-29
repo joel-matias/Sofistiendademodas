@@ -9,6 +9,7 @@ use App\Models\Color;
 use App\Models\ImagenProducto;
 use App\Models\Producto;
 use App\Models\Talla;
+use App\Support\CacheKeys;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -77,7 +78,7 @@ class ProductoController extends Controller
             $producto->tallas()->sync($request->input('tallas', []));
             $producto->colores()->sync($request->input('colores', []));
 
-            Cache::forget('home_destacados');
+            // La invalidación de caché la maneja ProductoObserver automáticamente.
 
             return redirect()->route('admin.productos.index')
                 ->with('success', 'Producto creado correctamente.');
@@ -144,7 +145,7 @@ class ProductoController extends Controller
             $producto->tallas()->sync($request->input('tallas', []));
             $producto->colores()->sync($request->input('colores', []));
 
-            Cache::forget('home_destacados');
+            // La invalidación de caché la maneja ProductoObserver automáticamente.
 
             return redirect()->route('admin.productos.index')
                 ->with('success', 'Producto actualizado correctamente.');
@@ -162,8 +163,7 @@ class ProductoController extends Controller
     public function destroy(Producto $producto)
     {
         try {
-            $producto->delete();
-            Cache::forget('home_destacados');
+            $producto->delete(); // ProductoObserver::deleted invalida el caché automáticamente.
             return back()->with('success', 'Producto eliminado.');
         } catch (\Exception $e) {
             Log::error('Error al eliminar producto', [
@@ -194,6 +194,9 @@ class ProductoController extends Controller
                 Storage::disk('public')->delete($imagen->url);
             }
             $imagen->delete();
+            // Eliminar una imagen de galería no dispara el ProductoObserver,
+            // así que invalidamos manualmente la caché del producto.
+            Cache::forget(CacheKeys::producto($producto->slug));
             return back()->with('success', 'Imagen eliminada de la galería.');
         } catch (\Exception $e) {
             Log::error('Error al eliminar imagen de galería', [

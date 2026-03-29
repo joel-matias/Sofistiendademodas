@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CoverRequest;
 use App\Models\Cover;
+use App\Support\CacheKeys;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -34,8 +35,7 @@ class CoverController extends Controller
 
             $data['activo'] = $request->boolean('activo');
 
-            Cover::create($data);
-            Cache::forget('home_covers');
+            Cover::create($data); // CoverObserver invalida el caché automáticamente.
 
             return redirect()->route('admin.covers.index')->with('success', 'Cover creado correctamente.');
 
@@ -64,8 +64,7 @@ class CoverController extends Controller
 
             $data['activo'] = $request->boolean('activo');
 
-            $cover->update($data);
-            Cache::forget('home_covers');
+            $cover->update($data); // CoverObserver invalida el caché automáticamente.
 
             return redirect()->route('admin.covers.index')->with('success', 'Cover actualizado correctamente.');
 
@@ -91,7 +90,8 @@ class CoverController extends Controller
             foreach ($request->input('orden') as $item) {
                 Cover::where('id', $item['id'])->update(['orden' => $item['orden']]);
             }
-            Cache::forget('home_covers');
+            // reorder usa query builder (no dispara el observer), invalidamos manualmente.
+            Cache::forget(CacheKeys::HOME_COVERS);
             return response()->json(['ok' => true]);
         } catch (\Exception $e) {
             Log::error('Error al reordenar covers', ['error' => $e->getMessage(), 'usuario' => auth()->id()]);
@@ -105,8 +105,7 @@ class CoverController extends Controller
             if ($cover->imagen && !str_starts_with($cover->imagen, 'http')) {
                 Storage::disk('public')->delete($cover->imagen);
             }
-            $cover->delete();
-            Cache::forget('home_covers');
+            $cover->delete(); // CoverObserver invalida el caché automáticamente.
             return back()->with('success', 'Cover eliminado.');
         } catch (\Exception $e) {
             Log::error('Error al eliminar cover', ['cover' => $cover->id, 'error' => $e->getMessage()]);

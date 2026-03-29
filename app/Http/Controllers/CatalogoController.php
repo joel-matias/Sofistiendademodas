@@ -7,6 +7,7 @@ use App\Models\Color;
 use App\Models\Cover;
 use App\Models\Producto;
 use App\Models\Talla;
+use App\Support\CacheKeys;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -33,7 +34,7 @@ class CatalogoController extends Controller
     {
         // Categorías y covers cambian raramente → se cachean 10 minutos.
         // Se invalidan automáticamente desde los controllers admin (ver CoverController / CategoriaController).
-        $categorias = Cache::remember('home_categorias', 600, function () {
+        $categorias = Cache::remember(CacheKeys::HOME_CATEGORIAS, 600, function () {
             return Categoria::orderBy('nombre')->get()->map(function ($c) {
                 $img = $this->urlImagen($c->imagen) ?? asset('assets/img/placeholder-category.jpg');
                 return [
@@ -46,7 +47,7 @@ class CatalogoController extends Controller
             })->toArray();
         });
 
-        $covers = Cache::remember('home_covers', 600, function () {
+        $covers = Cache::remember(CacheKeys::HOME_COVERS, 600, function () {
             return Cover::activos()->get()->map(function ($c) {
                 return [
                     'titulo'      => $c->titulo,
@@ -61,7 +62,7 @@ class CatalogoController extends Controller
         });
 
         // Productos destacados: cambian con más frecuencia → caché de 5 minutos
-        $destacados = Cache::remember('home_destacados', 300, function () {
+        $destacados = Cache::remember(CacheKeys::HOME_DESTACADOS, 300, function () {
             return Producto::with(['categorias', 'imagenes'])
                 ->where('activo', true)
                 ->orderByDesc('created_at')
@@ -94,9 +95,14 @@ class CatalogoController extends Controller
 
     public function catalogo(Request $request)
     {
-        // Opciones de filtro disponibles desde BD
-        $todasLasTallas  = Talla::orderBy('nombre')->get(['id', 'nombre', 'slug']);
-        $todosLosColores = Color::orderBy('nombre')->get(['id', 'nombre', 'slug', 'hex']);
+        // Opciones de filtro: cambian raramente → se cachean 15 minutos.
+        // Se invalidan automáticamente desde TallaObserver y ColorObserver.
+        $todasLasTallas  = Cache::remember(CacheKeys::CATALOGO_TALLAS, 900, fn () =>
+            Talla::orderBy('nombre')->get(['id', 'nombre', 'slug'])
+        );
+        $todosLosColores = Cache::remember(CacheKeys::CATALOGO_COLORES, 900, fn () =>
+            Color::orderBy('nombre')->get(['id', 'nombre', 'slug', 'hex'])
+        );
 
         $query = Producto::with(['categorias', 'imagenes'])->where('activo', true);
 
@@ -191,25 +197,26 @@ class CatalogoController extends Controller
             return response()->json(['terminos' => [], 'productos' => [], 'total' => 0]);
         }
 
-        $where = fn($query) => $query
-            ->where('nombre', 'like', "%{$q}%")
-            ->orWhere('descripcion', 'like', "%{$q}%");
+        // Cacheamos 2 minutos por término: reduce carga en BD cuando varios usuarios
+        // escriben el mismo texto o el mismo usuario tipea letra a letra.
+        $data = Cache::remember(CacheKeys::busqueda($q), 120, function () use ($q) {
+            $where = fn ($query) => $query
+                ->where('nombre', 'like', "%{$q}%")
+                ->orWhere('descripcion', 'like', "%{$q}%");
 
-        // Query 1: conteo total de coincidencias
-        $total = Producto::where('activo', true)->where($where)->count();
+            // Query 1: conteo total de coincidencias
+            $total = Producto::where('activo', true)->where($where)->count();
 
-        // Query 2: productos (top 5) → los primeros 4 se muestran como cards,
-        // sus nombres sirven como términos sugeridos (evita una 3ª query separada)
-        $resultados = Producto::where('activo', true)
-            ->where($where)
-            ->orderBy('nombre')
-            ->limit(5)
-            ->get(['id', 'nombre', 'slug', 'imagen', 'precio', 'oferta', 'precio_oferta']);
+            // Query 2: top 5 → primeros 4 como cards, todos sus nombres como términos sugeridos
+            $resultados = Producto::where('activo', true)
+                ->where($where)
+                ->orderBy('nombre')
+                ->limit(5)
+                ->get(['id', 'nombre', 'slug', 'imagen', 'precio', 'oferta', 'precio_oferta']);
 
-        $terminos = $resultados->pluck('nombre')->values()->toArray();
+            $terminos = $resultados->pluck('nombre')->values()->toArray();
 
-        $productos = $resultados->take(4)->map(function ($p) {
-            return [
+            $productos = $resultados->take(4)->map(fn ($p) => [
                 'nombre'        => $p->nombre,
                 'slug'          => $p->slug,
                 'imagen'        => $this->urlImagen($p->imagen),
@@ -217,108 +224,111 @@ class CatalogoController extends Controller
                 'oferta'        => (bool) $p->oferta,
                 'precio_oferta' => $p->precio_oferta,
                 'url'           => route('producto', $p->slug),
-            ];
+            ])->values()->toArray();
+
+            return compact('terminos', 'productos', 'total');
         });
 
-        return response()->json([
-            'terminos' => $terminos,
-            'productos' => $productos,
-            'total'    => $total,
-        ]);
+        return response()->json($data);
     }
 
     public function producto($slug)
     {
-        $p = Producto::with(['categorias', 'imagenes', 'tallas', 'colores', 'detalles'])
-            ->where('slug', $slug)
-            ->firstOrFail();
+        // Cacheamos el array de datos del producto 10 minutos.
+        // Se invalida desde ProductoObserver (update/delete) y manualmente
+        // en destroyImagen (eliminar imagen de galería no dispara el observer).
+        $producto = Cache::remember(CacheKeys::producto($slug), 600, function () use ($slug) {
+            $p = Producto::with(['categorias', 'imagenes', 'tallas', 'colores', 'detalles'])
+                ->where('slug', $slug)
+                ->firstOrFail();
 
-        // ✅ Armamos listado de imágenes (principal + galería) máximo 4
-        $imagenes = [];
-
-        if (! empty($p->imagen)) {
-            $imagenes[] = $this->urlImagen($p->imagen);
-        }
-
-        foreach ($p->imagenes as $img) {
-            if (count($imagenes) >= 4) {
-                break;
+            // Listado de imágenes: principal + galería, máximo 4
+            $imagenes = [];
+            if (! empty($p->imagen)) {
+                $imagenes[] = $this->urlImagen($p->imagen);
             }
-            $imagenes[] = $this->urlImagen($img->url);
-        }
+            foreach ($p->imagenes as $img) {
+                if (count($imagenes) >= 4) break;
+                $imagenes[] = $this->urlImagen($img->url);
+            }
 
-        $categorias = $p->categorias->map(fn ($c) => [
-            'id' => $c->id,
-            'nombre' => $c->nombre,
-            'slug' => $c->slug,
-        ])->values()->toArray();
+            return [
+                'id'            => $p->id,
+                'nombre'        => $p->nombre,
+                'precio'        => $p->precio,
+                'slug'          => $p->slug,
+                'descripcion'   => $p->descripcion,
+                'imagen'        => $imagenes[0] ?? $this->urlImagen($p->imagen),
+                'imagenes'      => $imagenes,
+                'oferta'        => (bool) $p->oferta,
+                'precio_oferta' => $p->precio_oferta,
+                'categoria'     => $p->categorias->first()?->nombre ?? '',
+                'categorias'    => $p->categorias->map(fn ($c) => [
+                    'id'     => $c->id,
+                    'nombre' => $c->nombre,
+                    'slug'   => $c->slug,
+                ])->values()->toArray(),
+                'categoria_ids' => $p->categorias->pluck('id')->toArray(),
+                'tallas'        => $p->tallas->pluck('nombre')->values()->toArray(),
+                'colores'       => $p->colores->map(fn ($c) => [
+                    'nombre' => $c->nombre,
+                    'hex'    => $c->hex,
+                ])->values()->toArray(),
+                'detalles'      => $p->detalles->sortBy('orden')->pluck('texto')->values()->toArray(),
+            ];
+        });
 
-        $detalles = $p->detalles->sortBy('orden')->pluck('texto')->values()->toArray();
-
-        $tallas = $p->tallas->pluck('nombre')->values()->toArray();
-
-        $colores = $p->colores->map(fn ($c) => [
-            'nombre' => $c->nombre,
-            'hex' => $c->hex,
-        ])->values()->toArray();
-
-        $producto = [
-            'id' => $p->id,
-            'nombre' => $p->nombre,
-            'precio' => $p->precio,
-            'slug' => $p->slug,
-            'descripcion' => $p->descripcion,
-
-            // ✅ principal y galería
-            'imagen' => $imagenes[0] ?? $this->urlImagen($p->imagen),
-            'imagenes' => $imagenes,
-
-            'oferta' => (bool) $p->oferta,
-            'precio_oferta' => $p->precio_oferta,
-
-            // Para mostrar en badge:
-            'categoria' => $p->categorias->first()?->nombre ?? '',
-            // Para "también te puede gustar":
-            'categorias' => $categorias,
-
-            'tallas' => $tallas,
-            'colores' => $colores,
-            'detalles' => $detalles,
-        ];
-
-        // ✅ Recomendados por categorías (mismas categorías)
-        $categoriaIds = $p->categorias->pluck('id')->toArray();
-
+        // Los recomendados cambian con frecuencia (nuevos productos, cambios de categoría)
+        // y son distintos por producto, así que se consultan en vivo.
         $recomendados = Producto::with(['categorias', 'imagenes'])
             ->where('activo', true)
-            ->where('id', '!=', $p->id)
-            ->whereHas('categorias', function ($q) use ($categoriaIds) {
-                $q->whereIn('categorias.id', $categoriaIds);
-            })
+            ->where('id', '!=', $producto['id'])
+            ->whereHas('categorias', fn ($q) =>
+                $q->whereIn('categorias.id', $producto['categoria_ids'])
+            )
             ->latest()
             ->limit(8)
             ->get()
             ->map(function ($rp) {
-                $catPrincipal = $rp->categorias->first();
                 $imagenHover = $rp->imagenes->isNotEmpty()
                     ? $this->urlImagen($rp->imagenes->first()->url)
                     : null;
 
                 return [
-                    'id' => $rp->id,
-                    'nombre' => $rp->nombre,
-                    'precio' => $rp->precio,
-                    'slug' => $rp->slug,
-                    'imagen' => $this->urlImagen($rp->imagen),
-                    'imagen_hover' => $imagenHover,
-                    'categoria' => $catPrincipal?->nombre ?? '',
-                    'categorias' => $rp->categorias->pluck('nombre')->implode(', '),
-                    'oferta' => (bool) $rp->oferta,
+                    'id'            => $rp->id,
+                    'nombre'        => $rp->nombre,
+                    'precio'        => $rp->precio,
+                    'slug'          => $rp->slug,
+                    'imagen'        => $this->urlImagen($rp->imagen),
+                    'imagen_hover'  => $imagenHover,
+                    'categoria'     => $rp->categorias->first()?->nombre ?? '',
+                    'categorias'    => $rp->categorias->pluck('nombre')->implode(', '),
+                    'oferta'        => (bool) $rp->oferta,
                     'precio_oferta' => $rp->precio_oferta,
                 ];
             })->toArray();
 
         return view('catalogo.show', compact('producto', 'recomendados'));
+    }
+
+    public function guiaTallas()
+    {
+        // Las medidas de tallas cambian raramente → se cachean 30 minutos.
+        // Se invalidan automáticamente desde TallaObserver.
+        $tallas = Cache::remember(CacheKeys::GUIA_TALLAS, 1800, fn () =>
+            Talla::whereNotNull('pecho')
+                ->orWhereNotNull('cintura')
+                ->orWhereNotNull('cadera')
+                ->orWhereNotNull('largo')
+                ->orderBy('orden')
+                ->orderBy('nombre')
+                ->get()
+        );
+
+        // Determina qué columnas mostrar (solo si al menos una talla tiene valor)
+        $mostrarLargo = $tallas->whereNotNull('largo')->isNotEmpty();
+
+        return view('guia-tallas', compact('tallas', 'mostrarLargo'));
     }
 
     public function nosotros()

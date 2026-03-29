@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CategoriaRequest;
 use App\Models\Categoria;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -33,8 +32,7 @@ class CategoriaController extends Controller
                 $data['imagen'] = $request->file('imagen')->store('categorias', 'public');
             }
 
-            Categoria::create($data);
-            Cache::forget('home_categorias');
+            Categoria::create($data); // CategoriaObserver invalida el caché automáticamente.
 
             return redirect()->route('admin.categorias.index')
                 ->with('success', 'Categoría creada correctamente.');
@@ -63,8 +61,7 @@ class CategoriaController extends Controller
                 $data['imagen'] = $request->file('imagen')->store('categorias', 'public');
             }
 
-            $categoria->update($data);
-            Cache::forget('home_categorias');
+            $categoria->update($data); // CategoriaObserver invalida el caché automáticamente.
 
             return redirect()->route('admin.categorias.index')
                 ->with('success', 'Categoría actualizada correctamente.');
@@ -85,8 +82,7 @@ class CategoriaController extends Controller
             if ($categoria->imagen && !str_starts_with($categoria->imagen, 'http')) {
                 Storage::disk('public')->delete($categoria->imagen);
             }
-            $categoria->delete();
-            Cache::forget('home_categorias');
+            $categoria->delete(); // CategoriaObserver invalida el caché automáticamente.
             return back()->with('success', 'Categoría eliminada.');
         } catch (\Exception $e) {
             Log::error('Error al eliminar categoría', ['categoria' => $categoria->id, 'error' => $e->getMessage()]);

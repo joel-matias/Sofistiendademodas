@@ -3,6 +3,16 @@
 namespace App\Providers;
 
 use App\Listeners\EnviarEmailVerificado;
+use App\Models\Categoria;
+use App\Models\Color;
+use App\Models\Cover;
+use App\Models\Producto;
+use App\Models\Talla;
+use App\Observers\CategoriaObserver;
+use App\Observers\ColorObserver;
+use App\Observers\CoverObserver;
+use App\Observers\ProductoObserver;
+use App\Observers\TallaObserver;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -18,6 +28,15 @@ class AppServiceProvider extends ServiceProvider
     {
         // Envía el correo de bienvenida cuando el usuario verifica su email
         Event::listen(Verified::class, EnviarEmailVerificado::class);
+
+        // Model Observers — centralizan la invalidación de caché.
+        // Cualquier cambio en estos modelos (create/update/delete) invalida
+        // automáticamente las keys correspondientes sin tocar los controllers.
+        Producto::observe(ProductoObserver::class);
+        Categoria::observe(CategoriaObserver::class);
+        Talla::observe(TallaObserver::class);
+        Color::observe(ColorObserver::class);
+        Cover::observe(CoverObserver::class);
 
         $this->configureRateLimiting();
     }
