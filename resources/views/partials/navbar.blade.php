@@ -3,24 +3,27 @@
 <header id="siteHeader"
     class="sticky top-0 z-50 bg-crema/95 backdrop-blur-md border-b border-borde transition-transform duration-300 ease-in-out">
 
-    <div class="w-full px-4 sm:px-6 lg:px-10 h-16 sm:h-20 flex items-center justify-between gap-4">
+    <div class="w-full px-4 sm:px-6 lg:px-10 h-16 sm:h-20 flex items-center gap-4">
 
-        <button type="button" onclick="toggleMenu()"
-            class="p-2 rounded-lg hover:bg-white transition text-tinta border border-transparent hover:border-borde"
-            aria-label="Abrir menú">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-        </button>
-
-        <div class="absolute left-1/2 -translate-x-1/2">
-            <a href="{{ route('home') }}">
-                <img src="{{ asset('assets/img/logo.png') }}" alt="Sofis Tienda de Modas"
-                    class="h-10 sm:h-12 object-contain">
-            </a>
+        {{-- Izquierda --}}
+        <div class="flex-1 flex items-center">
+            <button type="button" onclick="toggleMenu()"
+                class="p-2 rounded-lg hover:bg-white transition text-tinta border border-transparent hover:border-borde"
+                aria-label="Abrir menú">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
         </div>
 
-        <div class="flex items-center gap-1">
+        {{-- Centro: logo --}}
+        <a href="{{ route('home') }}">
+            <img src="{{ asset('assets/img/logo.png') }}" alt="Sofis Tienda de Modas"
+                class="h-10 sm:h-12 object-contain">
+        </a>
+
+        {{-- Derecha --}}
+        <div class="flex-1 flex items-center justify-end gap-1">
 
             {{-- nav para escritorio --}}
             <nav class="hidden lg:flex items-center gap-5 mr-4 text-[12px] font-semibold tracking-[0.12em] uppercase">

@@ -91,9 +91,6 @@
                 <li>
                     <a href="{{ route('guia-tallas') }}" class="text-sm text-white/70 hover:text-white transition">Guía de tallas</a>
                 </li>
-                <li>
-                    <a href="#" class="text-sm text-white/70 hover:text-white transition">Envíos y devoluciones</a>
-                </li>
             </ul>
         </div>
 
