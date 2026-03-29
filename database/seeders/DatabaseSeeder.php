@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             CategoriaSeeder::class,
             TallaSeeder::class,
             ColorSeeder::class,
+            SucursalSeeder::class,
             ProductoSeeder::class,
             CoverSeeder::class,
         ]);

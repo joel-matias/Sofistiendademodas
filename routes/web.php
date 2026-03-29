@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\CoverController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductoController as AdminProductoController;
+use App\Http\Controllers\Admin\SucursalController;
 use App\Http\Controllers\Admin\TallaController;
 use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\Auth\LoginController;
@@ -113,4 +114,11 @@ Route::prefix('admin')
 
         Route::get('usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
         Route::patch('usuarios/{usuario}/role', [UsuarioController::class, 'updateRole'])->name('usuarios.role');
+
+        Route::get('sucursales', [SucursalController::class, 'index'])->name('sucursales.index');
+        Route::get('sucursales/crear', [SucursalController::class, 'create'])->name('sucursales.create');
+        Route::post('sucursales', [SucursalController::class, 'store'])->name('sucursales.store');
+        Route::get('sucursales/{sucursal}/editar', [SucursalController::class, 'edit'])->name('sucursales.edit');
+        Route::put('sucursales/{sucursal}', [SucursalController::class, 'update'])->name('sucursales.update');
+        Route::delete('sucursales/{sucursal}', [SucursalController::class, 'destroy'])->name('sucursales.destroy');
     });
