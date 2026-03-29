@@ -8,7 +8,7 @@ class Talla extends Model
 {
     protected $table = 'tallas';
 
-    protected $fillable = ['nombre', 'slug'];
+    protected $fillable = ['nombre', 'slug', 'orden', 'pecho', 'cintura', 'cadera', 'largo'];
 
     public function productos()
     {

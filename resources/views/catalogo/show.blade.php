@@ -142,7 +142,13 @@
 
                 @if (!empty($producto['tallas']))
                     <div class="mt-6">
-                        <p class="text-[11px] tracking-[0.15em] uppercase text-gris mb-3">Tallas disponibles</p>
+                        <div class="flex items-center justify-between mb-3">
+                            <p class="text-[11px] tracking-[0.15em] uppercase text-gris">Tallas disponibles</p>
+                            <a href="{{ route('guia-tallas') }}"
+                                class="text-[11px] tracking-[0.1em] uppercase text-gris/70 hover:text-tinta underline underline-offset-2 transition">
+                                Ver guía de tallas
+                            </a>
+                        </div>
                         <div class="flex flex-wrap gap-2">
                             @foreach ($producto['tallas'] as $talla)
                                 <span
