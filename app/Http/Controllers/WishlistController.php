@@ -12,12 +12,19 @@ class WishlistController extends Controller
 {
     private function urlImagen(?string $path): ?string
     {
-        if (!$path) return null;
+        if (! $path) {
+            return null;
+        }
+
         return str_starts_with($path, 'http') ? $path : Storage::url($path);
     }
 
     public function index()
     {
+        if (Auth::user()->isAdmin()) {
+            return redirect()->route('home');
+        }
+
         $productos = Auth::user()->favoritos()
             ->with('categorias')
             ->where('activo', true)
@@ -25,13 +32,13 @@ class WishlistController extends Controller
             ->get()
             ->map(function ($p) {
                 return [
-                    'id'           => $p->id,
-                    'nombre'       => $p->nombre,
-                    'precio'       => $p->precio,
-                    'slug'         => $p->slug,
-                    'imagen'       => $this->urlImagen($p->imagen),
-                    'categoria'    => $p->categorias->first()?->nombre ?? '',
-                    'oferta'       => (bool) $p->oferta,
+                    'id' => $p->id,
+                    'nombre' => $p->nombre,
+                    'precio' => $p->precio,
+                    'slug' => $p->slug,
+                    'imagen' => $this->urlImagen($p->imagen),
+                    'categoria' => $p->categorias->first()?->nombre ?? '',
+                    'oferta' => (bool) $p->oferta,
                     'precio_oferta' => $p->precio_oferta,
                 ];
             })->toArray();
@@ -51,7 +58,7 @@ class WishlistController extends Controller
             $esFavorito = false;
         } else {
             Favorito::create([
-                'user_id'     => $user->id,
+                'user_id' => $user->id,
                 'producto_id' => $producto->id,
             ]);
             $esFavorito = true;
@@ -60,7 +67,7 @@ class WishlistController extends Controller
         if ($request->expectsJson()) {
             return response()->json([
                 'favorito' => $esFavorito,
-                'count'    => $user->favoritos()->count(),
+                'count' => $user->favoritos()->count(),
             ]);
         }
 

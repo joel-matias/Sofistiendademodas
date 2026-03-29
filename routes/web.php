@@ -1,18 +1,18 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\PublicAuthController;
-use App\Http\Controllers\Admin\DashboardController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use App\Http\Controllers\Admin\ProductoController as AdminProductoController;
 use App\Http\Controllers\Admin\CategoriaController as AdminCategoriaController;
-use App\Http\Controllers\Admin\TallaController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\CoverController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProductoController as AdminProductoController;
+use App\Http\Controllers\Admin\TallaController;
 use App\Http\Controllers\Admin\UsuarioController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\PublicAuthController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WishlistController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
@@ -35,16 +35,23 @@ Route::post('/logout', [PublicAuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
     // Verificación de email
-    Route::get('/email/verify', fn () => view('auth.verify-email'))
-        ->name('verification.notice');
+    Route::get('/email/verify', function () {
+        if (auth()->user()->hasVerifiedEmail()) {
+            return redirect()->route('home');
+        }
+
+        return view('auth.verify-email');
+    })->name('verification.notice');
 
     Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
         $request->fulfill();
+
         return redirect()->route('home')->with('success', '¡Correo verificado! Ya puedes acceder a todas las funciones.');
     })->middleware('signed')->name('verification.verify');
 
     Route::post('/email/verification-notification', function (Illuminate\Http\Request $request) {
         $request->user()->sendEmailVerificationNotification();
+
         return back()->with('resent', true);
     })->middleware('throttle:6,1')->name('verification.send');
 
