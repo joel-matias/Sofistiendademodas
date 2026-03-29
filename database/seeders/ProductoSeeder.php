@@ -452,6 +452,7 @@ class ProductoSeeder extends Seeder
         $catMap = DB::table('categorias')->pluck('id', 'nombre')->toArray();
         $tallaMap = DB::table('tallas')->pluck('id', 'nombre')->toArray();
         $colorMap = DB::table('colores')->pluck('id', 'nombre')->toArray();
+        $sucursalIds = DB::table('sucursales')->where('activa', true)->pluck('id')->toArray();
 
         foreach ($productos as $p) {
             $slug = Str::slug($p['nombre']).'-'.Str::random(4);
@@ -519,6 +520,25 @@ class ProductoSeeder extends Seeder
                         ['created_at' => now(), 'updated_at' => now()]
                     );
                 }
+            }
+
+            // ─── Sucursales ───────────────────────────────────────────────
+            // Asignación aleatoria: cada producto aparece en al menos una sucursal.
+            // Los productos con 'sucursales' definido usan esa lista; el resto se
+            // asigna aleatoriamente para poblar datos de prueba realistas.
+            DB::table('producto_sucursal')->where('producto_id', $productoId)->delete();
+            $asignadas = $p['sucursales'] ?? array_slice(
+                $sucursalIds,
+                0,
+                rand(1, count($sucursalIds))
+            );
+            foreach ($asignadas as $sucursalId) {
+                DB::table('producto_sucursal')->insertOrIgnore([
+                    'producto_id' => $productoId,
+                    'sucursal_id' => $sucursalId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
             }
         }
 

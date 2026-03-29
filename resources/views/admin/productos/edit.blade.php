@@ -194,6 +194,23 @@
                 </div>
             </div>
 
+            {{-- Sucursales --}}
+            @if ($sucursales->isNotEmpty())
+                <div class="card p-6 space-y-3">
+                    <h2 class="font-display text-lg border-b border-borde pb-3">Disponibilidad en sucursales</h2>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach ($sucursales as $sucursal)
+                            <label
+                                class="flex items-center gap-1.5 cursor-pointer text-sm px-3 py-1.5 rounded-xl border border-borde hover:border-tinta transition has-[:checked]:bg-tinta has-[:checked]:text-crema has-[:checked]:border-tinta">
+                                <input type="checkbox" name="sucursales[]" value="{{ $sucursal->id }}" class="sr-only"
+                                    {{ in_array($sucursal->id, old('sucursales', $sucursalesSeleccionadas)) ? 'checked' : '' }}>
+                                {{ $sucursal->nombre }}
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <div class="flex gap-3">
                 <button type="submit" class="btn-primary">Actualizar producto</button>
                 <a href="{{ route('admin.productos.index') }}" class="btn-ghost">Cancelar</a>

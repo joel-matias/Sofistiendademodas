@@ -123,14 +123,26 @@
                     </li>
                 @endif
 
-                <li class="flex items-start gap-2.5">
-                    <svg class="w-4 h-4 mt-0.5 text-white/40 flex-shrink-0"
-                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <span class="text-sm text-white/70">Lun – Sáb: 10:00 – 20:00</span>
-                </li>
+                @foreach ($sucursalesFooter ?? [] as $sucursal)
+                    <li class="flex items-start gap-2.5">
+                        <svg class="w-4 h-4 mt-0.5 text-white/40 flex-shrink-0"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <div>
+                            <p class="text-sm text-white/70 font-medium">{{ $sucursal->nombre }}</p>
+                            @if ($sucursal->horario)
+                                <p class="text-xs text-white/50 mt-0.5">{{ $sucursal->horario }}</p>
+                            @endif
+                            @if ($sucursal->telefono)
+                                <p class="text-xs text-white/50 mt-0.5">{{ $sucursal->telefono }}</p>
+                            @endif
+                        </div>
+                    </li>
+                @endforeach
             </ul>
         </div>
 

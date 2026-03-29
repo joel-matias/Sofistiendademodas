@@ -37,12 +37,13 @@ class CatalogoController extends Controller
         $categorias = Cache::remember(CacheKeys::HOME_CATEGORIAS, 600, function () {
             return Categoria::orderBy('nombre')->get()->map(function ($c) {
                 $img = $this->urlImagen($c->imagen) ?? asset('assets/img/placeholder-category.jpg');
+
                 return [
-                    'titulo'  => $c->nombre,
-                    'img'     => $img,
-                    'nombre'  => $c->nombre,
-                    'imagen'  => $img,
-                    'slug'    => $c->slug,
+                    'titulo' => $c->nombre,
+                    'img' => $img,
+                    'nombre' => $c->nombre,
+                    'imagen' => $img,
+                    'slug' => $c->slug,
                 ];
             })->toArray();
         });
@@ -50,11 +51,11 @@ class CatalogoController extends Controller
         $covers = Cache::remember(CacheKeys::HOME_COVERS, 600, function () {
             return Cover::activos()->get()->map(function ($c) {
                 return [
-                    'titulo'      => $c->titulo,
-                    'subtitulo'   => $c->subtitulo,
+                    'titulo' => $c->titulo,
+                    'subtitulo' => $c->subtitulo,
                     'texto_boton' => $c->texto_boton,
-                    'url_boton'   => $c->url_boton,
-                    'imagen'      => $c->imagen
+                    'url_boton' => $c->url_boton,
+                    'imagen' => $c->imagen
                         ? (str_starts_with($c->imagen, 'http') ? $c->imagen : Storage::url($c->imagen))
                         : null,
                 ];
@@ -75,16 +76,16 @@ class CatalogoController extends Controller
                         : null;
 
                     return [
-                        'id'           => $p->id,
-                        'nombre'       => $p->nombre,
-                        'precio'       => $p->precio,
-                        'slug'         => $p->slug,
-                        'descripcion'  => $p->descripcion,
-                        'imagen'       => $this->urlImagen($p->imagen),
+                        'id' => $p->id,
+                        'nombre' => $p->nombre,
+                        'precio' => $p->precio,
+                        'slug' => $p->slug,
+                        'descripcion' => $p->descripcion,
+                        'imagen' => $this->urlImagen($p->imagen),
                         'imagen_hover' => $imagenHover,
-                        'categoria'    => $categoriaPrincipal ? $categoriaPrincipal->nombre : '',
-                        'categorias'   => $p->categorias->pluck('nombre')->implode(', '),
-                        'oferta'       => (bool) $p->oferta,
+                        'categoria' => $categoriaPrincipal ? $categoriaPrincipal->nombre : '',
+                        'categorias' => $p->categorias->pluck('nombre')->implode(', '),
+                        'oferta' => (bool) $p->oferta,
                         'precio_oferta' => $p->precio_oferta,
                     ];
                 })->toArray();
@@ -97,11 +98,9 @@ class CatalogoController extends Controller
     {
         // Opciones de filtro: cambian raramente → se cachean 15 minutos.
         // Se invalidan automáticamente desde TallaObserver y ColorObserver.
-        $todasLasTallas  = Cache::remember(CacheKeys::CATALOGO_TALLAS, 900, fn () =>
-            Talla::orderBy('nombre')->get(['id', 'nombre', 'slug'])
+        $todasLasTallas = Cache::remember(CacheKeys::CATALOGO_TALLAS, 900, fn () => Talla::orderBy('nombre')->get(['id', 'nombre', 'slug'])
         );
-        $todosLosColores = Cache::remember(CacheKeys::CATALOGO_COLORES, 900, fn () =>
-            Color::orderBy('nombre')->get(['id', 'nombre', 'slug', 'hex'])
+        $todosLosColores = Cache::remember(CacheKeys::CATALOGO_COLORES, 900, fn () => Color::orderBy('nombre')->get(['id', 'nombre', 'slug', 'hex'])
         );
 
         $query = Producto::with(['categorias', 'imagenes'])->where('activo', true);
@@ -126,14 +125,14 @@ class CatalogoController extends Controller
             }
             if ($categoria) {
                 $categoriaSeleccionada = ['nombre' => $categoria->nombre, 'slug' => $categoria->slug];
-                $query->whereHas('categorias', fn($q) => $q->where('categorias.id', $categoria->id));
+                $query->whereHas('categorias', fn ($q) => $q->where('categorias.id', $categoria->id));
             }
         }
 
         // Filtro: búsqueda de texto
         if ($request->filled('search')) {
             $search = $request->input('search');
-            $query->where(fn($q) => $q
+            $query->where(fn ($q) => $q
                 ->where('nombre', 'like', "%{$search}%")
                 ->orWhere('descripcion', 'like', "%{$search}%")
             );
@@ -142,20 +141,20 @@ class CatalogoController extends Controller
         // Filtro: talla — busca por slug en la relación many-to-many
         if ($request->filled('talla')) {
             $tallaSlug = $request->input('talla');
-            $query->whereHas('tallas', fn($q) => $q->where('tallas.slug', $tallaSlug));
+            $query->whereHas('tallas', fn ($q) => $q->where('tallas.slug', $tallaSlug));
         }
 
         // Filtro: color — busca por slug en la relación many-to-many
         if ($request->filled('color')) {
             $colorSlug = $request->input('color');
-            $query->whereHas('colores', fn($q) => $q->where('colores.slug', $colorSlug));
+            $query->whereHas('colores', fn ($q) => $q->where('colores.slug', $colorSlug));
         }
 
         // Ordenamiento
         match ($request->input('orden')) {
             'precio_menor' => $query->orderBy('precio', 'asc'),
             'precio_mayor' => $query->orderBy('precio', 'desc'),
-            default        => $query->orderByDesc('created_at'),
+            default => $query->orderByDesc('created_at'),
         };
 
         $productos = $query->paginate(24)->withQueryString();
@@ -167,15 +166,15 @@ class CatalogoController extends Controller
                 : null;
 
             return [
-                'id'            => $p->id,
-                'nombre'        => $p->nombre,
-                'precio'        => $p->precio,
-                'slug'          => $p->slug,
-                'imagen'        => $this->urlImagen($p->imagen),
-                'imagen_hover'  => $imagenHover,
-                'categoria'     => $categoriaPrincipal ? $categoriaPrincipal->nombre : '',
-                'categorias'    => $p->categorias->pluck('nombre')->implode(', '),
-                'oferta'        => (bool) $p->oferta,
+                'id' => $p->id,
+                'nombre' => $p->nombre,
+                'precio' => $p->precio,
+                'slug' => $p->slug,
+                'imagen' => $this->urlImagen($p->imagen),
+                'imagen_hover' => $imagenHover,
+                'categoria' => $categoriaPrincipal ? $categoriaPrincipal->nombre : '',
+                'categorias' => $p->categorias->pluck('nombre')->implode(', '),
+                'oferta' => (bool) $p->oferta,
                 'precio_oferta' => $p->precio_oferta,
             ];
         });
@@ -217,13 +216,13 @@ class CatalogoController extends Controller
             $terminos = $resultados->pluck('nombre')->values()->toArray();
 
             $productos = $resultados->take(4)->map(fn ($p) => [
-                'nombre'        => $p->nombre,
-                'slug'          => $p->slug,
-                'imagen'        => $this->urlImagen($p->imagen),
-                'precio'        => $p->precio,
-                'oferta'        => (bool) $p->oferta,
+                'nombre' => $p->nombre,
+                'slug' => $p->slug,
+                'imagen' => $this->urlImagen($p->imagen),
+                'precio' => $p->precio,
+                'oferta' => (bool) $p->oferta,
                 'precio_oferta' => $p->precio_oferta,
-                'url'           => route('producto', $p->slug),
+                'url' => route('producto', $p->slug),
             ])->values()->toArray();
 
             return compact('terminos', 'productos', 'total');
@@ -238,7 +237,7 @@ class CatalogoController extends Controller
         // Se invalida desde ProductoObserver (update/delete) y manualmente
         // en destroyImagen (eliminar imagen de galería no dispara el observer).
         $producto = Cache::remember(CacheKeys::producto($slug), 600, function () use ($slug) {
-            $p = Producto::with(['categorias', 'imagenes', 'tallas', 'colores', 'detalles'])
+            $p = Producto::with(['categorias', 'imagenes', 'tallas', 'colores', 'detalles', 'sucursales'])
                 ->where('slug', $slug)
                 ->firstOrFail();
 
@@ -248,33 +247,42 @@ class CatalogoController extends Controller
                 $imagenes[] = $this->urlImagen($p->imagen);
             }
             foreach ($p->imagenes as $img) {
-                if (count($imagenes) >= 4) break;
+                if (count($imagenes) >= 4) {
+                    break;
+                }
                 $imagenes[] = $this->urlImagen($img->url);
             }
 
             return [
-                'id'            => $p->id,
-                'nombre'        => $p->nombre,
-                'precio'        => $p->precio,
-                'slug'          => $p->slug,
-                'descripcion'   => $p->descripcion,
-                'imagen'        => $imagenes[0] ?? $this->urlImagen($p->imagen),
-                'imagenes'      => $imagenes,
-                'oferta'        => (bool) $p->oferta,
+                'id' => $p->id,
+                'nombre' => $p->nombre,
+                'precio' => $p->precio,
+                'slug' => $p->slug,
+                'descripcion' => $p->descripcion,
+                'imagen' => $imagenes[0] ?? $this->urlImagen($p->imagen),
+                'imagenes' => $imagenes,
+                'oferta' => (bool) $p->oferta,
                 'precio_oferta' => $p->precio_oferta,
-                'categoria'     => $p->categorias->first()?->nombre ?? '',
-                'categorias'    => $p->categorias->map(fn ($c) => [
-                    'id'     => $c->id,
+                'categoria' => $p->categorias->first()?->nombre ?? '',
+                'categorias' => $p->categorias->map(fn ($c) => [
+                    'id' => $c->id,
                     'nombre' => $c->nombre,
-                    'slug'   => $c->slug,
+                    'slug' => $c->slug,
                 ])->values()->toArray(),
                 'categoria_ids' => $p->categorias->pluck('id')->toArray(),
-                'tallas'        => $p->tallas->pluck('nombre')->values()->toArray(),
-                'colores'       => $p->colores->map(fn ($c) => [
+                'tallas' => $p->tallas->pluck('nombre')->values()->toArray(),
+                'colores' => $p->colores->map(fn ($c) => [
                     'nombre' => $c->nombre,
-                    'hex'    => $c->hex,
+                    'hex' => $c->hex,
                 ])->values()->toArray(),
-                'detalles'      => $p->detalles->sortBy('orden')->pluck('texto')->values()->toArray(),
+                'detalles' => $p->detalles->sortBy('orden')->pluck('texto')->values()->toArray(),
+                'sucursales' => $p->sucursales->where('activa', true)->map(fn ($s) => [
+                    'id' => $s->id,
+                    'nombre' => $s->nombre,
+                    'direccion' => $s->direccion,
+                    'telefono' => $s->telefono,
+                    'horario' => $s->horario,
+                ])->values()->toArray(),
             ];
         });
 
@@ -283,8 +291,7 @@ class CatalogoController extends Controller
         $recomendados = Producto::with(['categorias', 'imagenes'])
             ->where('activo', true)
             ->where('id', '!=', $producto['id'])
-            ->whereHas('categorias', fn ($q) =>
-                $q->whereIn('categorias.id', $producto['categoria_ids'])
+            ->whereHas('categorias', fn ($q) => $q->whereIn('categorias.id', $producto['categoria_ids'])
             )
             ->latest()
             ->limit(8)
@@ -295,15 +302,15 @@ class CatalogoController extends Controller
                     : null;
 
                 return [
-                    'id'            => $rp->id,
-                    'nombre'        => $rp->nombre,
-                    'precio'        => $rp->precio,
-                    'slug'          => $rp->slug,
-                    'imagen'        => $this->urlImagen($rp->imagen),
-                    'imagen_hover'  => $imagenHover,
-                    'categoria'     => $rp->categorias->first()?->nombre ?? '',
-                    'categorias'    => $rp->categorias->pluck('nombre')->implode(', '),
-                    'oferta'        => (bool) $rp->oferta,
+                    'id' => $rp->id,
+                    'nombre' => $rp->nombre,
+                    'precio' => $rp->precio,
+                    'slug' => $rp->slug,
+                    'imagen' => $this->urlImagen($rp->imagen),
+                    'imagen_hover' => $imagenHover,
+                    'categoria' => $rp->categorias->first()?->nombre ?? '',
+                    'categorias' => $rp->categorias->pluck('nombre')->implode(', '),
+                    'oferta' => (bool) $rp->oferta,
                     'precio_oferta' => $rp->precio_oferta,
                 ];
             })->toArray();
@@ -315,14 +322,13 @@ class CatalogoController extends Controller
     {
         // Las medidas de tallas cambian raramente → se cachean 30 minutos.
         // Se invalidan automáticamente desde TallaObserver.
-        $tallas = Cache::remember(CacheKeys::GUIA_TALLAS, 1800, fn () =>
-            Talla::whereNotNull('pecho')
-                ->orWhereNotNull('cintura')
-                ->orWhereNotNull('cadera')
-                ->orWhereNotNull('largo')
-                ->orderBy('orden')
-                ->orderBy('nombre')
-                ->get()
+        $tallas = Cache::remember(CacheKeys::GUIA_TALLAS, 1800, fn () => Talla::whereNotNull('pecho')
+            ->orWhereNotNull('cintura')
+            ->orWhereNotNull('cadera')
+            ->orWhereNotNull('largo')
+            ->orderBy('orden')
+            ->orderBy('nombre')
+            ->get()
         );
 
         // Determina qué columnas mostrar (solo si al menos una talla tiene valor)

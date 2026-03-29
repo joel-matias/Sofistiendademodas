@@ -8,6 +8,7 @@ use App\Models\Categoria;
 use App\Models\Color;
 use App\Models\ImagenProducto;
 use App\Models\Producto;
+use App\Models\Sucursal;
 use App\Models\Talla;
 use App\Services\ImageService;
 use App\Support\CacheKeys;
@@ -49,8 +50,9 @@ class ProductoController extends Controller
         $categorias = Categoria::orderBy('nombre')->get();
         $tallas = Talla::orderBy('nombre')->get();
         $colores = Color::orderBy('nombre')->get();
+        $sucursales = Sucursal::where('activa', true)->orderBy('nombre')->get();
 
-        return view('admin.productos.create', compact('categorias', 'tallas', 'colores'));
+        return view('admin.productos.create', compact('categorias', 'tallas', 'colores', 'sucursales'));
     }
 
     public function store(ProductoRequest $request)
@@ -66,7 +68,7 @@ class ProductoController extends Controller
                 $data['imagen'] = $this->imageService->store($request->file('imagen'), 'productos', 800);
             }
 
-            unset($data['galeria'], $data['categorias'], $data['tallas'], $data['colores']);
+            unset($data['galeria'], $data['categorias'], $data['tallas'], $data['colores'], $data['sucursales']);
 
             $producto = Producto::create($data);
 
@@ -84,6 +86,7 @@ class ProductoController extends Controller
             $producto->categorias()->sync($request->input('categorias', []));
             $producto->tallas()->sync($request->input('tallas', []));
             $producto->colores()->sync($request->input('colores', []));
+            $producto->sucursales()->sync($request->input('sucursales', []));
 
             // La invalidación de caché la maneja ProductoObserver automáticamente.
 
@@ -105,15 +108,17 @@ class ProductoController extends Controller
         $categorias = Categoria::orderBy('nombre')->get();
         $tallas = Talla::orderBy('nombre')->get();
         $colores = Color::orderBy('nombre')->get();
+        $sucursales = Sucursal::where('activa', true)->orderBy('nombre')->get();
         $categoriasSeleccionadas = $producto->categorias->pluck('id')->toArray();
         $tallasSeleccionadas = $producto->tallas->pluck('id')->toArray();
         $coloresSeleccionados = $producto->colores->pluck('id')->toArray();
+        $sucursalesSeleccionadas = $producto->sucursales->pluck('id')->toArray();
         $imagenes = $producto->imagenes()->orderBy('orden')->get();
 
         return view('admin.productos.edit', compact(
-            'producto', 'categorias', 'tallas', 'colores',
+            'producto', 'categorias', 'tallas', 'colores', 'sucursales',
             'categoriasSeleccionadas', 'tallasSeleccionadas', 'coloresSeleccionados',
-            'imagenes'
+            'sucursalesSeleccionadas', 'imagenes'
         ));
     }
 
@@ -132,7 +137,7 @@ class ProductoController extends Controller
                 $data['imagen'] = $this->imageService->store($request->file('imagen'), 'productos', 800);
             }
 
-            unset($data['galeria'], $data['categorias'], $data['tallas'], $data['colores']);
+            unset($data['galeria'], $data['categorias'], $data['tallas'], $data['colores'], $data['sucursales']);
 
             $producto->update($data);
 
@@ -152,6 +157,7 @@ class ProductoController extends Controller
             $producto->categorias()->sync($request->input('categorias', []));
             $producto->tallas()->sync($request->input('tallas', []));
             $producto->colores()->sync($request->input('colores', []));
+            $producto->sucursales()->sync($request->input('sucursales', []));
 
             // La invalidación de caché la maneja ProductoObserver automáticamente.
 

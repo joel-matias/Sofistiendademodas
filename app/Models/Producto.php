@@ -60,4 +60,10 @@ class Producto extends Model
         return $this->hasMany(ImagenProducto::class, 'producto_id')
             ->orderBy('orden');
     }
+
+    public function sucursales(): BelongsToMany
+    {
+        return $this->belongsToMany(Sucursal::class, 'producto_sucursal')
+            ->withTimestamps();
+    }
 }
