@@ -34,7 +34,9 @@
 
                     <div class="sm:col-span-2">
                         <label class="block text-xs tracking-widest uppercase text-gris mb-1.5">Descripción</label>
-                        <textarea name="descripcion" rows="3" class="input resize-none">{{ old('descripcion', $producto->descripcion) }}</textarea>
+                        <textarea id="descripcionTextarea" name="descripcion" rows="3"
+                            class="input resize-none">{{ old('descripcion', $producto->descripcion) }}</textarea>
+                        @include('admin.partials.ai-descripcion')
                     </div>
 
                     <div>
@@ -75,7 +77,8 @@
                 <h2 class="font-display text-lg border-b border-borde pb-3 mb-5">Imagen principal</h2>
                 @if ($producto->imagen)
                     <div class="mb-4 flex items-start gap-4">
-                        <img src="{{ str_starts_with($producto->imagen, 'http') ? $producto->imagen : \Illuminate\Support\Facades\Storage::url($producto->imagen) }}"
+                        <img id="imagenActualSrc"
+                            src="{{ str_starts_with($producto->imagen, 'http') ? $producto->imagen : \Illuminate\Support\Facades\Storage::url($producto->imagen) }}"
                             class="w-24 h-32 object-cover rounded-xl border border-borde flex-shrink-0">
                         <div>
                             <p class="text-xs font-medium text-tinta mb-1">Imagen actual</p>

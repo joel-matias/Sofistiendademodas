@@ -35,8 +35,10 @@
 
                     <div class="sm:col-span-2">
                         <label class="block text-xs tracking-widest uppercase text-gris mb-1.5">Descripción</label>
-                        <textarea name="descripcion" rows="3" class="input resize-none @error('descripcion') border-red-400 @enderror"
+                        <textarea id="descripcionTextarea" name="descripcion" rows="3"
+                            class="input resize-none @error('descripcion') border-red-400 @enderror"
                             placeholder="Describe el producto...">{{ old('descripcion') }}</textarea>
+                        @include('admin.partials.ai-descripcion')
                     </div>
 
                     <div>
