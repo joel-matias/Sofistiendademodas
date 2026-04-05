@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AiController;
 use App\Http\Controllers\Admin\CategoriaController as AdminCategoriaController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\CoverController;
@@ -121,4 +122,8 @@ Route::prefix('admin')
         Route::get('sucursales/{sucursal}/editar', [SucursalController::class, 'edit'])->name('sucursales.edit');
         Route::put('sucursales/{sucursal}', [SucursalController::class, 'update'])->name('sucursales.update');
         Route::delete('sucursales/{sucursal}', [SucursalController::class, 'destroy'])->name('sucursales.destroy');
+
+        Route::post('ai/descripcion', [AiController::class, 'generarDescripcion'])
+            ->middleware('throttle:20,1')
+            ->name('ai.descripcion');
     });

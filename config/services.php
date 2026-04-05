@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        'model' => env('GEMINI_MODEL', 'gemini-2.0-flash'),
+    ],
+
+    'ai' => [
+        'provider' => env('AI_PROVIDER', 'groq'),  // 'groq' o 'gemini'
+        'groq_key' => env('GROQ_API_KEY'),
+        'groq_model' => env('GROQ_MODEL', 'llama-3.3-70b-versatile'),
+        'groq_vision_model' => env('GROQ_VISION_MODEL', 'meta-llama/llama-4-scout-17b-16e-instruct'),
+    ],
+
 ];
