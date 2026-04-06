@@ -342,8 +342,4 @@ class CatalogoController extends Controller
         return view('nosotros');
     }
 
-    public function contacto()
-    {
-        return view('contacto');
-    }
 }
