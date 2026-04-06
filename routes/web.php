@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PublicAuthController;
 use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -60,6 +61,10 @@ Route::middleware('auth')->group(function () {
     Route::middleware('verified')->group(function () {
         Route::get('/mis-favoritos', [WishlistController::class, 'index'])->name('favoritos.index');
         Route::post('/favoritos/{producto}', [WishlistController::class, 'toggle'])->name('favoritos.toggle');
+
+        Route::get('/mi-cuenta', [ProfileController::class, 'show'])->name('perfil.show');
+        Route::patch('/mi-cuenta/info', [ProfileController::class, 'updateInfo'])->name('perfil.update.info');
+        Route::patch('/mi-cuenta/password', [ProfileController::class, 'updatePassword'])->name('perfil.update.password');
     });
 });
 
@@ -125,4 +130,5 @@ Route::prefix('admin')
         Route::post('ai/descripcion', [AiController::class, 'generarDescripcion'])
             ->middleware('throttle:20,1')
             ->name('ai.descripcion');
+
     });
