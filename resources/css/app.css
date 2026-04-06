@@ -87,3 +87,126 @@
         @apply absolute inset-0 bg-tinta/0 group-hover:bg-tinta/10 transition-all duration-300 flex items-end justify-center pb-5 opacity-0 group-hover:opacity-100;
     }
 }
+
+/* ═══════════════════════════════════════════════════════
+   SweetAlert2 — Tema Sofis Tienda de Modas
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── Toast ─────────────────────────────────────────── */
+.sofis-toast {
+    background: #1A1A18 !important;
+    color: #F6F4F1 !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.875rem !important;
+    border-radius: 0.875rem !important;
+    padding: 0.625rem 1rem 0.625rem 0.875rem !important;
+    box-shadow: 0 4px 24px rgba(26, 26, 24, 0.25) !important;
+}
+
+.sofis-toast .swal2-title {
+    color: #F6F4F1 !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.sofis-toast .swal2-html-container {
+    color: rgba(246, 244, 241, 0.75) !important;
+    font-size: 0.8rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.sofis-toast .swal2-timer-progress-bar {
+    background: rgba(246, 244, 241, 0.2) !important;
+    height: 2px !important;
+}
+
+.sofis-toast .swal2-icon { margin: 0 0.625rem 0 0 !important; }
+
+/* Success */
+.sofis-toast.swal2-icon-success .swal2-icon { border-color: #B8936A !important; color: #B8936A !important; }
+.sofis-toast .swal2-icon.swal2-success .swal2-success-ring { border-color: rgba(184,147,106,0.25) !important; }
+.sofis-toast .swal2-icon.swal2-success [class^='swal2-success-line'] { background-color: #B8936A !important; }
+.sofis-toast.swal2-icon-success .swal2-timer-progress-bar { background: rgba(184,147,106,0.5) !important; }
+
+/* Error */
+.sofis-toast.swal2-icon-error .swal2-icon { border-color: #9B1D3A !important; color: #9B1D3A !important; }
+.sofis-toast .swal2-icon.swal2-error .swal2-x-mark-line-left,
+.sofis-toast .swal2-icon.swal2-error .swal2-x-mark-line-right { background-color: #9B1D3A !important; }
+.sofis-toast.swal2-icon-error .swal2-timer-progress-bar { background: rgba(155,29,58,0.5) !important; }
+
+/* Warning */
+.sofis-toast.swal2-icon-warning .swal2-icon,
+.sofis-toast .swal2-icon.swal2-warning { border-color: #B8936A !important; color: #B8936A !important; }
+.sofis-toast.swal2-icon-warning .swal2-timer-progress-bar { background: rgba(184,147,106,0.5) !important; }
+
+/* Info */
+.sofis-toast.swal2-icon-info .swal2-icon,
+.sofis-toast .swal2-icon.swal2-info { border-color: #716F6A !important; color: #716F6A !important; }
+
+/* ─── Dialog (confirmaciones) ────────────────────────── */
+.sofis-dialog {
+    background: #F6F4F1 !important;
+    color: #1A1A18 !important;
+    border-radius: 1.5rem !important;
+    border: 1px solid #E2DED9 !important;
+    padding: 2rem 2rem 1.75rem !important;
+    font-family: 'Inter', sans-serif !important;
+    box-shadow: 0 20px 60px rgba(26, 26, 24, 0.18) !important;
+}
+
+.sofis-dialog__title {
+    font-family: 'Playfair Display', serif !important;
+    color: #1A1A18 !important;
+    font-size: 1.35rem !important;
+    font-weight: 600 !important;
+    line-height: 1.3 !important;
+}
+
+.sofis-dialog__text {
+    color: #716F6A !important;
+    font-size: 0.875rem !important;
+    line-height: 1.6 !important;
+    margin-top: 0.25rem !important;
+}
+
+.sofis-dialog__actions {
+    gap: 0.625rem !important;
+    margin-top: 1.5rem !important;
+    padding-top: 0 !important;
+}
+
+.sofis-dialog__btn-confirm {
+    background: #1A1A18 !important;
+    color: #F6F4F1 !important;
+    border-radius: 0.75rem !important;
+    padding: 0.625rem 1.5rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    font-family: 'Inter', sans-serif !important;
+    cursor: pointer !important;
+    transition: opacity 0.15s !important;
+    border: none !important;
+}
+.sofis-dialog__btn-confirm:hover { opacity: 0.82 !important; }
+
+.sofis-dialog__btn-cancel {
+    background: transparent !important;
+    color: #1A1A18 !important;
+    border: 1px solid #E2DED9 !important;
+    border-radius: 0.75rem !important;
+    padding: 0.625rem 1.5rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    font-family: 'Inter', sans-serif !important;
+    cursor: pointer !important;
+    transition: background 0.15s !important;
+}
+.sofis-dialog__btn-cancel:hover { background: #E2DED9 !important; }
+
+/* Iconos en dialog */
+.sofis-dialog .swal2-icon.swal2-warning { border-color: rgba(155,29,58,0.3) !important; color: #9B1D3A !important; }
+.sofis-dialog .swal2-icon.swal2-question { border-color: rgba(26,26,24,0.2) !important; color: #1A1A18 !important; }

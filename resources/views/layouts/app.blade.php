@@ -103,6 +103,19 @@
 
     @include('partials.footer')
 
+    {{-- Flash messages vía SweetAlert --}}
+    @if (session('success') || session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                @if (session('success'))
+                    window.SofisAlert?.success(@json(session('success')));
+                @elseif (session('error'))
+                    window.SofisAlert?.error(@json(session('error')));
+                @endif
+            });
+        </script>
+    @endif
+
     @stack('scripts')
 </body>
 
