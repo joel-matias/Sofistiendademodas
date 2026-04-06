@@ -24,6 +24,8 @@
             @foreach($__covers as $i => $cover)
                 <div class="hero-slide absolute inset-0 flex items-end transition-opacity duration-700 ease-in-out
                             {{ $i === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0' }}"
+                    role="group" aria-roledescription="diapositiva"
+                    aria-label="{{ $i + 1 }} de {{ count($__covers) }}"
                     data-index="{{ $i }}">
 
                     @if(!empty($cover['imagen']))
@@ -61,25 +63,26 @@
             {{-- Navegación (solo si hay más de 1 slide) --}}
             @if(count($__covers) > 1)
                 {{-- Flechas --}}
-                <button onclick="heroCarousel.prev()" aria-label="Anterior"
+                <button type="button" onclick="heroCarousel.prev()" aria-label="Diapositiva anterior"
                     class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/20 hover:bg-white/35 backdrop-blur-sm flex items-center justify-center transition">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                     </svg>
                 </button>
-                <button onclick="heroCarousel.next()" aria-label="Siguiente"
+                <button type="button" onclick="heroCarousel.next()" aria-label="Diapositiva siguiente"
                     class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/20 hover:bg-white/35 backdrop-blur-sm flex items-center justify-center transition">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                     </svg>
                 </button>
 
                 {{-- Dots --}}
-                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex gap-2" role="tablist" aria-label="Diapositivas">
                     @foreach($__covers as $i => $cover)
-                        <button onclick="heroCarousel.goTo({{ $i }})"
+                        <button type="button" onclick="heroCarousel.goTo({{ $i }})"
                             class="hero-dot w-2 h-2 rounded-full transition-all duration-300 {{ $i === 0 ? 'bg-white w-5' : 'bg-white/40' }}"
-                            aria-label="Ir al slide {{ $i + 1 }}"></button>
+                            role="tab" aria-label="Diapositiva {{ $i + 1 }}" aria-selected="{{ $i === 0 ? 'true' : 'false' }}"
+                            tabindex="{{ $i === 0 ? '0' : '-1' }}"></button>
                     @endforeach
                 </div>
             @endif
@@ -98,6 +101,8 @@
                     slides[current].classList.replace('z-10', 'z-0');
                     dots[current].classList.remove('bg-white', 'w-5');
                     dots[current].classList.add('bg-white/40');
+                    dots[current].setAttribute('aria-selected', 'false');
+                    dots[current].setAttribute('tabindex', '-1');
 
                     current = (index + slides.length) % slides.length;
 
@@ -105,6 +110,8 @@
                     slides[current].classList.replace('z-0', 'z-10');
                     dots[current].classList.remove('bg-white/40');
                     dots[current].classList.add('bg-white', 'w-5');
+                    dots[current].setAttribute('aria-selected', 'true');
+                    dots[current].setAttribute('tabindex', '0');
                 }
 
                 function next()         { show(current + 1); resetTimer(); }
