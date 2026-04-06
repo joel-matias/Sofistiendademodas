@@ -189,8 +189,6 @@
                 completo</a>
             <a href="{{ route('nosotros') }}" onclick="closeMenu()"
                 class="flex items-center py-2.5 text-sm font-medium border-b border-borde/50 hover:text-gris transition">Nosotros</a>
-            <a href="{{ route('contacto') }}" onclick="closeMenu()"
-                class="flex items-center py-2.5 text-sm font-medium hover:text-gris transition">Contacto</a>
         </div>
 
         <div>

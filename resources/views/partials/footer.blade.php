@@ -85,10 +85,6 @@
                         class="text-sm text-white/70 hover:text-white transition">Nosotros</a>
                 </li>
                 <li>
-                    <a href="{{ route('contacto') }}"
-                        class="text-sm text-white/70 hover:text-white transition">Contacto</a>
-                </li>
-                <li>
                     <a href="{{ route('guia-tallas') }}" class="text-sm text-white/70 hover:text-white transition">Guía de tallas</a>
                 </li>
             </ul>

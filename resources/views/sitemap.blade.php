@@ -21,12 +21,6 @@
         <priority>0.5</priority>
     </url>
 
-    <url>
-        <loc>{{ route('contacto') }}</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
     {{-- ── Páginas de categoría ──────────────────────────────────────────── --}}
 
     @foreach ($categorias as $categoria)
