@@ -11,6 +11,7 @@ class UsuarioController extends Controller
     public function index()
     {
         $usuarios = User::orderBy('name')->get();
+
         return view('admin.usuarios.index', compact('usuarios'));
     }
 
@@ -20,14 +21,17 @@ class UsuarioController extends Controller
             'role' => 'required|in:admin,user',
         ]);
 
-        // No permite que un admin se quite sus propios permisos
-        if ($usuario->id === auth()->id() && $request->role !== 'admin') {
-            return back()->with('error', 'No puedes quitarte los permisos de administrador.');
+        $estaDemotando = $request->role === 'user' && $usuario->isAdmin();
+
+        // No permite dejar la tienda sin ningún administrador
+        if ($estaDemotando && User::where('role', 'admin')->count() <= 1) {
+            return back()->with('error', 'No puedes eliminar el único administrador del sistema. Asigna otro administrador primero.');
         }
 
         $usuario->update(['role' => $request->role]);
 
         $label = $request->role === 'admin' ? 'ascendido a administrador' : 'removido del rol de administrador';
+
         return back()->with('success', "Usuario {$usuario->name} {$label}.");
     }
 }
