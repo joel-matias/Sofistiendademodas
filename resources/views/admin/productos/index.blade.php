@@ -75,7 +75,7 @@
                             Editar
                         </a>
                         <form method="POST" action="{{ route('admin.productos.destroy', $producto) }}"
-                              onsubmit="return confirm('¿Eliminar este producto?')">
+                              data-confirm="¿Eliminar este producto? Esta acción no se puede deshacer." data-confirm-danger>
                             @csrf @method('DELETE')
                             <button type="submit"
                                     class="text-xs text-red-400 hover:text-red-600 font-medium px-2.5 py-1.5 rounded-lg hover:bg-red-50 transition w-full">
@@ -179,7 +179,7 @@
                                         <a href="{{ route('admin.productos.edit', $producto) }}"
                                             class="text-xs text-gris hover:text-tinta transition font-medium">Editar</a>
                                         <form method="POST" action="{{ route('admin.productos.destroy', $producto) }}"
-                                            onsubmit="return confirm('¿Eliminar este producto?')">
+                                            data-confirm="¿Eliminar este producto? Esta acción no se puede deshacer." data-confirm-danger>
                                             @csrf @method('DELETE')
                                             <button type="submit"
                                                 class="text-xs text-red-500 hover:text-red-700 transition font-medium">Eliminar</button>

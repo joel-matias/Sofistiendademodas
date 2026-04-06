@@ -104,7 +104,7 @@
                         </a>
 
                         <form method="POST" action="{{ route('admin.covers.destroy', $cover) }}"
-                              onsubmit="return confirm('¿Eliminar este cover?')">
+                              data-confirm="¿Eliminar este cover de portada?" data-confirm-danger>
                             @csrf @method('DELETE')
                             <button type="submit"
                                     class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium

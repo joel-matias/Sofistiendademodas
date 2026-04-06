@@ -31,11 +31,6 @@
             <h1 class="font-display text-2xl text-center mb-1">Bienvenida/o</h1>
             <p class="text-center text-sm text-gris mb-6">Inicia sesión en tu cuenta</p>
 
-            @if (session('error'))
-                <div class="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
-                    {{ session('error') }}</div>
-            @endif
-
             <form method="POST" action="{{ route('login.post') }}" class="space-y-4">
                 @csrf
 
@@ -80,6 +75,13 @@
         </p>
 
     </div>
+@if (session('error'))
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        window.SofisAlert?.error(@json(session('error')));
+    });
+</script>
+@endif
 </body>
 
 </html>

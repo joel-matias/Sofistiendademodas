@@ -30,12 +30,6 @@
         <div class="card p-8">
             <h1 class="font-display text-2xl text-center mb-6">Iniciar sesión</h1>
 
-            @if (session('error'))
-                <div class="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
-                    {{ session('error') }}
-                </div>
-            @endif
-
             <form method="POST" action="{{ route('admin.login.post') }}" class="space-y-4">
                 @csrf
 
@@ -76,6 +70,13 @@
         </p>
 
     </div>
+@if (session('error'))
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        window.SofisAlert?.error(@json(session('error')));
+    });
+</script>
+@endif
 </body>
 
 </html>

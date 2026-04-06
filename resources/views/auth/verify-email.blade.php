@@ -43,18 +43,6 @@
                 Revisa tu bandeja de entrada (y la carpeta de spam).
             </p>
 
-            @if (session('resent'))
-                <div class="mb-4 px-4 py-3 rounded-xl bg-green-50 border border-green-200 text-sm text-green-700">
-                    Correo reenviado. Revisa tu bandeja de entrada.
-                </div>
-            @endif
-
-            @if (session('success'))
-                <div class="mb-4 px-4 py-3 rounded-xl bg-green-50 border border-green-200 text-sm text-green-700">
-                    {{ session('success') }}
-                </div>
-            @endif
-
             <form method="POST" action="{{ route('verification.send') }}">
                 @csrf
                 <button type="submit" class="btn-primary w-full">
@@ -75,6 +63,17 @@
         </p>
 
     </div>
+@if (session('resent') || session('success'))
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        @if (session('resent'))
+            window.SofisAlert?.success('Correo reenviado. Revisa tu bandeja de entrada.');
+        @elseif (session('success'))
+            window.SofisAlert?.success(@json(session('success')));
+        @endif
+    });
+</script>
+@endif
 </body>
 
 </html>

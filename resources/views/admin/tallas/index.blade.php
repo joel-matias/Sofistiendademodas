@@ -21,7 +21,7 @@
                         Editar
                     </a>
                     <form method="POST" action="{{ route('admin.tallas.destroy', $talla) }}"
-                          onsubmit="return confirm('¿Eliminar?')">
+                          data-confirm="¿Eliminar esta talla?" data-confirm-danger>
                         @csrf @method('DELETE')
                         <button type="submit"
                                 class="px-2 py-1.5 rounded-lg text-xs font-medium text-red-400 hover:text-red-600 hover:bg-red-50 transition border border-red-100">
@@ -61,7 +61,7 @@
                                     <a href="{{ route('admin.tallas.edit', $talla) }}"
                                        class="text-xs text-gris hover:text-tinta transition font-medium">Editar</a>
                                     <form method="POST" action="{{ route('admin.tallas.destroy', $talla) }}"
-                                          onsubmit="return confirm('¿Eliminar?')">
+                                          data-confirm="¿Eliminar esta talla?" data-confirm-danger>
                                         @csrf @method('DELETE')
                                         <button type="submit"
                                                 class="text-xs text-red-500 hover:text-red-700 transition font-medium">Eliminar</button>

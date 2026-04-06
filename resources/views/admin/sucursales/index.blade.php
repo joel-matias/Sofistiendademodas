@@ -9,18 +9,6 @@
         <a href="{{ route('admin.sucursales.create') }}" class="btn-primary text-sm">+ Nueva sucursal</a>
     </div>
 
-    @if (session('success'))
-        <div class="mb-4 px-4 py-3 rounded-xl bg-green-50 border border-green-200 text-sm text-green-700">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="mb-4 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
-            {{ session('error') }}
-        </div>
-    @endif
-
     {{-- Cards en móvil --}}
     <div class="grid gap-3 sm:hidden">
         @forelse($sucursales as $sucursal)
@@ -45,7 +33,7 @@
                         Editar
                     </a>
                     <form method="POST" action="{{ route('admin.sucursales.destroy', $sucursal) }}"
-                          onsubmit="return confirm('¿Eliminar la sucursal {{ $sucursal->nombre }}?')">
+                          data-confirm="¿Eliminar la sucursal {{ $sucursal->nombre }}? Esta acción no se puede deshacer." data-confirm-danger>
                         @csrf @method('DELETE')
                         <button type="submit"
                                 class="px-2 py-1.5 rounded-lg text-xs font-medium text-red-400 hover:text-red-600 hover:bg-red-50 transition border border-red-100">
@@ -94,7 +82,7 @@
                                     <a href="{{ route('admin.sucursales.edit', $sucursal) }}"
                                        class="text-xs text-gris hover:text-tinta transition font-medium">Editar</a>
                                     <form method="POST" action="{{ route('admin.sucursales.destroy', $sucursal) }}"
-                                          onsubmit="return confirm('¿Eliminar la sucursal {{ $sucursal->nombre }}?')">
+                                          data-confirm="¿Eliminar la sucursal {{ $sucursal->nombre }}? Esta acción no se puede deshacer." data-confirm-danger>
                                         @csrf @method('DELETE')
                                         <button type="submit"
                                                 class="text-xs text-red-500 hover:text-red-700 transition font-medium">Eliminar</button>

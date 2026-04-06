@@ -95,15 +95,10 @@
     @push('scripts')
         <script>
             function mostrarToastVerificacion() {
-                const existing = document.getElementById('toastVerificacion');
-                if (existing) { return; }
-
-                const toast = document.createElement('div');
-                toast.id = 'toastVerificacion';
-                toast.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);z-index:9999;display:flex;align-items:center;gap:0.625rem;padding:0.75rem 1.25rem;background:#2C2B28;color:#F5F2EC;font-size:0.875rem;border-radius:0.875rem;box-shadow:0 4px 20px rgba(0,0,0,0.25);max-width:340px;text-align:center;';
-                toast.innerHTML = '<svg style="width:1rem;height:1rem;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg><span>Verifica tu correo para guardar favoritos. <a href="/email/verify" style="text-decoration:underline;opacity:0.85;">Verificar ahora</a></span>';
-                document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 5000);
+                window.SofisAlert?.html(
+                    'warning',
+                    'Verifica tu correo para guardar favoritos. <a href="/email/verify" style="text-decoration:underline;opacity:0.8">Verificar ahora</a>'
+                );
             }
 
             async function toggleFavorito(btn, productoId) {
@@ -146,6 +141,11 @@
                     svg.style.color = data.favorito ? '#ef4444' : '#716F6A';
                     btn.setAttribute('aria-label', data.favorito ? 'Quitar de favoritos' : 'Guardar en favoritos');
 
+                    // Toast feedback
+                    if (data.favorito) {
+                        window.SofisAlert?.success('Guardado en favoritos');
+                    }
+
                     // Actualizar contador en navbar si existe
                     const counter = document.getElementById('favoritosCount');
                     if (counter) {
@@ -176,6 +176,7 @@
                     btn.dataset.favorito = esFav ? 'true' : 'false';
                     svg.setAttribute('fill', esFav ? 'currentColor' : 'none');
                     svg.style.color = esFav ? '#ef4444' : '#716F6A';
+                    window.SofisAlert?.error('Ocurrió un error. Intenta de nuevo.');
                 }
             }
         </script>

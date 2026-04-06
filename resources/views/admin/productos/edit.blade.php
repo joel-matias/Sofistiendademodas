@@ -225,15 +225,18 @@
     <script>
         // Eliminar imagen de galería sin forms anidados
         function deleteGalleryImage(btn) {
-            if (!confirm('¿Eliminar esta imagen de la galería?')) return;
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = btn.dataset.url;
-            form.innerHTML =
-                '<input type="hidden" name="_token" value="' + btn.dataset.token + '">' +
-                '<input type="hidden" name="_method" value="DELETE">';
-            document.body.appendChild(form);
-            form.submit();
+            window.SofisAlert.confirm('¿Eliminar esta imagen de la galería?').then(({ isConfirmed }) => {
+                if (!isConfirmed) { return; }
+
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = btn.dataset.url;
+                form.innerHTML =
+                    '<input type="hidden" name="_token" value="' + btn.dataset.token + '">' +
+                    '<input type="hidden" name="_method" value="DELETE">';
+                document.body.appendChild(form);
+                form.submit();
+            });
         }
 
         // Preview imagen principal

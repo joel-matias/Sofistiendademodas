@@ -5,16 +5,6 @@
 
 @section('content')
 
-    @if(session('error'))
-        <div class="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-center gap-2">
-            <svg class="w-4 h-4 flex-shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-            </svg>
-            {{ session('error') }}
-        </div>
-    @endif
-
     <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
         <p class="text-sm text-gris">{{ $usuarios->count() }} usuarios registrados</p>
         <div class="flex items-center gap-3 text-xs text-gris">
@@ -52,26 +42,30 @@
                 </div>
 
                 @if($usuario->id !== auth()->id())
-                    <form method="POST" action="{{ route('admin.usuarios.role', $usuario) }}">
-                        @csrf @method('PATCH')
-                        @if($usuario->isAdmin())
+                    @if($usuario->isAdmin())
+                        <form method="POST" action="{{ route('admin.usuarios.role', $usuario) }}"
+                              data-confirm="¿Quitar permisos de administrador a {{ $usuario->name }}?"
+                              data-confirm-danger>
+                            @csrf @method('PATCH')
                             <input type="hidden" name="role" value="user">
                             <button type="submit"
-                                    onclick="return confirm('¿Quitar permisos de administrador a {{ $usuario->name }}?')"
                                     class="w-full text-center px-3 py-2 rounded-xl text-xs font-medium text-red-500
                                            hover:text-red-700 hover:bg-red-50 border border-red-100 transition">
                                 Quitar acceso admin
                             </button>
-                        @else
+                        </form>
+                    @else
+                        <form method="POST" action="{{ route('admin.usuarios.role', $usuario) }}"
+                              data-confirm="¿Ascender a {{ $usuario->name }} como administrador?">
+                            @csrf @method('PATCH')
                             <input type="hidden" name="role" value="admin">
                             <button type="submit"
-                                    onclick="return confirm('¿Ascender a {{ $usuario->name }} como administrador?')"
                                     class="w-full text-center px-3 py-2 rounded-xl text-xs font-medium text-tinta
                                            hover:bg-gray-100 border border-borde transition">
                                 Hacer administrador
                             </button>
-                        @endif
-                    </form>
+                        </form>
+                    @endif
                 @endif
             </div>
         @endforeach
@@ -117,24 +111,28 @@
                                 @if($usuario->id === auth()->id())
                                     <span class="text-xs text-gris italic">No editable</span>
                                 @else
-                                    <form method="POST" action="{{ route('admin.usuarios.role', $usuario) }}">
-                                        @csrf @method('PATCH')
-                                        @if($usuario->isAdmin())
+                                    @if($usuario->isAdmin())
+                                        <form method="POST" action="{{ route('admin.usuarios.role', $usuario) }}"
+                                              data-confirm="¿Quitar permisos de administrador a {{ $usuario->name }}?"
+                                              data-confirm-danger>
+                                            @csrf @method('PATCH')
                                             <input type="hidden" name="role" value="user">
                                             <button type="submit"
-                                                    onclick="return confirm('¿Quitar permisos de administrador a {{ $usuario->name }}?')"
                                                     class="text-xs text-red-500 hover:text-red-700 transition font-medium">
                                                 Quitar admin
                                             </button>
-                                        @else
+                                        </form>
+                                    @else
+                                        <form method="POST" action="{{ route('admin.usuarios.role', $usuario) }}"
+                                              data-confirm="¿Ascender a {{ $usuario->name }} como administrador?">
+                                            @csrf @method('PATCH')
                                             <input type="hidden" name="role" value="admin">
                                             <button type="submit"
-                                                    onclick="return confirm('¿Ascender a {{ $usuario->name }} como administrador?')"
                                                     class="text-xs text-tinta hover:underline transition font-medium">
                                                 Hacer admin
                                             </button>
-                                        @endif
-                                    </form>
+                                        </form>
+                                    @endif
                                 @endif
                             </td>
                         </tr>

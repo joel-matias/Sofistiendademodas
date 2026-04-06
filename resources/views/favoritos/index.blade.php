@@ -16,12 +16,6 @@
             </h1>
         </div>
 
-        @if (session('success'))
-            <div class="mb-6 p-3 rounded-xl bg-green-50 border border-green-200 text-green-800 text-sm">
-                {{ session('success') }}
-            </div>
-        @endif
-
         @if (count($productos) > 0)
             <div class="grid gap-x-4 gap-y-8 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" data-favoritos-grid>
                 @foreach ($productos as $producto)

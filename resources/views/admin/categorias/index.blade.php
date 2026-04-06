@@ -38,7 +38,7 @@
                         Editar
                     </a>
                     <form method="POST" action="{{ route('admin.categorias.destroy', $cat) }}"
-                          onsubmit="return confirm('¿Eliminar esta categoría?')">
+                          data-confirm="¿Eliminar esta categoría? Los productos asociados perderán esta categoría." data-confirm-danger>
                         @csrf @method('DELETE')
                         <button type="submit"
                                 class="px-2.5 py-1.5 rounded-lg text-xs font-medium text-red-400 hover:text-red-600 hover:bg-red-50 transition">
@@ -92,7 +92,7 @@
                                     <a href="{{ route('admin.categorias.edit', $cat) }}"
                                        class="text-xs text-gris hover:text-tinta transition font-medium">Editar</a>
                                     <form method="POST" action="{{ route('admin.categorias.destroy', $cat) }}"
-                                          onsubmit="return confirm('¿Eliminar esta categoría?')">
+                                          data-confirm="¿Eliminar esta categoría? Los productos asociados perderán esta categoría." data-confirm-danger>
                                         @csrf @method('DELETE')
                                         <button type="submit"
                                                 class="text-xs text-red-500 hover:text-red-700 transition font-medium">Eliminar</button>
