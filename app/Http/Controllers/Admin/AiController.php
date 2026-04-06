@@ -22,7 +22,7 @@ class AiController extends Controller
             'tallas.*' => ['string'],
             'colores' => ['nullable', 'array'],
             'colores.*' => ['string'],
-            'imagen_base64' => ['nullable', 'string'],
+            'imagen_base64' => ['nullable', 'string', 'max:5600000'],
             'imagen_mime' => ['nullable', 'string', 'in:image/jpeg,image/png,image/webp,image/gif'],
             'imagen_url' => ['nullable', 'url', 'max:2048'],
         ]);
