@@ -229,6 +229,36 @@
             });
         });
     </script>
+    <script>
+        const MAX_MB = 10;
+        const MAX_BYTES = MAX_MB * 1024 * 1024;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('input[type="file"]').forEach(function (input) {
+                const errorId = 'size-error-' + Math.random().toString(36).slice(2);
+                const errorEl = document.createElement('p');
+                errorEl.id = errorId;
+                errorEl.className = 'mt-1 text-xs text-red-600 hidden';
+                errorEl.innerHTML = 'La imagen supera los ' + MAX_MB + ' MB. Puedes reducirla gratis en <a href="https://squoosh.app" target="_blank" class="underline font-medium">squoosh.app</a> antes de subirla.';
+                input.insertAdjacentElement('afterend', errorEl);
+
+                input.addEventListener('change', function () {
+                    const files = Array.from(this.files);
+                    const tooBig = files.find(f => f.size > MAX_BYTES);
+                    const form = this.closest('form');
+                    const submitBtn = form ? form.querySelector('[type="submit"]') : null;
+
+                    if (tooBig) {
+                        errorEl.classList.remove('hidden');
+                        if (submitBtn) submitBtn.disabled = true;
+                    } else {
+                        errorEl.classList.add('hidden');
+                        if (submitBtn) submitBtn.disabled = false;
+                    }
+                });
+            });
+        });
+    </script>
     @stack('scripts')
 </body>
 
