@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar sesión · Sofis Tienda de Modas</title>
+    <title>Olvidé mi contraseña · Sofis Tienda de Modas</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -28,10 +28,18 @@
 
         <div class="card p-8">
             <div class="w-8 h-px bg-moda mx-auto mb-5"></div>
-            <h1 class="font-display text-2xl text-center mb-1">Bienvenida/o</h1>
-            <p class="text-center text-sm text-gris mb-6">Inicia sesión en tu cuenta</p>
+            <h1 class="font-display text-2xl text-center mb-1">Recuperar contraseña</h1>
+            <p class="text-center text-sm text-gris mb-6 leading-relaxed">
+                Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.
+            </p>
 
-            <form method="POST" action="{{ route('login.post') }}" class="space-y-4">
+            @if (session('status'))
+                <div class="mb-5 p-4 rounded-xl bg-green-50 border border-green-100 text-sm text-green-700 text-center leading-relaxed">
+                    {{ session('status') }}
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('password.email') }}" class="space-y-4">
                 @csrf
 
                 <div>
@@ -44,31 +52,11 @@
                     @enderror
                 </div>
 
-                <div>
-                    <label for="password"
-                        class="block text-xs tracking-widest uppercase text-gris mb-1.5">Contraseña</label>
-                    <input id="password" name="password" type="password" required class="input"
-                        placeholder="••••••••">
-                    @error('password')
-                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <label class="flex items-center gap-2 cursor-pointer text-sm text-gris">
-                        <input type="checkbox" name="remember" class="w-4 h-4 rounded border-borde">
-                        Recordarme
-                    </label>
-                    <a href="{{ route('password.request') }}"
-                        class="text-sm text-gris hover:text-tinta transition">¿Olvidaste tu contraseña?</a>
-                </div>
-
-                <button type="submit" class="btn-primary w-full mt-1">Iniciar sesión</button>
+                <button type="submit" class="btn-primary w-full mt-1">Enviar enlace</button>
             </form>
 
             <p class="mt-5 text-center text-sm text-gris">
-                ¿No tienes cuenta?
-                <a href="{{ route('registro') }}" class="text-tinta font-semibold hover:underline">Regístrate gratis</a>
+                <a href="{{ route('login') }}" class="text-tinta font-semibold hover:underline">← Volver al inicio de sesión</a>
             </p>
         </div>
 
@@ -77,13 +65,7 @@
         </p>
 
     </div>
-@if (session('error'))
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        window.SofisAlert?.error(@json(session('error')));
-    });
-</script>
-@endif
+
 </body>
 
 </html>

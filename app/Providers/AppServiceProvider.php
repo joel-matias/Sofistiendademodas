@@ -67,5 +67,10 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('busqueda', function (Request $request) {
             return Limit::perMinute(60)->by($request->ip());
         });
+
+        // Reset de contraseña: 5 intentos por minuto por IP (previene spam de emails)
+        RateLimiter::for('reset-password', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
     }
 }
