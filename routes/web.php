@@ -107,6 +107,7 @@ Route::prefix('admin')
         Route::put('productos/{producto}', [AdminProductoController::class, 'update'])->name('productos.update');
         Route::delete('productos/{producto}', [AdminProductoController::class, 'destroy'])->name('productos.destroy');
         Route::post('productos/{id}/restaurar', [AdminProductoController::class, 'restore'])->name('productos.restore');
+        Route::post('productos/{producto}/imagenes/reorder', [AdminProductoController::class, 'reorderImagenes'])->name('productos.imagenes.reorder');
         Route::delete('productos/{producto}/imagenes/{imagen}', [AdminProductoController::class, 'destroyImagen'])->name('productos.imagenes.destroy');
 
         Route::get('categorias', [AdminCategoriaController::class, 'index'])->name('categorias.index');

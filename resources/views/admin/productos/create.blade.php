@@ -86,7 +86,13 @@
                 @enderror
                 <div id="imagenPrincipalPreview" class="hidden mt-3">
                     <p class="text-xs text-gris mb-1.5">Vista previa:</p>
-                    <img id="imagenPrincipalPreviewImg" src="" class="w-24 h-32 object-cover rounded-xl border border-borde">
+                    <div class="relative inline-block group/principal">
+                        <img id="imagenPrincipalPreviewImg" src="" class="w-24 h-32 object-cover rounded-xl border border-borde">
+                        <button type="button" id="imagenPrincipalQuitar"
+                            class="absolute top-1 right-1 w-6 h-6 bg-white rounded-full shadow-sm border border-borde
+                                   flex items-center justify-center text-gris hover:text-red-500 hover:border-red-300
+                                   transition opacity-0 group-hover/principal:opacity-100 text-xs font-bold leading-none">✕</button>
+                    </div>
                 </div>
                 <p class="mt-2 text-xs text-gris">JPG, PNG o WebP. Máx. 4 MB.</p>
             </div>
@@ -184,36 +190,100 @@
     </div>
 
     <script>
-        // Preview imagen principal
-        document.getElementById('imagenPrincipalInput')?.addEventListener('change', function () {
+        // ── Imagen principal ────────────────────────────────────────────────
+        const principalInput   = document.getElementById('imagenPrincipalInput');
+        const principalPreview = document.getElementById('imagenPrincipalPreview');
+        const principalImg     = document.getElementById('imagenPrincipalPreviewImg');
+        const principalQuitarBtn = document.getElementById('imagenPrincipalQuitar');
+
+        principalInput?.addEventListener('change', function () {
             const file = this.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = e => {
-                document.getElementById('imagenPrincipalPreviewImg').src = e.target.result;
-                document.getElementById('imagenPrincipalPreview').classList.remove('hidden');
+                principalImg.src = e.target.result;
+                principalPreview.classList.remove('hidden');
             };
             reader.readAsDataURL(file);
         });
 
-        // Preview galería
-        document.getElementById('galeriaInput')?.addEventListener('change', function () {
-            const preview = document.getElementById('galeriaPreview');
-            preview.innerHTML = '';
-            const files = Array.from(this.files).slice(0, 3);
-            if (files.length === 0) { preview.classList.add('hidden'); return; }
-            preview.classList.remove('hidden');
-            files.forEach(file => {
+        principalQuitarBtn?.addEventListener('click', function () {
+            principalInput.value = '';
+            principalPreview.classList.add('hidden');
+            principalImg.src = '';
+        });
+
+        // ── Galería con X y drag & drop ─────────────────────────────────────
+        const galeriaInput   = document.getElementById('galeriaInput');
+        const galeriaPreview = document.getElementById('galeriaPreview');
+        let galeriaFiles     = [];
+
+        galeriaInput?.addEventListener('change', function () {
+            const nuevos = Array.from(this.files);
+            const disponibles = 3 - galeriaFiles.length;
+            nuevos.slice(0, disponibles).forEach(f => galeriaFiles.push(f));
+            this.value = '';
+            renderGaleria();
+        });
+
+        function renderGaleria() {
+            galeriaPreview.innerHTML = '';
+            if (galeriaFiles.length === 0) { galeriaPreview.classList.add('hidden'); return; }
+            galeriaPreview.classList.remove('hidden');
+
+            galeriaFiles.forEach((file, idx) => {
                 const reader = new FileReader();
                 reader.onload = e => {
-                    const div = document.createElement('div');
-                    div.className = 'aspect-[3/4] overflow-hidden rounded-xl border border-borde bg-gray-50';
-                    div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
-                    preview.appendChild(div);
+                    const wrap = document.createElement('div');
+                    wrap.className = 'relative group/img cursor-grab active:cursor-grabbing';
+                    wrap.draggable = true;
+                    wrap.dataset.idx = idx;
+                    wrap.innerHTML = `
+                        <div class="aspect-[3/4] overflow-hidden rounded-xl border border-borde bg-gray-50">
+                            <img src="${e.target.result}" class="w-full h-full object-cover pointer-events-none">
+                        </div>
+                        <button type="button" onclick="quitarGaleriaFile(${idx})"
+                            class="absolute top-1.5 right-1.5 w-6 h-6 bg-white rounded-full shadow-sm border border-borde
+                                   flex items-center justify-center text-gris hover:text-red-500 hover:border-red-300
+                                   transition opacity-0 group-hover/img:opacity-100 text-xs font-bold leading-none">✕</button>
+                        <p class="mt-1 text-center text-[10px] text-gris">#${idx + 1}</p>`;
+                    galeriaPreview.appendChild(wrap);
+                    iniciarDrag(wrap);
                 };
                 reader.readAsDataURL(file);
             });
-        });
+
+            sincronizarInputGaleria();
+        }
+
+        function quitarGaleriaFile(idx) {
+            galeriaFiles.splice(idx, 1);
+            renderGaleria();
+        }
+
+        function sincronizarInputGaleria() {
+            // Reconstruye el FileList del input usando DataTransfer
+            const dt = new DataTransfer();
+            galeriaFiles.forEach(f => dt.items.add(f));
+            galeriaInput.files = dt.files;
+        }
+
+        // ── Drag & drop reordenamiento (nuevas imágenes) ────────────────────
+        let dragIdx = null;
+
+        function iniciarDrag(el) {
+            el.addEventListener('dragstart', () => { dragIdx = parseInt(el.dataset.idx); el.classList.add('opacity-50'); });
+            el.addEventListener('dragend',   () => el.classList.remove('opacity-50'));
+            el.addEventListener('dragover',  e => e.preventDefault());
+            el.addEventListener('drop', () => {
+                const overIdx = parseInt(el.dataset.idx);
+                if (dragIdx === null || dragIdx === overIdx) return;
+                const moved = galeriaFiles.splice(dragIdx, 1)[0];
+                galeriaFiles.splice(overIdx, 0, moved);
+                dragIdx = null;
+                renderGaleria();
+            });
+        }
     </script>
 
 @endsection

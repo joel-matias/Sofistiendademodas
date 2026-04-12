@@ -208,6 +208,19 @@ class ProductoController extends Controller
         }
     }
 
+    public function reorderImagenes(Request $request, Producto $producto): \Illuminate\Http\JsonResponse
+    {
+        $ids = $request->validate(['ids' => 'required|array'])['ids'];
+
+        foreach ($ids as $orden => $id) {
+            $producto->imagenes()->where('id', $id)->update(['orden' => $orden + 1]);
+        }
+
+        Cache::forget(CacheKeys::producto($producto->slug));
+
+        return response()->json(['ok' => true]);
+    }
+
     public function destroyImagen(Producto $producto, ImagenProducto $imagen)
     {
         abort_if($imagen->producto_id !== $producto->id, 403);

@@ -92,8 +92,14 @@
                     <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                 @enderror
                 <div id="imagenPrincipalPreview" class="hidden mt-3">
-                    <p class="text-xs text-gris mb-1.5">Vista previa:</p>
-                    <img id="imagenPrincipalPreviewImg" src="" class="w-24 h-32 object-cover rounded-xl border border-borde">
+                    <p class="text-xs text-gris mb-1.5">Vista previa nueva:</p>
+                    <div class="relative inline-block group/principal">
+                        <img id="imagenPrincipalPreviewImg" src="" class="w-24 h-32 object-cover rounded-xl border border-borde">
+                        <button type="button" id="imagenPrincipalQuitar"
+                            class="absolute top-1 right-1 w-6 h-6 bg-white rounded-full shadow-sm border border-borde
+                                   flex items-center justify-center text-gris hover:text-red-500 hover:border-red-300
+                                   transition opacity-0 group-hover/principal:opacity-100 text-xs font-bold leading-none">✕</button>
+                    </div>
                 </div>
                 <p class="mt-2 text-xs text-gris">JPG, PNG o WebP. Máx. 4 MB.</p>
             </div>
@@ -104,12 +110,15 @@
                 <p class="text-xs text-gris mb-5">Hasta 3 imágenes adicionales. Se muestran en el detalle del producto y en el hover de las tarjetas del catálogo.</p>
 
                 @if ($imagenes->isNotEmpty())
-                    <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-5">
+                    <p class="text-xs text-gris mb-3">Arrastra las imágenes para cambiar el orden.</p>
+                    <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-5" id="galeriaExistente"
+                        data-reorder-url="{{ route('admin.productos.imagenes.reorder', $producto) }}"
+                        data-token="{{ csrf_token() }}">
                         @foreach ($imagenes as $img)
-                            <div class="relative group/img">
+                            <div class="relative group/img cursor-grab active:cursor-grabbing" draggable="true" data-id="{{ $img->id }}">
                                 <div class="aspect-[3/4] overflow-hidden rounded-xl border border-borde bg-gray-50">
                                     <img src="{{ str_starts_with($img->url, 'http') ? $img->url : \Illuminate\Support\Facades\Storage::url($img->url) }}"
-                                        class="w-full h-full object-cover">
+                                        class="w-full h-full object-cover pointer-events-none">
                                 </div>
                                 <button type="button"
                                     data-url="{{ route('admin.productos.imagenes.destroy', [$producto, $img]) }}"
@@ -118,7 +127,7 @@
                                     class="absolute top-1.5 right-1.5 w-6 h-6 bg-white rounded-full shadow-sm border border-borde flex items-center justify-center text-gris hover:text-red-500 hover:border-red-300 transition opacity-0 group-hover/img:opacity-100 text-xs font-bold leading-none">
                                     ✕
                                 </button>
-                                <p class="mt-1 text-center text-[10px] text-gris">#{{ $loop->iteration }}</p>
+                                <p class="mt-1 text-center text-[10px] text-gris orden-label">#{{ $loop->iteration }}</p>
                             </div>
                         @endforeach
                     </div>
@@ -223,7 +232,7 @@
     </div>
 
     <script>
-        // Eliminar imagen de galería sin forms anidados
+        // ── Eliminar imagen de galería existente ────────────────────────────
         function deleteGalleryImage(btn) {
             window.SofisAlert.confirm('¿Eliminar esta imagen de la galería?').then(({ isConfirmed }) => {
                 if (!isConfirmed) { return; }
@@ -239,38 +248,157 @@
             });
         }
 
-        // Preview imagen principal
-        document.getElementById('imagenPrincipalInput')?.addEventListener('change', function () {
+        // ── Imagen principal ─────────────────────────────────────────────────
+        const principalInput     = document.getElementById('imagenPrincipalInput');
+        const principalPreview   = document.getElementById('imagenPrincipalPreview');
+        const principalImg       = document.getElementById('imagenPrincipalPreviewImg');
+        const principalQuitarBtn = document.getElementById('imagenPrincipalQuitar');
+
+        principalInput?.addEventListener('change', function () {
             const file = this.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = e => {
-                document.getElementById('imagenPrincipalPreviewImg').src = e.target.result;
-                document.getElementById('imagenPrincipalPreview').classList.remove('hidden');
+                principalImg.src = e.target.result;
+                principalPreview.classList.remove('hidden');
             };
             reader.readAsDataURL(file);
         });
 
-        // Preview galería
-        document.getElementById('galeriaInput')?.addEventListener('change', function () {
-            const preview = document.getElementById('galeriaPreview');
-            if (!preview) return;
-            preview.innerHTML = '';
-            const maxFiles = parseInt(this.getAttribute('data-max') || '3');
-            const files = Array.from(this.files).slice(0, maxFiles);
-            if (files.length === 0) { preview.classList.add('hidden'); return; }
-            preview.classList.remove('hidden');
-            files.forEach(file => {
+        principalQuitarBtn?.addEventListener('click', function () {
+            principalInput.value = '';
+            principalPreview.classList.add('hidden');
+            principalImg.src = '';
+        });
+
+        // ── Galería: nuevas imágenes (con X y drag & drop) ───────────────────
+        const galeriaInput   = document.getElementById('galeriaInput');
+        const galeriaPreview = document.getElementById('galeriaPreview');
+        let galeriaFiles     = [];
+
+        galeriaInput?.addEventListener('change', function () {
+            const existentes  = document.getElementById('galeriaExistente')?.querySelectorAll('[data-id]').length ?? 0;
+            const disponibles = 3 - existentes - galeriaFiles.length;
+            Array.from(this.files).slice(0, disponibles).forEach(f => galeriaFiles.push(f));
+            this.value = '';
+            renderGaleria();
+        });
+
+        function renderGaleria() {
+            if (!galeriaPreview) return;
+            galeriaPreview.innerHTML = '';
+            if (galeriaFiles.length === 0) { galeriaPreview.classList.add('hidden'); return; }
+            galeriaPreview.classList.remove('hidden');
+
+            galeriaFiles.forEach((file, idx) => {
                 const reader = new FileReader();
                 reader.onload = e => {
-                    const div = document.createElement('div');
-                    div.className = 'aspect-[3/4] overflow-hidden rounded-xl border border-borde bg-gray-50';
-                    div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
-                    preview.appendChild(div);
+                    const wrap = document.createElement('div');
+                    wrap.className = 'relative group/img cursor-grab active:cursor-grabbing';
+                    wrap.draggable = true;
+                    wrap.dataset.idx = idx;
+                    wrap.innerHTML = `
+                        <div class="aspect-[3/4] overflow-hidden rounded-xl border border-borde bg-gray-50">
+                            <img src="${e.target.result}" class="w-full h-full object-cover pointer-events-none">
+                        </div>
+                        <button type="button" onclick="quitarGaleriaFile(${idx})"
+                            class="absolute top-1.5 right-1.5 w-6 h-6 bg-white rounded-full shadow-sm border border-borde
+                                   flex items-center justify-center text-gris hover:text-red-500 hover:border-red-300
+                                   transition opacity-0 group-hover/img:opacity-100 text-xs font-bold leading-none">✕</button>
+                        <p class="mt-1 text-center text-[10px] text-gris">#${idx + 1}</p>`;
+                    galeriaPreview.appendChild(wrap);
+                    iniciarDragNueva(wrap);
                 };
                 reader.readAsDataURL(file);
             });
-        });
+
+            sincronizarInputGaleria();
+        }
+
+        function quitarGaleriaFile(idx) {
+            galeriaFiles.splice(idx, 1);
+            renderGaleria();
+        }
+
+        function sincronizarInputGaleria() {
+            if (!galeriaInput) return;
+            const dt = new DataTransfer();
+            galeriaFiles.forEach(f => dt.items.add(f));
+            galeriaInput.files = dt.files;
+        }
+
+        // Drag & drop para nuevas imágenes
+        let dragIdxNueva = null;
+
+        function iniciarDragNueva(el) {
+            el.addEventListener('dragstart', () => { dragIdxNueva = parseInt(el.dataset.idx); el.classList.add('opacity-50'); });
+            el.addEventListener('dragend',   () => el.classList.remove('opacity-50'));
+            el.addEventListener('dragover',  e => e.preventDefault());
+            el.addEventListener('drop', () => {
+                const overIdx = parseInt(el.dataset.idx);
+                if (dragIdxNueva === null || dragIdxNueva === overIdx) return;
+                const moved = galeriaFiles.splice(dragIdxNueva, 1)[0];
+                galeriaFiles.splice(overIdx, 0, moved);
+                dragIdxNueva = null;
+                renderGaleria();
+            });
+        }
+
+        // ── Drag & drop para imágenes existentes (AJAX reorder) ──────────────
+        const galeriaExistente = document.getElementById('galeriaExistente');
+
+        if (galeriaExistente) {
+            let dragEl   = null;
+            let dragOver = null;
+
+            galeriaExistente.querySelectorAll('[draggable]').forEach(el => {
+                el.addEventListener('dragstart', () => {
+                    dragEl = el;
+                    el.classList.add('opacity-50');
+                });
+                el.addEventListener('dragend', () => {
+                    el.classList.remove('opacity-50');
+                    dragEl = null;
+                    dragOver = null;
+                });
+                el.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    if (dragOver && dragOver !== el) dragOver.classList.remove('ring-2', 'ring-tinta');
+                    dragOver = el;
+                    el.classList.add('ring-2', 'ring-tinta');
+                });
+                el.addEventListener('drop', () => {
+                    el.classList.remove('ring-2', 'ring-tinta');
+                    if (!dragEl || dragEl === el) return;
+
+                    // Reorder DOM
+                    const items   = [...galeriaExistente.querySelectorAll('[data-id]')];
+                    const fromIdx = items.indexOf(dragEl);
+                    const toIdx   = items.indexOf(el);
+                    if (fromIdx < toIdx) {
+                        el.after(dragEl);
+                    } else {
+                        el.before(dragEl);
+                    }
+
+                    // Update order labels
+                    galeriaExistente.querySelectorAll('.orden-label').forEach((lbl, i) => {
+                        lbl.textContent = '#' + (i + 1);
+                    });
+
+                    // AJAX persist
+                    const ids = [...galeriaExistente.querySelectorAll('[data-id]')].map(n => n.dataset.id);
+                    fetch(galeriaExistente.dataset.reorderUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': galeriaExistente.dataset.token,
+                        },
+                        body: JSON.stringify({ ids }),
+                    });
+                });
+            });
+        }
     </script>
 
 @endsection
