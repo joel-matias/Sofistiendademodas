@@ -150,8 +150,8 @@
             © {{ date('Y') }} {{ config('seo.site_name') }}. Todos los derechos reservados.
         </p>
         <div class="flex gap-4">
-            <a href="#" class="text-xs text-white/40 hover:text-white/70 transition">Privacidad</a>
-            <a href="#" class="text-xs text-white/40 hover:text-white/70 transition">Términos</a>
+            <a href="{{ route('privacidad') }}" class="text-xs text-white/40 hover:text-white/70 transition">Privacidad</a>
+            <a href="{{ route('terminos') }}" class="text-xs text-white/40 hover:text-white/70 transition">Términos</a>
         </div>
     </div>
 

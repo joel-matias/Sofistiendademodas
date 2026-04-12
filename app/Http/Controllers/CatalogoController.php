@@ -342,4 +342,13 @@ class CatalogoController extends Controller
         return view('nosotros');
     }
 
+    public function terminos()
+    {
+        return view('terminos');
+    }
+
+    public function privacidad()
+    {
+        return view('privacidad');
+    }
 }
