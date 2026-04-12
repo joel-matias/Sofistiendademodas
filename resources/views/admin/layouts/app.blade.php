@@ -245,10 +245,25 @@
                 input.addEventListener('change', function () {
                     const form = this.closest('form');
                     const submitBtn = form ? form.querySelector('[type="submit"]') : null;
+                    const files = Array.from(this.files);
+
+                    // Verificar dimensiones de cada imagen
+                    files.forEach(function (file) {
+                        const img = new Image();
+                        const url = URL.createObjectURL(file);
+                        img.onload = function () {
+                            URL.revokeObjectURL(url);
+                            if (img.naturalWidth > 6000 || img.naturalHeight > 6000) {
+                                errorEl.classList.remove('hidden');
+                                errorEl.innerHTML = '"' + file.name + '" tiene dimensiones demasiado grandes (' + img.naturalWidth + '×' + img.naturalHeight + ' px). El máximo es 6000×6000 px. Puedes reducirla en <a href="https://squoosh.app" target="_blank" class="underline font-medium">squoosh.app</a>.';
+                                if (submitBtn) submitBtn.disabled = true;
+                            }
+                        };
+                        img.src = url;
+                    });
 
                     // Verificar por archivo individual
-                    const files = Array.from(this.files);
-                    const hayArchivoGrande = files.some(f => f.size > MAX_FILE_BYTES);
+                    const archivosGrandes = files.filter(f => f.size > MAX_FILE_BYTES);
 
                     // Verificar total del formulario completo
                     const totalBytes = Array.from(form.querySelectorAll('input[type="file"]'))
@@ -256,9 +271,15 @@
                         .reduce((sum, f) => sum + f.size, 0);
                     const totalExcedido = totalBytes > MAX_TOTAL_BYTES;
 
-                    if (hayArchivoGrande) {
+                    if (archivosGrandes.length > 0) {
+                        const nombres = archivosGrandes.map(f =>
+                            '"' + f.name + '" (' + (f.size / 1024 / 1024).toFixed(1) + ' MB)'
+                        ).join(', ');
                         errorEl.classList.remove('hidden');
-                        errorEl.innerHTML = 'Una o más imágenes superan los ' + MAX_FILE_MB + ' MB. Puedes reducirlas gratis en <a href="https://squoosh.app" target="_blank" class="underline font-medium">squoosh.app</a> antes de subirlas.';
+                        errorEl.innerHTML = (archivosGrandes.length === 1
+                            ? 'La imagen ' + nombres + ' supera los ' + MAX_FILE_MB + ' MB.'
+                            : 'Las imágenes ' + nombres + ' superan los ' + MAX_FILE_MB + ' MB.'
+                        ) + ' Puedes reducirlas gratis en <a href="https://squoosh.app" target="_blank" class="underline font-medium">squoosh.app</a>.';
                     } else if (totalExcedido) {
                         errorEl.classList.remove('hidden');
                         errorEl.innerHTML = 'El total de imágenes supera los ' + MAX_TOTAL_MB + ' MB. Reduce el tamaño de algunas en <a href="https://squoosh.app" target="_blank" class="underline font-medium">squoosh.app</a>.';
@@ -266,7 +287,7 @@
                         errorEl.classList.add('hidden');
                     }
 
-                    if (submitBtn) submitBtn.disabled = hayArchivoGrande || totalExcedido;
+                    if (submitBtn) submitBtn.disabled = archivosGrandes.length > 0 || totalExcedido;
                 });
             });
         });
