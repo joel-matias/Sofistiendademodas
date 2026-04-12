@@ -230,31 +230,43 @@
         });
     </script>
     <script>
-        const MAX_MB = 10;
-        const MAX_BYTES = MAX_MB * 1024 * 1024;
+        const MAX_FILE_MB = 10;
+        const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
+        const MAX_TOTAL_MB = 25;
+        const MAX_TOTAL_BYTES = MAX_TOTAL_MB * 1024 * 1024;
 
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('input[type="file"]').forEach(function (input) {
-                const errorId = 'size-error-' + Math.random().toString(36).slice(2);
                 const errorEl = document.createElement('p');
-                errorEl.id = errorId;
                 errorEl.className = 'mt-1 text-xs text-red-600 hidden';
-                errorEl.innerHTML = 'La imagen supera los ' + MAX_MB + ' MB. Puedes reducirla gratis en <a href="https://squoosh.app" target="_blank" class="underline font-medium">squoosh.app</a> antes de subirla.';
+                errorEl.innerHTML = 'Una o más imágenes superan los ' + MAX_FILE_MB + ' MB. Puedes reducirlas gratis en <a href="https://squoosh.app" target="_blank" class="underline font-medium">squoosh.app</a> antes de subirlas.';
                 input.insertAdjacentElement('afterend', errorEl);
 
                 input.addEventListener('change', function () {
-                    const files = Array.from(this.files);
-                    const tooBig = files.find(f => f.size > MAX_BYTES);
                     const form = this.closest('form');
                     const submitBtn = form ? form.querySelector('[type="submit"]') : null;
 
-                    if (tooBig) {
+                    // Verificar por archivo individual
+                    const files = Array.from(this.files);
+                    const hayArchivoGrande = files.some(f => f.size > MAX_FILE_BYTES);
+
+                    // Verificar total del formulario completo
+                    const totalBytes = Array.from(form.querySelectorAll('input[type="file"]'))
+                        .flatMap(i => Array.from(i.files))
+                        .reduce((sum, f) => sum + f.size, 0);
+                    const totalExcedido = totalBytes > MAX_TOTAL_BYTES;
+
+                    if (hayArchivoGrande) {
                         errorEl.classList.remove('hidden');
-                        if (submitBtn) submitBtn.disabled = true;
+                        errorEl.innerHTML = 'Una o más imágenes superan los ' + MAX_FILE_MB + ' MB. Puedes reducirlas gratis en <a href="https://squoosh.app" target="_blank" class="underline font-medium">squoosh.app</a> antes de subirlas.';
+                    } else if (totalExcedido) {
+                        errorEl.classList.remove('hidden');
+                        errorEl.innerHTML = 'El total de imágenes supera los ' + MAX_TOTAL_MB + ' MB. Reduce el tamaño de algunas en <a href="https://squoosh.app" target="_blank" class="underline font-medium">squoosh.app</a>.';
                     } else {
                         errorEl.classList.add('hidden');
-                        if (submitBtn) submitBtn.disabled = false;
                     }
+
+                    if (submitBtn) submitBtn.disabled = hayArchivoGrande || totalExcedido;
                 });
             });
         });
