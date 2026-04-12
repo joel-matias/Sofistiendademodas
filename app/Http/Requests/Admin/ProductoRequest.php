@@ -25,9 +25,9 @@ class ProductoRequest extends FormRequest
             ],
             'oferta' => ['boolean'],
             'activo' => ['boolean'],
-            'imagen' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'imagen' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
             'galeria' => ['nullable', 'array', 'max:3'],
-            'galeria.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'galeria.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
             'categorias' => ['nullable', 'array'],
             'categorias.*' => ['integer', 'exists:categorias,id'],
             'tallas' => ['nullable', 'array'],
@@ -56,12 +56,12 @@ class ProductoRequest extends FormRequest
 
             'imagen.image' => 'El archivo seleccionado no es una imagen válida.',
             'imagen.mimes' => 'La imagen debe ser JPG, PNG o WebP.',
-            'imagen.max' => 'La imagen no puede pesar más de 4 MB.',
+            'imagen.max' => 'La imagen no puede pesar más de 8 MB.',
 
             'galeria.max' => 'Solo puedes subir hasta 3 imágenes en la galería.',
             'galeria.*.image' => 'Uno de los archivos de galería no es una imagen válida.',
             'galeria.*.mimes' => 'Las imágenes de galería deben ser JPG, PNG o WebP.',
-            'galeria.*.max' => 'Cada imagen de galería no puede pesar más de 4 MB.',
+            'galeria.*.max' => 'Cada imagen de galería no puede pesar más de 8 MB.',
 
             'categorias.*.exists' => 'Una de las categorías seleccionadas no es válida.',
             'tallas.*.exists' => 'Una de las tallas seleccionadas no es válida.',
