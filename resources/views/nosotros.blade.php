@@ -27,7 +27,7 @@
                 </div>
             </div>
             <div class="h-[240px] sm:h-[320px] lg:h-[400px] rounded-2xl overflow-hidden border border-white/10">
-                <img src="{{ asset('assets/img/hero.jpg') }}" alt="Sofis Tienda de Modas"
+                <img src="{{ $imagenHero }}" alt="Sofis Tienda de Modas"
                     class="w-full h-full object-cover opacity-80">
             </div>
         </div>
@@ -67,7 +67,7 @@
                     <a href="{{ route('catalogo') }}" class="btn-primary mt-8 self-start">Explorar catálogo</a>
                 </div>
                 <div class="h-64 lg:h-auto bg-gray-100">
-                    <img src="{{ asset('assets/img/hero.jpg') }}" alt="Calidad" class="w-full h-full object-cover">
+                    <img src="{{ $imagenHero }}" alt="Calidad" class="w-full h-full object-cover">
                 </div>
             </div>
         </div>

@@ -339,7 +339,13 @@ class CatalogoController extends Controller
 
     public function nosotros()
     {
-        return view('nosotros');
+        $cover = \App\Models\Cover::activos()->whereNotNull('imagen')->first();
+
+        $imagenHero = $cover
+            ? $this->urlImagen($cover->imagen)
+            : asset('assets/img/hero.jpg');
+
+        return view('nosotros', compact('imagenHero'));
     }
 
     public function terminos()
