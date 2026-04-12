@@ -10,12 +10,14 @@ use App\Http\Controllers\Admin\SucursalController;
 use App\Http\Controllers\Admin\TallaController;
 use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\PublicAuthController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
@@ -30,6 +32,12 @@ Route::get('/privacidad', [CatalogoController::class, 'privacidad'])->name('priv
 Route::get('/buscar/sugerencias', [CatalogoController::class, 'sugerenciasBusqueda'])
     ->middleware('throttle:busqueda')
     ->name('buscar.sugerencias');
+
+// Recuperación de contraseña
+Route::get('/olvide-contrasena', [PasswordResetController::class, 'showForgotForm'])->name('password.request');
+Route::post('/olvide-contrasena', [PasswordResetController::class, 'sendResetLink'])->middleware('throttle:reset-password')->name('password.email');
+Route::get('/restablecer-contrasena/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
+Route::post('/restablecer-contrasena', [PasswordResetController::class, 'reset'])->middleware('throttle:reset-password')->name('password.update');
 
 Route::get('/login', [PublicAuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [PublicAuthController::class, 'login'])->middleware('throttle:login')->name('login.post');
@@ -50,6 +58,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
         $request->fulfill();
 
+        // Cerrar sesiones en otros dispositivos: el correo ya está verificado,
+        // lo que confirma que el dueño real de la cuenta es quien está aquí.
+        DB::table('sessions')
+            ->where('user_id', auth()->id())
+            ->where('id', '!=', session()->getId())
+            ->delete();
+
         return redirect()->route('home')->with('success', '¡Correo verificado! Ya puedes acceder a todas las funciones.');
     })->middleware('signed')->name('verification.verify');
 
@@ -59,14 +74,18 @@ Route::middleware('auth')->group(function () {
         return back()->with('resent', true);
     })->middleware('throttle:6,1')->name('verification.send');
 
-    // Rutas que requieren email verificado (o ser admin)
-    Route::middleware('verified_or_admin')->group(function () {
+    // Favoritos: solo usuarios verificados
+    Route::middleware('verified')->group(function () {
         Route::get('/mis-favoritos', [WishlistController::class, 'index'])->name('favoritos.index');
         Route::post('/favoritos/{producto}', [WishlistController::class, 'toggle'])->name('favoritos.toggle');
+    });
 
+    // Perfil: usuarios verificados o admins
+    Route::middleware('verified_or_admin')->group(function () {
         Route::get('/mi-cuenta', [ProfileController::class, 'show'])->name('perfil.show');
         Route::patch('/mi-cuenta/info', [ProfileController::class, 'updateInfo'])->name('perfil.update.info');
         Route::patch('/mi-cuenta/password', [ProfileController::class, 'updatePassword'])->name('perfil.update.password');
+        Route::delete('/mi-cuenta/sesiones/{session}', [ProfileController::class, 'destroySession'])->name('perfil.sesion.destroy');
     });
 });
 
