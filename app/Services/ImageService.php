@@ -43,6 +43,18 @@ class ImageService
      */
     public function store(UploadedFile $file, string $directory, int $maxWidth = 1200): string
     {
+        // Leemos solo los headers para obtener las dimensiones sin cargar la imagen en RAM.
+        // Esto evita que imágenes de muy alta resolución agoten la memoria de PHP.
+        [$width, $height] = getimagesize($file->getPathname()) ?: [0, 0];
+
+        if ($width > 6000 || $height > 6000) {
+            throw new \InvalidArgumentException(
+                'La imagen es demasiado grande ('.$width.'×'.$height.' px). '.
+                'El máximo permitido es 6000×6000 px. '.
+                'Puedes reducirla gratis en squoosh.app antes de subirla.'
+            );
+        }
+
         $filename = Str::uuid().'.webp';
         $relativePath = $directory.'/'.$filename;
         $absolutePath = Storage::disk('public')->path($relativePath);

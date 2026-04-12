@@ -93,6 +93,8 @@ class ProductoController extends Controller
             return redirect()->route('admin.productos.index')
                 ->with('success', 'Producto creado correctamente.');
 
+        } catch (\InvalidArgumentException $e) {
+            return back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             Log::error('Error al crear producto', [
                 'error' => $e->getMessage(),
@@ -164,6 +166,8 @@ class ProductoController extends Controller
             return redirect()->route('admin.productos.index')
                 ->with('success', 'Producto actualizado correctamente.');
 
+        } catch (\InvalidArgumentException $e) {
+            return back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             Log::error('Error al actualizar producto', [
                 'producto' => $producto->id,

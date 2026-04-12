@@ -41,6 +41,8 @@ class CategoriaController extends Controller
             return redirect()->route('admin.categorias.index')
                 ->with('success', 'Categoría creada correctamente.');
 
+        } catch (\InvalidArgumentException $e) {
+            return back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             Log::error('Error al crear categoría', ['error' => $e->getMessage(), 'usuario' => auth()->id()]);
 
@@ -71,6 +73,8 @@ class CategoriaController extends Controller
             return redirect()->route('admin.categorias.index')
                 ->with('success', 'Categoría actualizada correctamente.');
 
+        } catch (\InvalidArgumentException $e) {
+            return back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             Log::error('Error al actualizar categoría', [
                 'categoria' => $categoria->id,

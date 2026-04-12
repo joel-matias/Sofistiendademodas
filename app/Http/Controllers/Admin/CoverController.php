@@ -44,6 +44,8 @@ class CoverController extends Controller
 
             return redirect()->route('admin.covers.index')->with('success', 'Cover creado correctamente.');
 
+        } catch (\InvalidArgumentException $e) {
+            return back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             Log::error('Error al crear cover', ['error' => $e->getMessage(), 'usuario' => auth()->id()]);
 
@@ -74,6 +76,8 @@ class CoverController extends Controller
 
             return redirect()->route('admin.covers.index')->with('success', 'Cover actualizado correctamente.');
 
+        } catch (\InvalidArgumentException $e) {
+            return back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             Log::error('Error al actualizar cover', [
                 'cover' => $cover->id,
