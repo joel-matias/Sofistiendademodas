@@ -249,16 +249,20 @@
 
                 {{-- Perks --}}
                 <div class="mt-6 pt-6 border-t border-borde grid grid-cols-2 gap-4">
-                    @foreach ([['icon' => 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10', 'txt' => 'Envíos rápidos y seguros'], ['icon' => 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15', 'txt' => 'Cambios fáciles']] as $perk)
-                        <div class="flex items-start gap-2.5">
-                            <svg class="w-4 h-4 mt-0.5 text-moda flex-shrink-0" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="{{ $perk['icon'] }}" />
-                            </svg>
-                            <p class="text-xs text-gris leading-relaxed">{{ $perk['txt'] }}</p>
-                        </div>
-                    @endforeach
+                    <div class="flex items-start gap-2.5">
+                        <svg class="w-4 h-4 mt-0.5 text-moda flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p class="text-xs text-gris leading-relaxed">Calidad seleccionada en cada prenda</p>
+                    </div>
+                    <div class="flex items-start gap-2.5">
+                        <svg class="w-4 h-4 mt-0.5 text-moda flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                        </svg>
+                        <p class="text-xs text-gris leading-relaxed">Atención personalizada por WhatsApp</p>
+                    </div>
                 </div>
 
                 {{-- Detalles desktop --}}
