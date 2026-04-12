@@ -9,36 +9,17 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-
         User::updateOrCreate(
             ['email' => 'admin@sofis.com'],
             [
-                'name'     => 'Administrador',
-                'email'    => 'admin@sofis.com',
-                'password' => bcrypt('admin123'),
-                'role'     => 'admin',
+                'name' => 'Administrador',
+                'email' => 'admin@sofis.com',
+                'password' => bcrypt('Sofis2025!'),
+                'role' => 'admin',
             ]
         );
 
-        $usuarios = [
-            ['name' => 'María García',    'email' => 'maria@ejemplo.com'],
-            ['name' => 'Laura Martínez',  'email' => 'laura@ejemplo.com'],
-            ['name' => 'Ana Rodríguez',   'email' => 'ana@ejemplo.com'],
-            ['name' => 'Sofía López',     'email' => 'sofia@ejemplo.com'],
-        ];
-
-        foreach ($usuarios as $u) {
-            User::updateOrCreate(
-                ['email' => $u['email']],
-                [
-                    'name'     => $u['name'],
-                    'email'    => $u['email'],
-                    'password' => bcrypt('password'),
-                    'role'     => 'user',
-                ]
-            );
-        }
-
-        $this->command->info('✓ Usuarios creados (admin@sofis.com / admin123)');
+        $this->command->info('✓ Admin creado — email: admin@sofis.com / contraseña: Sofis2025!');
+        $this->command->warn('  ⚠ Cambia la contraseña del admin después del primer inicio de sesión.');
     }
 }
