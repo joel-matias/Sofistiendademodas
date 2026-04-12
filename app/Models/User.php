@@ -18,6 +18,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'role',
+        'terms_accepted_at',
     ];
 
     protected $hidden = [
@@ -29,7 +30,8 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
+            'terms_accepted_at' => 'datetime',
+            'password' => 'hashed',
         ];
     }
 
@@ -39,7 +41,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function sendEmailVerificationNotification(): void
     {
-        $this->notify(new VerificarEmail());
+        $this->notify(new VerificarEmail);
     }
 
     public function isAdmin(): bool

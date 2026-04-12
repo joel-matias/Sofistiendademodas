@@ -67,6 +67,26 @@
                         placeholder="Repite tu contraseña">
                 </div>
 
+                <div class="pt-1">
+                    <label class="flex items-start gap-3 cursor-pointer group">
+                        <input type="checkbox" name="terms" value="1"
+                            class="mt-0.5 w-4 h-4 rounded border-borde text-tinta focus:ring-moda/30 flex-shrink-0
+                                   @error('terms') border-red-400 @enderror">
+                        <span class="text-xs text-gris leading-relaxed">
+                            He leído y acepto los
+                            <a href="{{ route('terminos') }}" target="_blank"
+                                class="text-tinta font-semibold hover:underline">Términos y Condiciones</a>
+                            y la
+                            <a href="{{ route('privacidad') }}" target="_blank"
+                                class="text-tinta font-semibold hover:underline">Política de Privacidad</a>
+                            de Sofis Tienda de Modas.
+                        </span>
+                    </label>
+                    @error('terms')
+                        <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <button type="submit" class="btn-primary w-full mt-1">Crear mi cuenta</button>
             </form>
 
