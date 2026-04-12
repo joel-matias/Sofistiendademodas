@@ -17,13 +17,6 @@ class SucursalSeeder extends Seeder
                 'horario' => 'Lun – Sáb: 10:00 – 20:00',
                 'activa' => true,
             ],
-            [
-                'nombre' => 'Sofis Plaza',
-                'direccion' => 'Blvd. Costero 120, Local 8, Plaza Miramar',
-                'telefono' => '312-765-4321',
-                'horario' => 'Lun – Dom: 11:00 – 21:00',
-                'activa' => true,
-            ],
         ];
 
         foreach ($sucursales as $s) {

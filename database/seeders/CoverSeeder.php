@@ -47,7 +47,10 @@ class CoverSeeder extends Seeder
                 $cover['imagen'] = $this->descargarImagen($cover['imagen'], 'covers', 1400);
             }
 
-            Cover::create($cover);
+            Cover::updateOrCreate(
+                ['orden' => $cover['orden']],
+                $cover
+            );
         }
 
         $this->command->info('✓ Covers creados');
