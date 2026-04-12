@@ -6,6 +6,7 @@ use App\Http\Requests\UpdateProfileInfoRequest;
 use App\Http\Requests\UpdateProfilePasswordRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -45,12 +46,19 @@ class ProfileController extends Controller
 
     public function destroySession(string $sessionId): RedirectResponse
     {
-        // Solo permite cerrar sesiones propias y no la actual
-        DB::table('sessions')
+        $deleted = DB::table('sessions')
             ->where('id', $sessionId)
             ->where('user_id', auth()->id())
             ->where('id', '!=', session()->getId())
             ->delete();
+
+        if ($deleted) {
+            // Rotar el remember_token para invalidar las cookies "Recordarme"
+            // del dispositivo cerrado. Sin esto, Laravel recrearía la sesión
+            // automáticamente usando la cookie remember_me aunque la sesión
+            // haya sido eliminada de la base de datos.
+            auth()->user()->forceFill(['remember_token' => Str::random(60)])->save();
+        }
 
         return back()->with('success', 'Sesión cerrada correctamente.');
     }
