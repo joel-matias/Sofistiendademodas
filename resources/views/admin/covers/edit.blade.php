@@ -47,7 +47,16 @@
                 <div>
                     <label class="block text-xs tracking-widest uppercase text-gris mb-1.5">URL del botón</label>
                     <input type="text" name="url_boton" value="{{ old('url_boton', $cover->url_boton) }}"
+                        list="url-sugerencias"
                         class="input @error('url_boton') border-red-400 @enderror">
+                    <datalist id="url-sugerencias">
+                        <option value="/catalogo">Catálogo completo</option>
+                        <option value="/catalogo?nuevo=1">Lo nuevo</option>
+                        <option value="/catalogo?ofertas=1">Ofertas</option>
+                        <option value="/">Inicio</option>
+                        <option value="/nosotros">Nosotros</option>
+                        <option value="/guia-de-tallas">Guía de tallas</option>
+                    </datalist>
                     @error('url_boton')
                         <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                     @enderror
@@ -57,19 +66,32 @@
             <div>
                 <label class="block text-xs tracking-widest uppercase text-gris mb-1.5">Imagen</label>
                 @if($cover->imagen)
-                    <div class="mb-3">
-                        <p class="text-xs text-gris mb-1.5">Imagen actual:</p>
+                    <div class="mb-4 flex items-start gap-4">
                         <img src="{{ str_starts_with($cover->imagen, 'http') ? $cover->imagen : Storage::url($cover->imagen) }}"
                             alt="{{ $cover->titulo }}"
-                            class="h-24 w-auto rounded-lg object-cover border border-borde">
+                            class="h-24 w-auto rounded-lg object-cover border border-borde flex-shrink-0">
+                        <div>
+                            <p class="text-xs font-medium text-tinta mb-1">Imagen actual</p>
+                            <p class="text-xs text-gris">Sube una nueva para reemplazarla.</p>
+                        </div>
                     </div>
                 @endif
-                <input type="file" name="imagen" accept="image/*"
-                    class="block w-full text-sm text-gris file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-tinta file:text-white hover:file:opacity-90 cursor-pointer">
-                <p class="text-xs text-gris mt-1">Sube una nueva imagen para reemplazar la actual.</p>
+                <input type="file" name="imagen" accept="image/*" id="coverImagenInput"
+                    class="block w-full text-sm text-gris file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-tinta file:text-white hover:file:opacity-90 cursor-pointer @error('imagen') ring-1 ring-red-400 rounded-xl @enderror">
                 @error('imagen')
                     <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                 @enderror
+                <div id="coverImagenPreview" class="hidden mt-3">
+                    <p class="text-xs text-gris mb-1.5">Vista previa nueva:</p>
+                    <div class="relative inline-block group/cover">
+                        <img id="coverImagenPreviewImg" src="" class="h-24 w-auto rounded-lg object-cover border border-borde">
+                        <button type="button" id="coverImagenQuitar"
+                            class="absolute top-1 right-1 w-6 h-6 bg-white rounded-full shadow-sm border border-borde
+                                   flex items-center justify-center text-gris hover:text-red-500 hover:border-red-300
+                                   transition opacity-0 group-hover/cover:opacity-100 text-xs font-bold leading-none">✕</button>
+                    </div>
+                </div>
+                <p class="mt-2 text-xs text-gris">JPG, PNG o WebP. Máx. 10 MB.</p>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
@@ -97,4 +119,28 @@
             </div>
         </form>
     </div>
+
+    <script>
+        const coverInput     = document.getElementById('coverImagenInput');
+        const coverPreview   = document.getElementById('coverImagenPreview');
+        const coverImg       = document.getElementById('coverImagenPreviewImg');
+        const coverQuitarBtn = document.getElementById('coverImagenQuitar');
+
+        coverInput?.addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                coverImg.src = e.target.result;
+                coverPreview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        coverQuitarBtn?.addEventListener('click', function () {
+            coverInput.value = '';
+            coverPreview.classList.add('hidden');
+            coverImg.src = '';
+        });
+    </script>
 @endsection
