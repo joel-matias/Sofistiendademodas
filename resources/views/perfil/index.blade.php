@@ -133,6 +133,57 @@
                 </div>
             </div>
 
+            {{-- Sesiones activas --}}
+            <div class="card overflow-hidden">
+                <div class="flex items-center gap-3 px-7 py-4 border-b border-borde bg-white/60">
+                    <div class="w-7 h-7 rounded-lg bg-tinta/8 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-tinta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-xs tracking-[0.2em] uppercase text-tinta font-semibold">Sesiones activas</h2>
+                </div>
+
+                <div class="divide-y divide-borde">
+                    @foreach ($sesiones as $sesion)
+                        <div class="flex items-center justify-between gap-4 px-7 py-4">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-4 h-4 text-gris" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <p class="text-sm font-medium text-tinta">{{ $sesion->dispositivo }}</p>
+                                        @if ($sesion->es_actual)
+                                            <span class="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-tinta text-crema">Este dispositivo</span>
+                                        @endif
+                                    </div>
+                                    <p class="text-xs text-gris mt-0.5">{{ $sesion->ip }} · {{ $sesion->ultima_vez }}</p>
+                                </div>
+                            </div>
+
+                            @if (!$sesion->es_actual)
+                                <form method="POST"
+                                    action="{{ route('perfil.sesion.destroy', $sesion->id) }}"
+                                    data-confirm="¿Cerrar la sesión en este dispositivo?"
+                                    data-confirm-danger>
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        class="flex-shrink-0 text-xs text-red-500 hover:text-red-700 font-medium transition">
+                                        Cerrar sesión
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
             {{-- Volver al catálogo --}}
             <div class="text-center pb-4">
                 <a href="{{ route('catalogo') }}"
