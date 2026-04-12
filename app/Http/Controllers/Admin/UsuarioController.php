@@ -15,6 +15,22 @@ class UsuarioController extends Controller
         return view('admin.usuarios.index', compact('usuarios'));
     }
 
+    public function destroy(User $usuario): \Illuminate\Http\RedirectResponse
+    {
+        if ($usuario->id === auth()->id()) {
+            return back()->with('error', 'No puedes eliminar tu propia cuenta.');
+        }
+
+        if ($usuario->isAdmin() && User::where('role', 'admin')->count() <= 1) {
+            return back()->with('error', 'No puedes eliminar el único administrador del sistema.');
+        }
+
+        $nombre = $usuario->name;
+        $usuario->delete();
+
+        return back()->with('success', "Usuario {$nombre} eliminado correctamente.");
+    }
+
     public function updateRole(Request $request, User $usuario)
     {
         $request->validate([

@@ -42,30 +42,42 @@
                 </div>
 
                 @if($usuario->id !== auth()->id())
-                    @if($usuario->isAdmin())
-                        <form method="POST" action="{{ route('admin.usuarios.role', $usuario) }}"
-                              data-confirm="¿Quitar permisos de administrador a {{ $usuario->name }}?"
+                    <div class="space-y-2">
+                        @if($usuario->isAdmin())
+                            <form method="POST" action="{{ route('admin.usuarios.role', $usuario) }}"
+                                  data-confirm="¿Quitar permisos de administrador a {{ $usuario->name }}?"
+                                  data-confirm-danger>
+                                @csrf @method('PATCH')
+                                <input type="hidden" name="role" value="user">
+                                <button type="submit"
+                                        class="w-full text-center px-3 py-2 rounded-xl text-xs font-medium text-red-500
+                                               hover:text-red-700 hover:bg-red-50 border border-red-100 transition">
+                                    Quitar acceso admin
+                                </button>
+                            </form>
+                        @else
+                            <form method="POST" action="{{ route('admin.usuarios.role', $usuario) }}"
+                                  data-confirm="¿Ascender a {{ $usuario->name }} como administrador?">
+                                @csrf @method('PATCH')
+                                <input type="hidden" name="role" value="admin">
+                                <button type="submit"
+                                        class="w-full text-center px-3 py-2 rounded-xl text-xs font-medium text-tinta
+                                               hover:bg-gray-100 border border-borde transition">
+                                    Hacer administrador
+                                </button>
+                            </form>
+                        @endif
+                        <form method="POST" action="{{ route('admin.usuarios.destroy', $usuario) }}"
+                              data-confirm="¿Eliminar a {{ $usuario->name }}? Esta acción no se puede deshacer."
                               data-confirm-danger>
-                            @csrf @method('PATCH')
-                            <input type="hidden" name="role" value="user">
+                            @csrf @method('DELETE')
                             <button type="submit"
                                     class="w-full text-center px-3 py-2 rounded-xl text-xs font-medium text-red-500
                                            hover:text-red-700 hover:bg-red-50 border border-red-100 transition">
-                                Quitar acceso admin
+                                Eliminar usuario
                             </button>
                         </form>
-                    @else
-                        <form method="POST" action="{{ route('admin.usuarios.role', $usuario) }}"
-                              data-confirm="¿Ascender a {{ $usuario->name }} como administrador?">
-                            @csrf @method('PATCH')
-                            <input type="hidden" name="role" value="admin">
-                            <button type="submit"
-                                    class="w-full text-center px-3 py-2 rounded-xl text-xs font-medium text-tinta
-                                           hover:bg-gray-100 border border-borde transition">
-                                Hacer administrador
-                            </button>
-                        </form>
-                    @endif
+                    </div>
                 @endif
             </div>
         @endforeach
@@ -81,6 +93,7 @@
                         <th class="text-left px-5 py-3 text-xs uppercase tracking-widest text-gris font-medium">Email</th>
                         <th class="text-center px-5 py-3 text-xs uppercase tracking-widest text-gris font-medium">Rol actual</th>
                         <th class="text-right px-5 py-3 text-xs uppercase tracking-widest text-gris font-medium">Cambiar rol</th>
+                        <th class="text-right px-5 py-3 text-xs uppercase tracking-widest text-gris font-medium">Eliminar</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-borde">
@@ -109,30 +122,43 @@
                             </td>
                             <td class="px-5 py-3 text-right">
                                 @if($usuario->id === auth()->id())
-                                    <span class="text-xs text-gris italic">No editable</span>
+                                    <span class="text-xs text-gris italic">—</span>
+                                @elseif($usuario->isAdmin())
+                                    <form method="POST" action="{{ route('admin.usuarios.role', $usuario) }}"
+                                          data-confirm="¿Quitar permisos de administrador a {{ $usuario->name }}?"
+                                          data-confirm-danger>
+                                        @csrf @method('PATCH')
+                                        <input type="hidden" name="role" value="user">
+                                        <button type="submit"
+                                                class="text-xs text-red-500 hover:text-red-700 transition font-medium">
+                                            Quitar admin
+                                        </button>
+                                    </form>
                                 @else
-                                    @if($usuario->isAdmin())
-                                        <form method="POST" action="{{ route('admin.usuarios.role', $usuario) }}"
-                                              data-confirm="¿Quitar permisos de administrador a {{ $usuario->name }}?"
-                                              data-confirm-danger>
-                                            @csrf @method('PATCH')
-                                            <input type="hidden" name="role" value="user">
-                                            <button type="submit"
-                                                    class="text-xs text-red-500 hover:text-red-700 transition font-medium">
-                                                Quitar admin
-                                            </button>
-                                        </form>
-                                    @else
-                                        <form method="POST" action="{{ route('admin.usuarios.role', $usuario) }}"
-                                              data-confirm="¿Ascender a {{ $usuario->name }} como administrador?">
-                                            @csrf @method('PATCH')
-                                            <input type="hidden" name="role" value="admin">
-                                            <button type="submit"
-                                                    class="text-xs text-tinta hover:underline transition font-medium">
-                                                Hacer admin
-                                            </button>
-                                        </form>
-                                    @endif
+                                    <form method="POST" action="{{ route('admin.usuarios.role', $usuario) }}"
+                                          data-confirm="¿Ascender a {{ $usuario->name }} como administrador?">
+                                        @csrf @method('PATCH')
+                                        <input type="hidden" name="role" value="admin">
+                                        <button type="submit"
+                                                class="text-xs text-tinta hover:underline transition font-medium">
+                                            Hacer admin
+                                        </button>
+                                    </form>
+                                @endif
+                            </td>
+                            <td class="px-5 py-3 text-right">
+                                @if($usuario->id !== auth()->id())
+                                    <form method="POST" action="{{ route('admin.usuarios.destroy', $usuario) }}"
+                                          data-confirm="¿Eliminar a {{ $usuario->name }}? Esta acción no se puede deshacer."
+                                          data-confirm-danger>
+                                        @csrf @method('DELETE')
+                                        <button type="submit"
+                                                class="text-xs text-red-500 hover:text-red-700 transition font-medium">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                @else
+                                    <span class="text-xs text-gris italic">—</span>
                                 @endif
                             </td>
                         </tr>
