@@ -59,8 +59,8 @@ Route::middleware('auth')->group(function () {
         return back()->with('resent', true);
     })->middleware('throttle:6,1')->name('verification.send');
 
-    // Rutas que requieren email verificado
-    Route::middleware('verified')->group(function () {
+    // Rutas que requieren email verificado (o ser admin)
+    Route::middleware('verified_or_admin')->group(function () {
         Route::get('/mis-favoritos', [WishlistController::class, 'index'])->name('favoritos.index');
         Route::post('/favoritos/{producto}', [WishlistController::class, 'toggle'])->name('favoritos.toggle');
 
@@ -121,6 +121,7 @@ Route::prefix('admin')
 
         Route::get('usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
         Route::patch('usuarios/{usuario}/role', [UsuarioController::class, 'updateRole'])->name('usuarios.role');
+        Route::delete('usuarios/{usuario}', [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
 
         Route::get('sucursales', [SucursalController::class, 'index'])->name('sucursales.index');
         Route::get('sucursales/crear', [SucursalController::class, 'create'])->name('sucursales.create');
