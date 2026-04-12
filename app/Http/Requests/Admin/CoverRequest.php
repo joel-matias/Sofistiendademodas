@@ -18,7 +18,7 @@ class CoverRequest extends FormRequest
             'subtitulo'   => ['nullable', 'string', 'max:255'],
             'texto_boton' => ['nullable', 'string', 'max:80'],
             'url_boton'   => ['nullable', 'string', 'max:255'],
-            'imagen'      => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+            'imagen'      => ['nullable', 'image', 'max:10240'],
             'orden'       => ['required', 'integer', 'min:0'],
             'activo'      => ['nullable', 'boolean'],
         ];
@@ -34,7 +34,6 @@ class CoverRequest extends FormRequest
             'url_boton.max'    => 'La URL del botón no puede superar los 255 caracteres.',
 
             'imagen.image'     => 'El archivo seleccionado no es una imagen válida.',
-            'imagen.mimes'     => 'La imagen debe ser JPG, PNG o WebP.',
             'imagen.max'       => 'La imagen no puede pesar más de 10 MB.',
 
             'orden.required'   => 'El orden es obligatorio.',

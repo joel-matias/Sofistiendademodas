@@ -22,7 +22,7 @@ class CategoriaRequest extends FormRequest
                 Rule::unique('categorias', 'nombre')->ignore($categoriaId),
             ],
             'descripcion' => ['nullable', 'string'],
-            'imagen'      => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+            'imagen'      => ['nullable', 'image', 'max:10240'],
         ];
     }
 
@@ -34,7 +34,6 @@ class CategoriaRequest extends FormRequest
             'nombre.unique'   => 'Ya existe una categoría con ese nombre.',
 
             'imagen.image'    => 'El archivo seleccionado no es una imagen válida.',
-            'imagen.mimes'    => 'La imagen debe ser JPG, PNG o WebP.',
             'imagen.max'      => 'La imagen no puede pesar más de 10 MB.',
         ];
     }
