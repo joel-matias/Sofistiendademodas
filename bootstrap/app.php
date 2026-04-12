@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'verified_or_admin' => \App\Http\Middleware\VerifiedOrAdmin::class,
         ]);
 
         // Cabeceras de seguridad en todas las respuestas web

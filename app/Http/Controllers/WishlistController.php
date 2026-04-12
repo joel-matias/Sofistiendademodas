@@ -21,10 +21,6 @@ class WishlistController extends Controller
 
     public function index()
     {
-        if (Auth::user()->isAdmin()) {
-            return redirect()->route('home');
-        }
-
         $productos = Auth::user()->favoritos()
             ->with('categorias')
             ->where('activo', true)
